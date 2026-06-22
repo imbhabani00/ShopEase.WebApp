@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>@(ViewData["Title"] != null ? ViewData["Title"] + " — ShopEase" : "ShopEase")</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="@(ViewData["BodyClass"])">
+
+    <!-- ════════════════════════════════════════
+         SIDEBAR
+    ════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+
+        <!-- Brand -->
+        <div class="sidebar__brand">
+            <div class="sidebar__brand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 01-8 0" />
+                </svg>
+            </div>
+            <span class="sidebar__brand-name">ShopEase</span>
+            <button class="sidebar__close" id="sidebarClose" aria-label="Close menu">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+            </button>
+        </div>
+
+        <!-- Nav -->
+        <nav class="sidebar__nav">
+
+            <div class="nav-section">
+                <span class="nav-section__label">Main</span>
+                <a href="/Dashboard" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Dashboard" ? "nav-item--active" : "")">
+                    <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-section__label">Catalogue</span>
+                <a href="/Product" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Product" ? "nav-item--active" : "")">
+                    <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /></svg>
+                    <span>Products</span>
+                </a>
+                <a href="/Category" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Category" ? "nav-item--active" : "")">
+                    <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
+                    <span>Categories</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-section__label">Sales</span>
+                <a href="/Order" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Order" ? "nav-item--active" : "")">
+                    <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
+                    <span>Orders</span>
+                    <span class="nav-badge" id="orderBadge"></span>
+                </a>
+                <a href="/Customer" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Customer" ? "nav-item--active" : "")">
+                    <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>
+                    <span>Customers</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-section__label">Admin</span>
+                <a href="/User" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "User" ? "nav-item--active" : "")">
+                    <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                    <span>Users</span>
+                </a>
+                <a href="/Role" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Role" ? "nav-item--active" : "")">
+                    <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                    <span>Roles</span>
+                </a>
+            </div>
+
+        </nav>
+
+        <!-- Sidebar Footer - User Info -->
+        <div class="sidebar__footer">
+            <div class="sidebar__user">
+                <div class="sidebar__avatar">@(ViewData["UserInitials"] ?? "U")</div>
+                <div class="sidebar__user-info">
+                    <span class="sidebar__user-name">@(ViewData["UserFullName"] ?? "User")</span>
+                    <span class="sidebar__user-role">@(ViewData["RoleName"] ?? "")</span>
+                </div>
+            </div>
+            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sidebar__logout" title="Logout">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                </button>
+            </form>
+        </div>
+
+    </aside>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ════════════════════════════════════════
+         MAIN CONTENT AREA
+    ════════════════════════════════════════ -->
+    <div class="main-wrap">
+
+        <!-- Top navbar -->
+        <header class="topbar">
+            <div class="topbar__left">
+                <button class="topbar__menu-btn" id="sidebarToggle" aria-label="Toggle menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+                </button>
+
+                <!-- Breadcrumb -->
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <a href="/Dashboard" class="breadcrumb__item">Home</a>
+                    @if (ViewData["BreadcrumbParent"] != null)
+                    {
+                        <span class="breadcrumb__sep">/</span>
+                        <span class="breadcrumb__item">@ViewData["BreadcrumbParent"]</span>
+                    }
+                    @if (ViewData["BreadcrumbCurrent"] != null)
+                    {
+                        <span class="breadcrumb__sep">/</span>
+                        <span class="breadcrumb__item breadcrumb__item--active">@ViewData["BreadcrumbCurrent"]</span>
+                    }
+                </nav>
+            </div>
+
+            <div class="topbar__right">
+                <!-- Notifications -->
+                <button class="topbar__icon-btn" id="notifBtn" aria-label="Notifications">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
+                    <span class="topbar__badge" id="notifBadge" style="display:none">0</span>
+                </button>
+
+                <!-- User dropdown -->
+                <div class="topbar__user-wrap" id="userDropWrap">
+                    <button class="topbar__user-btn" id="userDropBtn">
+                        <div class="topbar__avatar">@(ViewData["UserInitials"] ?? "U")</div>
+                        <span class="topbar__username">@(ViewData["UserFullName"] ?? "User")</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
+                    </button>
+                    <div class="user-drop" id="userDrop">
+                        <a href="/Account/Profile" class="user-drop__item">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                            Profile
+                        </a>
+                        <a href="/Account/ChangePassword" class="user-drop__item">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+                            Change Password
+                        </a>
+                        <div class="user-drop__divider"></div>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="user-drop__item user-drop__item--danger">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page content -->
+        <main class="page-content">
+
+            <!-- Page header (title + action buttons) -->
+            @if (ViewData["PageTitle"] != null)
+            {
+                <div class="page-header">
+                    <div class="page-header__left">
+                        <h1 class="page-header__title">@ViewData["PageTitle"]</h1>
+                        @if (ViewData["PageSubTitle"] != null)
+                        {
+                            <p class="page-header__sub">@ViewData["PageSubTitle"]</p>
+                        }
+                    </div>
+                    <div class="page-header__actions">
+                        @await RenderSectionAsync("PageActions", required: false)
+                    </div>
+                </div>
+            }
+
+            <!-- Main body -->
+            @RenderBody()
+
+        </main>
+
+    </div>
+
+    <!-- ════════════════════════════════════════
+         MODAL CONTAINER (all popups render here)
+    ════════════════════════════════════════ -->
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-container" id="modalContainer" role="dialog" aria-modal="true">
+        <div class="modal-box" id="modalBox">
+            <div class="modal-header" id="modalHeader">
+                <h5 class="modal-title" id="modalTitle">Title</h5>
+                <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content loads here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         SCRIPTS
+    ════════════════════════════════════════ -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+
+    <!-- TempData toasts fired from controller -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            $(function () { showSuccess('@TempData["SuccessMessage"]'); });
+        </script>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            $(function () { showError('@TempData["ErrorMessage"]'); });
+        </script>
+    }
+    <!-- Page-specific scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
