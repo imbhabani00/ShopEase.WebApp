@@ -226,6 +226,8 @@
     <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/chat.js" asp-append-version="true"></script>
 
+    @await RenderSectionAsync("Scripts", required: false)
+
     <!-- TempData toasts fired from controller -->
     @if (TempData["SuccessMessage"] != null)
     {

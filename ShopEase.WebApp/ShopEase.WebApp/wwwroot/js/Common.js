@@ -1,14 +1,4 @@
-﻿/* =============================================
-   common.js — ShopEase Web App
-   Shared utilities for all pages
-   ============================================= */
-
-'use strict';
-
-/* ──────────────────────────────────────────────
-   1. TOASTR CONFIGURATION
-────────────────────────────────────────────── */
-toastr.options = {
+﻿toastr.options = {
     closeButton: true,
     progressBar: true,
     positionClass: 'toast-top-right',
@@ -25,10 +15,6 @@ function showError(message) { toastr.error(message || 'Something went wrong'); }
 function showWarning(message) { toastr.warning(message || 'Warning'); }
 function showInfo(message) { toastr.info(message || 'Info'); }
 
-
-/* ──────────────────────────────────────────────
-   2. SIDEBAR TOGGLE
-────────────────────────────────────────────── */
 $(function () {
     var $sidebar = $('#sidebar');
     var $overlay = $('#sidebarOverlay');
@@ -52,10 +38,6 @@ $(function () {
     $overlay.on('click', closeSidebar);
 });
 
-
-/* ──────────────────────────────────────────────
-   3. USER DROPDOWN
-────────────────────────────────────────────── */
 $(function () {
     var $btn = $('#userDropBtn');
     var $drop = $('#userDrop');
@@ -70,11 +52,6 @@ $(function () {
     });
 });
 
-
-/* ──────────────────────────────────────────────
-   4. MODAL  — loadPopup(url, title, size)
-   size: 'sm' | 'md' (default) | 'lg' | 'xl'
-────────────────────────────────────────────── */
 var _modalStack = [];
 
 function loadPopup(url, title, size) {
@@ -84,7 +61,6 @@ function loadPopup(url, title, size) {
     var $title = $('#modalTitle');
     var $body = $('#modalBody');
 
-    // Remove previous size classes
     $box.removeClass('modal-sm modal-lg modal-xl');
     if (size === 'sm') $box.addClass('modal-sm');
     else if (size === 'lg') $box.addClass('modal-lg');
@@ -101,7 +77,6 @@ function loadPopup(url, title, size) {
         type: 'GET',
         success: function (html) {
             $body.html(html);
-            // Re-init any selects or datepickers inside modal
             initFormControls($body);
         },
         error: function () {
@@ -116,24 +91,14 @@ function closePopup() {
     $('#modalBody').html('');
 }
 
-// Close on backdrop click
 $('#modalBackdrop').on('click', closePopup);
 
-// Close on X button
 $('#modalClose').on('click', closePopup);
 
-// Close on Escape key
 $(document).on('keydown', function (e) {
     if (e.key === 'Escape') closePopup();
 });
 
-
-/* ──────────────────────────────────────────────
-   5. LOAD DROPDOWN
-   loadDropdown(url, controlId, prefillValue, defaultSelect)
-   
-   API response expected: [{ id, name, code }]
-────────────────────────────────────────────── */
 function loadDropdown(url, controlId, prefillValue, defaultSelect) {
     var $select = $('#' + controlId);
 
@@ -152,14 +117,11 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
         headers: accessToken ? { 'Authorization': 'Bearer ' + accessToken } : {},
         success: function (response) {
             $select.empty();
-
-            // Default placeholder option
             var defaultText = defaultSelect || '— Select —';
             $select.append($('<option>', { value: '', text: defaultText }));
 
             var data = [];
 
-            // Handle both raw array and wrapped ApiResponse
             if (Array.isArray(response)) {
                 data = response;
             } else if (response && response.status && Array.isArray(response.response)) {
@@ -191,34 +153,19 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
     });
 }
 
-// Get selected item's code from dropdown
 function getDropdownCode(controlId) {
     var $selected = $('#' + controlId + ' option:selected');
     return $selected.data('code') || '';
 }
-
-// Get full item object from selected option
 function getDropdownItem(controlId) {
     var $selected = $('#' + controlId + ' option:selected');
     return $selected.data('item') || null;
 }
 
-
-/* ──────────────────────────────────────────────
-   6. ACCESS TOKEN HELPER
-   Reads from session via hidden meta tag in layout
-   Add this in _Layout.cshtml inside <head>:
-   <meta name="access-token" content="@(HttpContext.Session.GetString("AccessToken") ?? "")" />
-────────────────────────────────────────────── */
 function getAccessToken() {
     return $('meta[name="access-token"]').attr('content') || '';
 }
 
-
-/* ──────────────────────────────────────────────
-   7. AJAX POST HELPER
-   ajaxPost(url, data, successFn, errorFn)
-────────────────────────────────────────────── */
 function ajaxPost(url, data, successFn, errorFn) {
     var token = $('input[name="__RequestVerificationToken"]').val();
 
@@ -239,12 +186,6 @@ function ajaxPost(url, data, successFn, errorFn) {
         }
     });
 }
-
-
-/* ──────────────────────────────────────────────
-   8. AJAX POST JSON HELPER
-   ajaxPostJson(url, jsonData, successFn, errorFn)
-────────────────────────────────────────────── */
 function ajaxPostJson(url, jsonData, successFn, errorFn) {
     var token = $('input[name="__RequestVerificationToken"]').val();
 
@@ -267,10 +208,6 @@ function ajaxPostJson(url, jsonData, successFn, errorFn) {
     });
 }
 
-
-/* ──────────────────────────────────────────────
-   9. CONFIRM DELETE — showConfirm(message, onConfirm)
-────────────────────────────────────────────── */
 function showConfirm(message, onConfirm) {
     var $backdrop = $('#modalBackdrop');
     var $container = $('#modalContainer');
@@ -297,10 +234,6 @@ function showConfirm(message, onConfirm) {
     });
 }
 
-
-/* ──────────────────────────────────────────────
-   10. PARTIAL VIEW RELOAD — reloadPartial(url, containerId)
-────────────────────────────────────────────── */
 function reloadPartial(url, containerId) {
     var $container = $('#' + containerId);
     $container.html('<div class="spinner"></div>');
@@ -317,12 +250,6 @@ function reloadPartial(url, containerId) {
     });
 }
 
-
-/* ──────────────────────────────────────────────
-   11. FORM HELPERS
-────────────────────────────────────────────── */
-
-// Serialize form to plain JS object
 function serializeForm(formId) {
     var data = {};
     $('#' + formId).serializeArray().forEach(function (item) {
@@ -331,7 +258,6 @@ function serializeForm(formId) {
     return data;
 }
 
-// Reset form fields and clear validation errors
 function resetForm(formId) {
     var $form = $('#' + formId);
     $form[0].reset();
@@ -339,27 +265,11 @@ function resetForm(formId) {
     $form.find('.field-error').text('');
 }
 
-// Show server-side validation errors on fields
-function showValidationErrors(errors) {
-    if (!errors || !Array.isArray(errors)) return;
-    errors.forEach(function (err) {
-        var $input = $('[name="' + err.propertyName + '"]');
-        $input.addClass('is-invalid');
-        $input.siblings('.field-error').text(err.errorMessage);
-    });
-}
-
-// Init form controls (called after modal loads)
 function initFormControls($context) {
-    // Placeholder for datepicker, select2 etc. inits
-    // e.g. $context.find('.datepicker').datepicker();
 }
 
-
-/* ──────────────────────────────────────────────
-   12. BUTTON LOADING STATE
-────────────────────────────────────────────── */
 function setButtonLoading($btn, loading) {
+    debugger
     if (loading) {
         $btn.prop('disabled', true)
             .find('.btn-text').addClass('hidden').end()
@@ -371,14 +281,8 @@ function setButtonLoading($btn, loading) {
     }
 }
 
-
-/* ──────────────────────────────────────────────
-   13. HANDLE API RESPONSE (standard pattern)
-   Usage:
-     var result = handleApiResponse(response);
-     if (!result) return; // failed, toast already shown
-────────────────────────────────────────────── */
 function handleApiResponse(response, successMessage) {
+    debugger
     if (!response) {
         showError('No response from server.');
         return null;
@@ -391,10 +295,6 @@ function handleApiResponse(response, successMessage) {
     return response.response;
 }
 
-
-/* ──────────────────────────────────────────────
-   14. FORMAT HELPERS
-────────────────────────────────────────────── */
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     var d = new Date(dateStr);
@@ -416,15 +316,10 @@ function formatNumber(num) {
     return new Intl.NumberFormat('en-IN').format(num);
 }
 
-
-/* ──────────────────────────────────────────────
-   15. AUTH.JS HELPERS (password toggle + strength)
-────────────────────────────────────────────── */
 function togglePassword(inputId, btn) {
     var $input = $('#' + inputId);
     var isText = $input.attr('type') === 'text';
     $input.attr('type', isText ? 'password' : 'text');
-    // Swap icon
     $(btn).find('svg').toggle();
 }
 
@@ -454,6 +349,5 @@ function updateStrength(val) {
 }
 
 function googleSignIn() {
-    // Wire up your Google OAuth flow here
     showInfo('Google Sign-In coming soon.');
 }
