@@ -480,6 +480,7 @@ body {
             text-decoration: underline;
         }
 
+
 /* ── Responsive ── */
 @media (max-width: 680px) {
     .auth-left {

@@ -40,7 +40,18 @@ namespace Ecommerce.Web.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+                return StatusCode(200, new
+                {
+                    status = false,
+                    message = "Invalid input",
+                    errors = ModelState
+                .Where(x => x.Value.Errors.Count > 0)
+                .Select(x => new
+                {
+                    propertyName = x.Key,
+                    errorMessage = x.Value.Errors.First().ErrorMessage
+                })
+                });
 
             try
             {
@@ -48,16 +59,22 @@ namespace Ecommerce.Web.Controllers
 
                 if (result == null || !result.Status || result.Response == null)
                 {
-                    ModelState.AddModelError("", result?.Message ?? "Login failed");
-                    return View(model);
+                    return StatusCode(200, new
+                    {
+                        status = false,
+                        message = result?.Message ?? "Login failed"
+                    });
                 }
 
                 var token = JsonConvert.DeserializeObject<TokenResponseModel>(result.Response.ToString()!);
 
                 if (token == null)
                 {
-                    ModelState.AddModelError("", "Invalid response from server.");
-                    return View(model);
+                    return StatusCode(200, new
+                    {
+                        status = false,
+                        message = "Invalid response from server."
+                    });
                 }
 
                 // Store in session
@@ -72,16 +89,22 @@ namespace Ecommerce.Web.Controllers
 
                 _logger.LogInformation("Login: User {UserId} logged in successfully", token.UserId);
 
-                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    return Redirect(model.ReturnUrl);
-
-                return Redirect(RouteConstants.Dashboard);
+                return StatusCode(200, new
+                {
+                    status = true,
+                    message = "Login successful",
+                    returnUrl = RouteConstants.Dashboard
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Login: Error occurred");
                 ModelState.AddModelError("", "An error occurred. Please try again.");
-                return View(model);
+                return StatusCode(200, new
+                {
+                    status = false,
+                    message = "An error occurred. Please try again."
+                });
             }
         }
         #endregion
