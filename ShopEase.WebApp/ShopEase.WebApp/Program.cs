@@ -55,9 +55,6 @@ try
         app.UseHsts();
     }
 
-
-    
-
     app.UseMiddleware<ExceptionMiddleware>();
     app.UseHttpsRedirection();
     app.UseStaticFiles();

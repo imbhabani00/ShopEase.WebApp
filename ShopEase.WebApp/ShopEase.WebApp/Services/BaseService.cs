@@ -11,9 +11,13 @@ namespace Ecommerce.Web.Services.Base
     public abstract class BaseService
     {
         #region Properties
+        private string _ShopEaseApiUrl = "";
+        private string _ShopEaseApiVersion = "";
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly AppSettings _appSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        protected string ShopEaseApiUrl => _appSettings.EcommerceApi.BaseUrl;
+        protected string ShopEaseApiVersion => _appSettings.EcommerceApi.Version;
         #endregion
 
         #region Constructor
