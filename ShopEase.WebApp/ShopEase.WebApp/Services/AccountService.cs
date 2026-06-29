@@ -9,7 +9,7 @@ namespace Ecommerce.Web.Services
     {
         Task<ApiResponse> LoginAsync(LoginViewModel model);
         Task<ApiResponse> RefreshTokenAsync(string accessToken, string refreshToken);
-        Task LogoutAsync();
+        Task LogoutAsync();  
     }
     public class AccountService : BaseService, IAccountService
     {

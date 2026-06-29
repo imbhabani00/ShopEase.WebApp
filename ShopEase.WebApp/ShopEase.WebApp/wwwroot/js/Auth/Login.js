@@ -6,7 +6,7 @@
         e.preventDefault();
         if (!loginForm.valid()) {
             return false; 
-        }
+        } 
 
         setButtonLoading(loginBtn, true);
         var formData = new FormData(loginForm[0]);
@@ -22,11 +22,10 @@
             },
             success: function (response) {
                 debugger
-                if (response.status) {
-                    debugger
+                if (response.statusCode == 200) {
                     showSuccess(response.message || 'Login successful');
                     setTimeout(function () {
-                        window.location.href = response.redirectUrl || '/Dashboard';
+                        window.location.href = response.redirectUrl || '/Dashboard/Index';
                     }, 500);
                 } else {
                     if (response.errors && Array.isArray(response.errors)) {
@@ -34,7 +33,6 @@
                             if (err.propertyName) {
                                 var input = loginForm.find('[name="' + err.propertyName + '"]');
                                 var errorSpan = input.closest('.form-group').find('.field-error');
-
                                 input.addClass('is-invalid');
                                 errorSpan.removeClass('field-validation-valid').addClass('field-validation-error');
                                 errorSpan.text(err.errorMessage);

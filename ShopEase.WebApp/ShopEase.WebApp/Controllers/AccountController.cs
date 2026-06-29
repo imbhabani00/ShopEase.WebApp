@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Helpers;
 using ShopEase.WebApp.Models.Auth;
+using ShopEase.WebApp.Models.Common;
+using ShopEase.WebApp.Services;
 
 namespace Ecommerce.Web.Controllers
 {
@@ -12,15 +14,18 @@ namespace Ecommerce.Web.Controllers
         #region Properties
         private readonly IAccountService _accountService;
         private readonly ILogger<AccountController> _logger;
+        private readonly IUserService _userService;
         #endregion
 
         #region Constructor
         public AccountController(
             IAccountService accountService,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            IUserService userService)
         {
             _accountService = accountService;
             _logger = logger;
+            _userService = userService;
         }
         #endregion
 
@@ -93,7 +98,8 @@ namespace Ecommerce.Web.Controllers
                 {
                     status = true,
                     message = "Login successful",
-                    returnUrl = RouteConstants.Dashboard
+                    returnUrl = RouteConstants.Dashboard,
+                    statusCode = 200
                 });
             }
             catch (Exception ex)
@@ -115,6 +121,7 @@ namespace Ecommerce.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _accountService.LogoutAsync();
+            SessionHelper.ClearSession(HttpContext.Session);
             CookieHelper.DeleteRefreshTokenCookie(Response);
             _logger.LogInformation("Logout: User {UserId} logged out", CurrentUserId);
             return Redirect(RouteConstants.Login);
@@ -129,8 +136,29 @@ namespace Ecommerce.Web.Controllers
         }
         #endregion
 
-        #region Register
-
+        #region Register -- GET
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
         #endregion
+
+        #region Register -- POST
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+        {
+            var apiResponse = new ApiResponse();
+            try
+            {
+                apiResponse = await _userService.UserSaveAsync(registerViewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Register: Error occurred");
+            }
+            return new ObjectResult(apiResponse);
+        }
+        #endregion 
     }
 }
