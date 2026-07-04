@@ -79,5 +79,34 @@ namespace ShopEase.WebApp.Helpers
 
         public static void ClearSession(ISession session)
             => session.Clear();
+
+        #region Pending User (OTP Verification)
+
+        public static void SetPendingUserId(ISession session, int userId)
+            => session.SetInt32(SessionConstants.PendingUserId, userId);
+
+        public static int GetPendingUserId(ISession session)
+            => session.GetInt32(SessionConstants.PendingUserId) ?? 0;
+
+        public static void SetPendingEmail(ISession session, string email)
+            => session.SetString(SessionConstants.PendingEmail, email);
+
+        public static string? GetPendingEmail(ISession session)
+            => session.GetString(SessionConstants.PendingEmail);
+
+        public static void SetPendingTenantId(ISession session, int tenantId)
+            => session.SetInt32(SessionConstants.PendingTenantId, tenantId);
+
+        public static int GetPendingTenantId(ISession session)
+            => session.GetInt32(SessionConstants.PendingTenantId) ?? 0;
+
+        public static void ClearPendingUser(ISession session)
+        {
+            session.Remove(SessionConstants.PendingUserId);
+            session.Remove(SessionConstants.PendingEmail);
+            session.Remove(SessionConstants.PendingTenantId);
+        }
+
+        #endregion
     }
 }
