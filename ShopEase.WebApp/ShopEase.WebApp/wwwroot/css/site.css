@@ -870,6 +870,17 @@ select.form-control {
     margin-top: 4px;
 }
 
+.field-validation-valid {
+    display: none !important;
+}
+
+.field-validation-error {
+    display: block !important;
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
 /* ── UTILITIES ────────────────────────────── */
 .d-flex {
     display: flex;
