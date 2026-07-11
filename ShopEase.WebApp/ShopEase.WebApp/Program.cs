@@ -1,6 +1,7 @@
 using Ecommerce.Web.Middleware;
 using Serilog;
 using ShopEase.WebApp.Extensions;
+using ShopEase.WebApp.Models.Email;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -47,6 +48,9 @@ try
         options.HeaderName = "RequestVerificationToken";
     });
 
+    builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
     var app = builder.Build();
 
     if (!app.Environment.IsDevelopment())
@@ -60,9 +64,9 @@ try
     app.UseStaticFiles();
     app.UseRouting();
     app.UseSession();
+    app.UseMiddleware<AuthMiddleware>();
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseMiddleware<AuthMiddleware>();
 
     app.MapControllerRoute(
         name: "default",

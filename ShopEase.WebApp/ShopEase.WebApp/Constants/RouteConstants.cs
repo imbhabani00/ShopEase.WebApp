@@ -8,5 +8,7 @@
         public const string Dashboard = "/Dashboard/Index";
         public const string AccessDenied = "/Account/AccessDenied";
         public const string ForgotPassword = "/Account/ForgotPassword";
+        public const string VerifyOtp = "/Account/VerifyOtp";
+        public const string ResendOtp = "/Account/ResendOtp";
     }
 }
