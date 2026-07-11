@@ -1,5 +1,1043 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "ShopEase — Shop the Everyday, Beautifully";
+
+    // ---------------------------------------------------------------
+    // DEMO DATA — replace with your real ViewModel / repository calls.
+    // Shape shown below so wiring it up later is a straight swap.
+    // ---------------------------------------------------------------
+    var banners = new[]
+    {
+        new { Tag = "NEW SEASON", Title = "Autumn Essentials, Sorted", Sub = "Fresh layers and everyday staples, up to 40% off", Cta = "Shop the edit", Bg = "linear-gradient(135deg,#1F3358,#2C4A7C)" },
+        new { Tag = "FLASH DROP", Title = "Tech That Keeps Up", Sub = "Headphones, chargers & gadgets — today only", Cta = "See the drop", Bg = "linear-gradient(135deg,#1B4B43,#227A63)" },
+        new { Tag = "MEMBERS ONLY", Title = "Extra 15% for ShopEase+", Sub = "Free next-day delivery on every order", Cta = "Join free", Bg = "linear-gradient(135deg,#5C3A1E,#8A5A2B)" },
+    };
+
+    var categories = new[]
+    {
+        new { Name = "Electronics", Icon = "M4 5h16v11H4z M2 19h20 M9 8h6 M9 11h4" },
+        new { Name = "Fashion", Icon = "M8 3l4 3 4-3 3 4-3 2v11H5V9L2 7z" },
+        new { Name = "Home", Icon = "M3 11l9-7 9 7 M5 10v10h14V10" },
+        new { Name = "Beauty", Icon = "M12 2v4 M8 6h8l1 5H7z M7 11h10v10H7z" },
+        new { Name = "Sports", Icon = "M12 2a10 10 0 100 20 10 10 0 000-20z M2 12h20 M12 2c2.5 3 2.5 15 0 20 M12 2c-2.5 3-2.5 15 0 20" },
+        new { Name = "Toys", Icon = "M12 3l2.5 5 5.5.5-4 4 1 5.5-5-3-5 3 1-5.5-4-4 5.5-.5z" },
+        new { Name = "Grocery", Icon = "M6 2l1.5 5h9L18 2 M5 7h14l-1.5 13h-11z" },
+        new { Name = "Books", Icon = "M4 4h9a3 3 0 013 3v13a3 3 0 00-3-3H4z M20 4h-4a3 3 0 00-3 3v13a3 3 0 013-3h4z" },
+    };
+
+    var deals = new[]
+    {
+        new { Name = "Wireless ANC Headphones", Price = 3499m, OldPrice = 5999m, Rating = 4.6, Img = "https://picsum.photos/seed/shopease1/480/480", Badge = "42% OFF" },
+        new { Name = "Ceramic Pour-Over Kettle", Price = 1299m, OldPrice = 1899m, Rating = 4.8, Img = "https://picsum.photos/seed/shopease2/480/480", Badge = "32% OFF" },
+        new { Name = "Trail Running Shoes", Price = 2799m, OldPrice = 3999m, Rating = 4.4, Img = "https://picsum.photos/seed/shopease3/480/480", Badge = "30% OFF" },
+        new { Name = "Minimalist Desk Lamp", Price = 899m,  OldPrice = 1499m, Rating = 4.7, Img = "https://picsum.photos/seed/shopease4/480/480", Badge = "40% OFF" },
+        new { Name = "Organic Cotton Tee", Price = 599m,  OldPrice = 999m,  Rating = 4.5, Img = "https://picsum.photos/seed/shopease5/480/480", Badge = "40% OFF" },
+        new { Name = "Stainless Water Bottle", Price = 749m,  OldPrice = 1099m, Rating = 4.9, Img = "https://picsum.photos/seed/shopease6/480/480", Badge = "32% OFF" },
+    };
+
+    var featured = new[]
+    {
+        new { Name = "Everyday Backpack, 22L", Price = 2199m, Rating = 4.6, Img = "https://picsum.photos/seed/shopease7/480/480", Tag = "Bestseller" },
+        new { Name = "Smart Fitness Band", Price = 1999m, Rating = 4.3, Img = "https://picsum.photos/seed/shopease8/480/480", Tag = "New" },
+        new { Name = "Linen Blend Shirt", Price = 1349m, Rating = 4.5, Img = "https://picsum.photos/seed/shopease9/480/480", Tag = "" },
+        new { Name = "Cast Iron Skillet 10\"", Price = 1799m, Rating = 4.8, Img = "https://picsum.photos/seed/shopease10/480/480", Tag = "Bestseller" },
+        new { Name = "Noise-Isolating Earbuds", Price = 2299m, Rating = 4.4, Img = "https://picsum.photos/seed/shopease11/480/480", Tag = "" },
+        new { Name = "Woven Storage Basket", Price = 649m,  Rating = 4.7, Img = "https://picsum.photos/seed/shopease12/480/480", Tag = "New" },
+        new { Name = "Espresso Travel Mug", Price = 799m,  Rating = 4.6, Img = "https://picsum.photos/seed/shopease13/480/480", Tag = "" },
+        new { Name = "Yoga Mat, Non-Slip", Price = 1099m, Rating = 4.5, Img = "https://picsum.photos/seed/shopease14/480/480", Tag = "" },
+    };
+}
+
+@section Styles {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .se-root {
+            --ink: #151A24;
+            --paper: #F2F3EF;
+            --card: #FFFFFF;
+            --primary: #1F3358;
+            --primary-light: #2C4A7C;
+            --accent: #FFB020;
+            --accent-ink: #5C3A00;
+            --sale: #DD4B39;
+            --success: #1F8A5F;
+            --muted: #6B7280;
+            --line: #E4E3DC;
+            --radius: 14px;
+            --shadow: 0 2px 4px rgba(21,26,36,.04), 0 8px 24px rgba(21,26,36,.06);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: 'Inter',sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+            .se-root * {
+                box-sizing: border-box;
+            }
+
+            .se-root h1, .se-root h2, .se-root h3, .se-root .display {
+                font-family: 'Space Grotesk',sans-serif;
+                letter-spacing: -0.01em;
+            }
+
+            .se-root a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            .se-root img {
+                display: block;
+                max-width: 100%;
+            }
+
+            .se-root button {
+                font-family: inherit;
+                cursor: pointer;
+            }
+
+            .se-root .wrap {
+                max-width: 1240px;
+                margin: 0 auto;
+                padding: 0 24px;
+            }
+
+            /* ---------- Eyebrow / tag motif (signature element) ---------- */
+            .se-root .tag-label {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11.5px;
+                font-weight: 700;
+                letter-spacing: .14em;
+                text-transform: uppercase;
+                padding: 5px 12px 5px 10px;
+                position: relative;
+            }
+
+                .se-root .tag-label::before {
+                    content: "";
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background: currentColor;
+                }
+
+            /* ---------- Category strip ---------- */
+            .se-root .cat-strip {
+                background: var(--card);
+                border-bottom: 1px solid var(--line);
+                border-radius: 14px;
+                margin-top: 16px;
+            }
+
+                .se-root .cat-strip .wrap {
+                    display: flex;
+                    gap: 8px;
+                    overflow-x: auto;
+                    padding-top: 12px;
+                    padding-bottom: 12px;
+                    scrollbar-width: none;
+                }
+
+                    .se-root .cat-strip .wrap::-webkit-scrollbar {
+                        display: none;
+                    }
+
+            .se-root .cat-chip {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                font-size: 13.5px;
+                font-weight: 600;
+                white-space: nowrap;
+                flex-shrink: 0;
+                transition: .15s;
+            }
+
+                .se-root .cat-chip svg {
+                    width: 16px;
+                    height: 16px;
+                    stroke: var(--primary);
+                    fill: none;
+                    stroke-width: 1.8;
+                }
+
+                .se-root .cat-chip:hover {
+                    border-color: var(--primary);
+                    background: var(--primary);
+                    color: #fff;
+                }
+
+                    .se-root .cat-chip:hover svg {
+                        stroke: #fff;
+                    }
+
+            /* ---------- Hero banner carousel ---------- */
+            .se-root .hero {
+                padding: 22px 0 0;
+            }
+
+            .se-root .hero-shell {
+                position: relative;
+                border-radius: 20px;
+                overflow: hidden;
+                height: 320px;
+                box-shadow: var(--shadow);
+            }
+
+            .se-root .hero-track {
+                display: flex;
+                height: 100%;
+                transition: transform .6s cubic-bezier(.65,0,.35,1);
+            }
+
+            .se-root .hero-slide {
+                min-width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                padding: 0 60px;
+                position: relative;
+                color: #fff;
+                overflow: hidden;
+            }
+
+                .se-root .hero-slide::after {
+                    content: "";
+                    position: absolute;
+                    right: -60px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 260px;
+                    height: 260px;
+                    border-radius: 50%;
+                    background: rgba(255,255,255,.08);
+                }
+
+                .se-root .hero-slide::before {
+                    content: "";
+                    position: absolute;
+                    right: 36px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 160px;
+                    height: 160px;
+                    border-radius: 50%;
+                    background: rgba(255,255,255,.07);
+                }
+
+            .se-root .hero-content {
+                position: relative;
+                z-index: 2;
+                max-width: 440px;
+            }
+
+                .se-root .hero-content .tag-label {
+                    background: rgba(255,255,255,.16);
+                    color: #fff;
+                    margin-bottom: 14px;
+                }
+
+                .se-root .hero-content h2 {
+                    font-size: 34px;
+                    line-height: 1.1;
+                    margin: 0 0 12px;
+                }
+
+                .se-root .hero-content p {
+                    font-size: 14.5px;
+                    opacity: .85;
+                    margin: 0 0 20px;
+                    line-height: 1.5;
+                }
+
+            .se-root .hero-cta {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: var(--accent);
+                color: var(--accent-ink);
+                font-weight: 700;
+                font-size: 14px;
+                padding: 11px 20px;
+                border-radius: 9px;
+                border: 0;
+            }
+
+                .se-root .hero-cta:hover {
+                    filter: brightness(1.05);
+                }
+
+            .se-root .hero-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: rgba(255,255,255,.18);
+                border: 0;
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 3;
+                backdrop-filter: blur(2px);
+            }
+
+                .se-root .hero-nav:hover {
+                    background: rgba(255,255,255,.32);
+                }
+
+                .se-root .hero-nav.prev {
+                    left: 18px;
+                }
+
+                .se-root .hero-nav.next {
+                    right: 18px;
+                }
+
+                .se-root .hero-nav svg {
+                    width: 17px;
+                    height: 17px;
+                    stroke: #fff;
+                    fill: none;
+                    stroke-width: 2.2;
+                }
+
+            .se-root .hero-dots {
+                position: absolute;
+                bottom: 16px;
+                left: 60px;
+                display: flex;
+                gap: 8px;
+                z-index: 3;
+            }
+
+            .se-root .hero-dot {
+                width: 22px;
+                height: 5px;
+                border-radius: 3px;
+                background: rgba(255,255,255,.35);
+                border: 0;
+                padding: 0;
+                cursor: pointer;
+                transition: .2s;
+            }
+
+                .se-root .hero-dot.active {
+                    background: #fff;
+                    width: 30px;
+                }
+
+            /* ---------- Section header ---------- */
+            .se-root .section {
+                padding: 40px 0 6px;
+            }
+
+            .se-root .section-head {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                margin-bottom: 18px;
+            }
+
+                .se-root .section-head h3 {
+                    font-size: 22px;
+                    margin: 4px 0 0;
+                }
+
+                .se-root .section-head .tag-label {
+                    color: var(--sale);
+                }
+
+                .se-root .section-head.alt .tag-label {
+                    color: var(--success);
+                }
+
+            .se-root .see-all {
+                font-size: 13.5px;
+                font-weight: 700;
+                color: var(--primary);
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+                .se-root .see-all:hover {
+                    opacity: .7;
+                }
+
+            .se-root .countdown {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-left: auto;
+                margin-right: 26px;
+                font-size: 13px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+                .se-root .countdown span {
+                    background: var(--ink);
+                    color: #fff;
+                    font-family: 'Space Grotesk',sans-serif;
+                    padding: 4px 7px;
+                    border-radius: 5px;
+                    min-width: 28px;
+                    text-align: center;
+                }
+
+            /* ---------- Product rows / grids ---------- */
+            .se-root .h-scroll {
+                display: flex;
+                gap: 18px;
+                overflow-x: auto;
+                padding: 4px 4px 18px;
+                scrollbar-width: none;
+            }
+
+                .se-root .h-scroll::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .se-root .h-scroll .card {
+                    min-width: 210px;
+                }
+
+            .se-root .grid {
+                display: grid;
+                grid-template-columns: repeat(4,1fr);
+                gap: 18px;
+                padding-bottom: 8px;
+            }
+
+            .se-root .card {
+                background: var(--card);
+                border-radius: var(--radius);
+                border: 1px solid var(--line);
+                overflow: hidden;
+                position: relative;
+                transition: .18s ease;
+            }
+
+                .se-root .card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: var(--shadow);
+                    border-color: transparent;
+                }
+
+                .se-root .card .imgwrap {
+                    position: relative;
+                    aspect-ratio: 1/1;
+                    background: #F4F4F1;
+                    overflow: hidden;
+                }
+
+                    .se-root .card .imgwrap img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        transition: .35s;
+                    }
+
+                .se-root .card:hover .imgwrap img {
+                    transform: scale(1.06);
+                }
+
+            .se-root .badge {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                background: var(--sale);
+                color: #fff;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 4px 9px;
+                border-radius: 6px;
+            }
+
+                .se-root .badge.new {
+                    background: var(--success);
+                }
+
+                .se-root .badge.best {
+                    background: var(--ink);
+                }
+
+            .se-root .wishlist-btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background: rgba(255,255,255,.92);
+                border: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .se-root .wishlist-btn svg {
+                    width: 15px;
+                    height: 15px;
+                    stroke: var(--ink);
+                    fill: none;
+                    stroke-width: 1.8;
+                }
+
+                .se-root .wishlist-btn:hover svg {
+                    fill: var(--sale);
+                    stroke: var(--sale);
+                }
+
+            .se-root .card .info {
+                padding: 13px 14px 15px;
+            }
+
+            .se-root .card .name {
+                font-size: 13.8px;
+                font-weight: 600;
+                line-height: 1.35;
+                margin: 0 0 6px;
+                height: 37px;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            .se-root .rating {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 12px;
+                color: var(--muted);
+                margin-bottom: 8px;
+            }
+
+                .se-root .rating svg {
+                    width: 12px;
+                    height: 12px;
+                    fill: var(--accent);
+                    stroke: none;
+                }
+
+            .se-root .price-row {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+            }
+
+            .se-root .price {
+                font-family: 'Space Grotesk',sans-serif;
+                font-weight: 700;
+                font-size: 16.5px;
+            }
+
+            .se-root .old-price {
+                font-size: 12.5px;
+                color: #A6ABB4;
+                text-decoration: line-through;
+            }
+
+            .se-root .add-btn {
+                position: absolute;
+                right: 12px;
+                bottom: 12px;
+                width: 34px;
+                height: 34px;
+                border-radius: 9px;
+                background: var(--primary);
+                border: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transform: translateY(6px);
+                transition: .18s;
+            }
+
+            .se-root .card:hover .add-btn {
+                opacity: 1;
+                transform: none;
+            }
+
+            .se-root .add-btn svg {
+                width: 16px;
+                height: 16px;
+                stroke: #fff;
+                fill: none;
+                stroke-width: 2;
+            }
+
+            /* ---------- Category tiles ---------- */
+            .se-root .catgrid {
+                display: grid;
+                grid-template-columns: repeat(8,1fr);
+                gap: 14px;
+            }
+
+            .se-root .cattile {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 18px 8px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                text-align: center;
+                transition: .15s;
+            }
+
+                .se-root .cattile:hover {
+                    border-color: var(--primary);
+                    transform: translateY(-3px);
+                }
+
+                .se-root .cattile .ico {
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 12px;
+                    background: var(--paper);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                    .se-root .cattile .ico svg {
+                        width: 21px;
+                        height: 21px;
+                        stroke: var(--primary);
+                        fill: none;
+                        stroke-width: 1.6;
+                    }
+
+                .se-root .cattile span {
+                    font-size: 12.5px;
+                    font-weight: 600;
+                }
+
+            /* ---------- Perks strip ---------- */
+            .se-root .perks {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                margin-top: 46px;
+            }
+
+                .se-root .perks .wrap {
+                    display: grid;
+                    grid-template-columns: repeat(4,1fr);
+                    gap: 20px;
+                    padding: 24px;
+                }
+
+            .se-root .perk {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+                .se-root .perk .ico {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 10px;
+                    background: var(--paper);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+
+                    .se-root .perk .ico svg {
+                        width: 19px;
+                        height: 19px;
+                        stroke: var(--primary);
+                        fill: none;
+                        stroke-width: 1.6;
+                    }
+
+                .se-root .perk h4 {
+                    font-size: 13.5px;
+                    margin: 0 0 2px;
+                }
+
+                .se-root .perk p {
+                    font-size: 12px;
+                    color: var(--muted);
+                    margin: 0;
+                }
+
+            /* ---------- Newsletter ---------- */
+            .se-root .newsletter {
+                background: var(--primary);
+                color: #fff;
+                border-radius: 14px;
+                margin-top: 24px;
+            }
+
+                .se-root .newsletter .wrap {
+                    padding: 40px 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 24px;
+                }
+
+                .se-root .newsletter h3 {
+                    font-size: 22px;
+                    margin: 0 0 6px;
+                }
+
+                .se-root .newsletter p {
+                    margin: 0;
+                    opacity: .8;
+                    font-size: 14px;
+                }
+
+            .se-root .nl-form {
+                display: flex;
+                gap: 10px;
+                flex-shrink: 0;
+            }
+
+                .se-root .nl-form input {
+                    width: 250px;
+                    padding: 11px 14px;
+                    border-radius: 9px;
+                    border: 0;
+                    font-size: 13.5px;
+                    font-family: inherit;
+                }
+
+                .se-root .nl-form button {
+                    background: var(--accent);
+                    color: var(--accent-ink);
+                    border: 0;
+                    padding: 11px 18px;
+                    border-radius: 9px;
+                    font-weight: 700;
+                    font-size: 13.5px;
+                }
+
+        @@media (max-width: 980px) {
+            .se-root .grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .se-root .catgrid {
+                grid-template-columns: repeat(4,1fr);
+            }
+
+            .se-root .perks .wrap {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .se-root .hero-content h2 {
+                font-size: 26px;
+            }
+        }
+
+        @@media (max-width: 620px) {
+            .se-root .catgrid {
+                grid-template-columns: repeat(3,1fr);
+            }
+
+            .se-root .grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .se-root .newsletter .wrap {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .se-root .hero-shell {
+                height: 280px;
+            }
+
+            .se-root .hero-slide {
+                padding: 0 26px;
+            }
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            .se-root .hero-track {
+                transition: none;
+            }
+
+            .se-root .card {
+                transition: none;
+            }
+        }
+    </style>
+}
+
+<div class="se-root">
+
+    <nav class="cat-strip">
+        <div class="wrap">
+            @foreach (var c in categories)
+            {
+                <a class="cat-chip" href="#">
+                    <svg viewBox="0 0 24 24"><path d="@c.Icon" /></svg>
+                    @c.Name
+                </a>
+            }
+        </div>
+    </nav>
+
+    <!-- ================= HERO BANNER (auto-scrolling) ================= -->
+    <section class="hero">
+        <div class="wrap">
+            <div class="hero-shell" id="heroShell">
+                <div class="hero-track" id="heroTrack">
+                    @foreach (var b in banners)
+                    {
+                        <div class="hero-slide" style="background:@b.Bg">
+                            <div class="hero-content">
+                                <span class="tag-label">@b.Tag</span>
+                                <h2>@b.Title</h2>
+                                <p>@b.Sub</p>
+                                <button class="hero-cta">
+                                    @b.Cta
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button class="hero-nav prev" id="heroPrev" aria-label="Previous banner">
+                    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></svg>
+                </button>
+                <button class="hero-nav next" id="heroNext" aria-label="Next banner">
+                    <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
+                </button>
+                <div class="hero-dots" id="heroDots"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FLASH DEALS ================= -->
+    <section class="section">
+        <div class="wrap">
+            <div class="section-head">
+                <div>
+                    <span class="tag-label">Flash deals</span>
+                    <h3>Today's Best Price Drops</h3>
+                </div>
+                <div class="countdown">
+                    Ends in <span id="cdH">05</span>:<span id="cdM">42</span>:<span id="cdS">10</span>
+                </div>
+                <a class="see-all" href="#">
+                    See all
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
+            </div>
+
+            <div class="h-scroll">
+                @foreach (var p in deals)
+                {
+                    <div class="card">
+                        <div class="imgwrap">
+                            <span class="badge">@p.Badge</span>
+                            <button class="wishlist-btn" aria-label="Add to wishlist">
+                                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z" /></svg>
+                            </button>
+                            <img src="@p.Img" alt="@p.Name" loading="lazy" />
+                            <button class="add-btn" aria-label="Add to cart">
+                                <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.5 3h2l2.4 12.4a2 2 0 002 1.6h8.4a2 2 0 002-1.6L21 8H6" /></svg>
+                            </button>
+                        </div>
+                        <div class="info">
+                            <p class="name">@p.Name</p>
+                            <div class="rating">
+                                <svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.3-6.2 3.3 1.2-6.8-5-4.9 6.9-1z" /></svg>
+                                @p.Rating.ToString("0.0")
+                            </div>
+                            <div class="price-row">
+                                <span class="price">₹@p.Price.ToString("N0")</span>
+                                <span class="old-price">₹@p.OldPrice.ToString("N0")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SHOP BY CATEGORY ================= -->
+    <section class="section">
+        <div class="wrap">
+            <div class="section-head alt">
+                <div>
+                    <span class="tag-label">Browse</span>
+                    <h3>Shop by Category</h3>
+                </div>
+            </div>
+            <div class="catgrid">
+                @foreach (var c in categories)
+                {
+                    <a class="cattile" href="#">
+                        <span class="ico"><svg viewBox="0 0 24 24"><path d="@c.Icon" /></svg></span>
+                        <span>@c.Name</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FEATURED PRODUCTS ================= -->
+    <section class="section">
+        <div class="wrap">
+            <div class="section-head alt">
+                <div>
+                    <span class="tag-label">Handpicked</span>
+                    <h3>Featured For You</h3>
+                </div>
+                <a class="see-all" href="#">
+                    See all
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
+            </div>
+
+            <div class="grid">
+                @foreach (var p in featured)
+                {
+                    <div class="card">
+                        <div class="imgwrap">
+                            @if (!string.IsNullOrEmpty(p.Tag))
+                            {
+                                <span class="badge @(p.Tag == "New" ? "new" : "best")">@p.Tag</span>
+                            }
+                            <button class="wishlist-btn" aria-label="Add to wishlist">
+                                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z" /></svg>
+                            </button>
+                            <img src="@p.Img" alt="@p.Name" loading="lazy" />
+                            <button class="add-btn" aria-label="Add to cart">
+                                <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.5 3h2l2.4 12.4a2 2 0 002 1.6h8.4a2 2 0 002-1.6L21 8H6" /></svg>
+                            </button>
+                        </div>
+                        <div class="info">
+                            <p class="name">@p.Name</p>
+                            <div class="rating">
+                                <svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.3-6.2 3.3 1.2-6.8-5-4.9 6.9-1z" /></svg>
+                                @p.Rating.ToString("0.0")
+                            </div>
+                            <div class="price-row">
+                                <span class="price">₹@p.Price.ToString("N0")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PERKS ================= -->
+    <section class="perks">
+        <div class="wrap">
+            <div class="perk">
+                <span class="ico"><svg viewBox="0 0 24 24"><path d="M3 7h11v10H3z" /><path d="M14 10h4l3 3v4h-7z" /><circle cx="7" cy="19" r="1.6" /><circle cx="18" cy="19" r="1.6" /></svg></span>
+                <div><h4>Free Delivery</h4><p>On orders above ₹999</p></div>
+            </div>
+            <div class="perk">
+                <span class="ico"><svg viewBox="0 0 24 24"><path d="M3 12l6 6L21 6" /></svg></span>
+                <div><h4>Easy Returns</h4><p>15-day return window</p></div>
+            </div>
+            <div class="perk">
+                <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6z" /></svg></span>
+                <div><h4>Secure Checkout</h4><p>100% protected payments</p></div>
+            </div>
+            <div class="perk">
+                <span class="ico"><svg viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7" /><path d="M3 7l9-4 9 4" /></svg></span>
+                <div><h4>24/7 Support</h4><p>Real humans, real fast</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= NEWSLETTER ================= -->
+    <section class="newsletter">
+        <div class="wrap">
+            <div>
+                <h3>Get deals before everyone else</h3>
+                <p>One email a week. No spam, unsubscribe anytime.</p>
+            </div>
+            <form class="nl-form" onsubmit="return false;">
+                <input type="email" placeholder="you@example.com" required />
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+</div>
+
+@section Scripts {
+    <script>
+        // ---------------- Hero banner auto-scroll ----------------
+        (function () {
+            const track = document.getElementById('heroTrack');
+            const dotsWrap = document.getElementById('heroDots');
+            const slides = track.children;
+            const total = slides.length;
+            let index = 0;
+            let timer;
+
+            for (let i = 0; i < total; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+                dot.addEventListener('click', () => goTo(i));
+                dotsWrap.appendChild(dot);
+            }
+            const dots = dotsWrap.children;
+
+            function render() {
+                track.style.transform = `translateX(-${index * 100}%)`;
+                for (let i = 0; i < dots.length; i++) {
+                    dots[i].classList.toggle('active', i === index);
+                }
+            }
+            function goTo(i) { index = (i + total) % total; render(); restart(); }
+            function next() { goTo(index + 1); }
+            function prev() { goTo(index - 1); }
+            function restart() {
+                clearInterval(timer);
+                timer = setInterval(next, 4500);
+            }
+
+            document.getElementById('heroNext').addEventListener('click', next);
+            document.getElementById('heroPrev').addEventListener('click', prev);
+
+            const shell = document.getElementById('heroShell');
+            shell.addEventListener('mouseenter', () => clearInterval(timer));
+            shell.addEventListener('mouseleave', restart);
+
+            render();
+            restart();
+        })();
+
+        // ---------------- Flash-deal countdown ----------------
+        (function () {
+            let total = 5 * 3600 + 42 * 60 + 10; // demo countdown, wire to real deal-end time
+            const h = document.getElementById('cdH'), m = document.getElementById('cdM'), s = document.getElementById('cdS');
+            setInterval(() => {
+                if (total <= 0) return;
+                total--;
+                const hh = Math.floor(total / 3600);
+                const mm = Math.floor((total % 3600) / 60);
+                const ss = total % 60;
+                h.textContent = String(hh).padStart(2, '0');
+                m.textContent = String(mm).padStart(2, '0');
+                s.textContent = String(ss).padStart(2, '0');
+            }, 1000);
+        })();
+    </script>
 }

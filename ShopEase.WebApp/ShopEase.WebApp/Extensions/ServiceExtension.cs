@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using ShopEase.WebApp.Configuration;
+
 public static class ServiceExtension
 {
     public static IServiceCollection AddApplicationServices(
@@ -19,9 +20,9 @@ public static class ServiceExtension
             client.Timeout = TimeSpan.FromSeconds(30);
         });
 
-        // Auto-register all Web Services
         var webAssembly = typeof(Program).Assembly;
 
+        // Auto-register all Web Services
         foreach (var type in webAssembly.GetTypes()
             .Where(x => x.IsClass
                      && !x.IsAbstract
@@ -32,6 +33,19 @@ public static class ServiceExtension
                 .FirstOrDefault(i =>
                     i.Name != "IDisposable" &&
                     i.Name != "IBaseService");
+
+            if (interfaceType != null)
+                services.AddScoped(interfaceType, type);
+        }
+
+        // Auto-register all Repositories
+        foreach (var type in webAssembly.GetTypes()
+            .Where(x => x.IsClass
+                     && !x.IsAbstract
+                     && x.Name.EndsWith("Repository")))
+        {
+            var interfaceType = type.GetInterfaces()
+                .FirstOrDefault(i => i.Name != "IDisposable");
 
             if (interfaceType != null)
                 services.AddScoped(interfaceType, type);

@@ -29,7 +29,16 @@ namespace Ecommerce.Web.Middleware
             var path = context.Request.Path.Value?.ToLower();
 
             // Skip auth for login/logout
-            if (path != null && (path.Contains("/account/login") || path.Contains("/account/logout")))
+            if (path == null ||
+                path.Contains(RouteConstants.Login.ToLower()) ||
+                path.Contains(RouteConstants.Logout.ToLower()) ||
+                path.Contains(RouteConstants.Register.ToLower()) ||
+                path.Contains(RouteConstants.VerifyOtp.ToLower()) ||
+                path.Contains(RouteConstants.ResendOtp.ToLower()) 
+
+                )
+
+
             {
                 await _next(context);
                 return;
