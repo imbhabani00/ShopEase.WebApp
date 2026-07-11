@@ -185,7 +185,7 @@ namespace Ecommerce.Web.Controllers
                 }
 
                 // Verify OTP
-                var isOtpValid = await _otpRepository.VerifyOtpAsync(pendingUserId,pendingEmail, model.Otp);
+                var isOtpValid = await _otpRepository.VerifyOtpAsync(pendingUserId, pendingEmail, model.Otp);
 
                 if (!isOtpValid)
                 {
@@ -348,10 +348,11 @@ namespace Ecommerce.Web.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            var registerModel = RegisterViewModel();
             if (!string.IsNullOrEmpty(AccessToken))
                 return Redirect(RouteConstants.Dashboard);
 
-            return View(new RegisterViewModel());
+            return View(registerModel);
         }
         #endregion
 
@@ -409,6 +410,13 @@ namespace Ecommerce.Web.Controllers
                     message = "An error occurred. Please try again."
                 });
             }
+        }
+        #endregion
+
+        #region Profile
+        public async Task Profile()
+        {
+            var loginViewModel = new LoginViewModel();
         }
         #endregion
     }
