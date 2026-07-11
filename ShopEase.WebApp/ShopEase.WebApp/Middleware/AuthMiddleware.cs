@@ -32,7 +32,12 @@ namespace Ecommerce.Web.Middleware
             if (path == null ||
                 path.Contains(RouteConstants.Login.ToLower()) ||
                 path.Contains(RouteConstants.Logout.ToLower()) ||
-                path.Contains(RouteConstants.Register.ToLower()))
+                path.Contains(RouteConstants.Register.ToLower()) ||
+                path.Contains(RouteConstants.VerifyOtp.ToLower()) ||
+                path.Contains(RouteConstants.ResendOtp.ToLower()) 
+
+                )
+
 
             {
                 await _next(context);

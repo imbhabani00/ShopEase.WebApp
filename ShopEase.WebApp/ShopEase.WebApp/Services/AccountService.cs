@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Web.Services.Base;
+using Newtonsoft.Json;
 using ShopEase.WebApp.Configuration;
 using ShopEase.WebApp.Models.Auth;
 using ShopEase.WebApp.Models.Common;
@@ -9,7 +10,10 @@ namespace Ecommerce.Web.Services
     {
         Task<ApiResponse> LoginAsync(LoginViewModel model);
         Task<ApiResponse> RefreshTokenAsync(string accessToken, string refreshToken);
-        Task LogoutAsync();  
+        Task LogoutAsync();
+        void StoreTokenInSession(TokenResponseModel token, IHttpContextAccessor httpContextAccessor);
+        TokenResponseModel? GetTokenFromSession(IHttpContextAccessor httpContextAccessor);
+        void ClearTempToken(IHttpContextAccessor httpContextAccessor);
     }
     public class AccountService : BaseService, IAccountService
     {
@@ -29,6 +33,12 @@ namespace Ecommerce.Web.Services
             _httpContextAccessor = httpContextAccessor;
         }
         #endregion
+
+
+        public void ClearTempToken(IHttpContextAccessor httpContextAccessor)
+        {
+            httpContextAccessor.HttpContext?.Session.Remove("TempToken");
+        }
 
         #region LoginAsync
         public async Task<ApiResponse> LoginAsync(LoginViewModel model)
@@ -81,6 +91,23 @@ namespace Ecommerce.Web.Services
         {
             _httpContextAccessor.HttpContext?.Session.Clear();
             return Task.CompletedTask;
+        }
+        #endregion
+
+        #region StoreTokenInSession
+        public void StoreTokenInSession(TokenResponseModel token, IHttpContextAccessor httpContextAccessor)
+        {
+            var json = JsonConvert.SerializeObject(token);
+            httpContextAccessor.HttpContext.Session.SetString("TempToken", json);
+        }
+        #endregion
+
+        #region GetTokenFromSession
+        public TokenResponseModel? GetTokenFromSession(IHttpContextAccessor httpContextAccessor)
+        {
+            var json = httpContextAccessor.HttpContext.Session.GetString("TempToken");
+            if (string.IsNullOrEmpty(json)) return null;
+            return JsonConvert.DeserializeObject<TokenResponseModel>(json);
         }
         #endregion
     }

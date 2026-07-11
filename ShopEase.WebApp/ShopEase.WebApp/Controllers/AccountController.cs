@@ -18,6 +18,7 @@ namespace Ecommerce.Web.Controllers
         private readonly IUserService _userService;
         private readonly IOtpRepository _otpRepository;
         private readonly IEmailService _emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         #endregion
 
         #region Constructor
@@ -26,13 +27,15 @@ namespace Ecommerce.Web.Controllers
             ILogger<AccountController> logger,
             IUserService userService,
             IEmailService emailService,
-            IOtpRepository otpRepository)
+            IOtpRepository otpRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
             _accountService = accountService;
             _logger = logger;
             _userService = userService;
             _emailService = emailService;
             _otpRepository = otpRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
         #endregion
 
@@ -95,8 +98,10 @@ namespace Ecommerce.Web.Controllers
                 // Step 3: Generate 6-digit OTP
                 var otp = new Random().Next(100000, 999999).ToString();
 
+                _accountService.StoreTokenInSession(token, _httpContextAccessor);
+
                 // Step 4: Save OTP to database (10 min expiry)
-                var otpSaved = await _otpRepository.SaveOtpAsync(token.UserId, otp, 10);
+                var otpSaved = await _otpRepository.SaveOtpAsync(model.Email, token.UserId, otp, 10);
 
                 if (!otpSaved)
                 {
@@ -121,7 +126,7 @@ namespace Ecommerce.Web.Controllers
                 {
                     status = true,
                     message = "OTP sent to your email.",
-                    returnUrl = "/Account/VerifyOtp",
+                    returnUrl = RouteConstants.VerifyOtp,
                     statusCode = 200
                 });
             }
@@ -141,12 +146,13 @@ namespace Ecommerce.Web.Controllers
         [HttpGet]
         public IActionResult VerifyOtp()
         {
+            var model = new OtpViewModel();
             var pendingUserId = SessionHelper.GetPendingUserId(HttpContext.Session);
-
+            var pendingEmail = SessionHelper.GetPendingEmail(HttpContext.Session);
             if (pendingUserId == 0)
                 return Redirect(RouteConstants.Login);
-
-            return View(new OtpViewModel());
+            ViewBag.Email = pendingEmail;
+            return View(model);
         }
         #endregion
 
@@ -179,7 +185,7 @@ namespace Ecommerce.Web.Controllers
                 }
 
                 // Verify OTP
-                var isOtpValid = await _otpRepository.VerifyOtpAsync(pendingUserId, model.Otp);
+                var isOtpValid = await _otpRepository.VerifyOtpAsync(pendingUserId, pendingEmail, model.Otp);
 
                 if (!isOtpValid)
                 {
@@ -191,27 +197,34 @@ namespace Ecommerce.Web.Controllers
                 }
 
                 // OTP verified - now get full token from API using pending email
-                var loginModel = new LoginViewModel { Email = pendingEmail, Password = "" };
-                var tokenResult = await _accountService.LoginAsync(loginModel);
+                //var loginModel = new LoginViewModel { Email = pendingEmail, Password = "" };
+                //var tokenResult = await _accountService.LoginAsync(loginModel);
 
-                if (tokenResult == null || !tokenResult.Status || tokenResult.Response == null)
-                {
-                    return StatusCode(200, new
-                    {
-                        status = false,
-                        message = "Failed to complete login. Please try again."
-                    });
-                }
+                //if (tokenResult == null || !tokenResult.Status || tokenResult.Response == null)
+                //{
+                //    return StatusCode(200, new
+                //    {
+                //        status = false,
+                //        message = "Failed to complete login. Please try again."
+                //    });
+                //}
 
-                var token = JsonConvert.DeserializeObject<TokenResponseModel>(tokenResult.Response.ToString()!);
+                //var token = JsonConvert.DeserializeObject<TokenResponseModel>(tokenResult.Response.ToString()!);
+
+                //if (token == null)
+                //{
+                //    return StatusCode(200, new
+                //    {
+                //        status = false,
+                //        message = "Invalid response from server."
+                //    });
+                //}
+                // ✅ Retrieve the token stashed in Step 1 — no re-login needed
+                var token = _accountService.GetTokenFromSession(_httpContextAccessor);
 
                 if (token == null)
                 {
-                    return StatusCode(200, new
-                    {
-                        status = false,
-                        message = "Invalid response from server."
-                    });
+                    return StatusCode(200, new { status = false, message = "Session expired. Please login again." });
                 }
 
                 // Step 7: Store tokens in session
@@ -227,7 +240,7 @@ namespace Ecommerce.Web.Controllers
 
                 // Clear pending user data
                 SessionHelper.ClearPendingUser(HttpContext.Session);
-
+                _accountService.ClearTempToken(_httpContextAccessor);
                 // Invalidate OTP
                 await _otpRepository.InvalidateOtpAsync(pendingUserId);
 
@@ -335,10 +348,11 @@ namespace Ecommerce.Web.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            var registerModel = RegisterViewModel();
             if (!string.IsNullOrEmpty(AccessToken))
                 return Redirect(RouteConstants.Dashboard);
 
-            return View(new RegisterViewModel());
+            return View(registerModel);
         }
         #endregion
 
@@ -396,6 +410,13 @@ namespace Ecommerce.Web.Controllers
                     message = "An error occurred. Please try again."
                 });
             }
+        }
+        #endregion
+
+        #region Profile
+        public async Task Profile()
+        {
+            var loginViewModel = new LoginViewModel();
         }
         #endregion
     }

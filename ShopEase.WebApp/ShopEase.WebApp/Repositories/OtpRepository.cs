@@ -8,8 +8,8 @@ namespace ShopEase.WebApp.Repositories
     #region Interface
     public interface IOtpRepository
     {
-        Task<bool> SaveOtpAsync(int userId, string otp, int expiryMinutes = 10);
-        Task<bool> VerifyOtpAsync(int userId, string otp);
+        Task<bool> SaveOtpAsync(string email,int userId, string otp, int expiryMinutes = 10);
+        Task<bool> VerifyOtpAsync(int userId,string email, string otp);
         Task<bool> ResendOtpAsync(int userId, string newOtp, int expiryMinutes = 10);
         Task<bool> InvalidateOtpAsync(int userId);
     }
@@ -36,7 +36,7 @@ namespace ShopEase.WebApp.Repositories
         #endregion
 
         #region SaveOtpAsync
-        public async Task<bool> SaveOtpAsync(int userId, string otp, int expiryMinutes = 10)
+        public async Task<bool> SaveOtpAsync(string email, int userId, string otp, int expiryMinutes = 10)
         {
             try
             {
@@ -44,18 +44,18 @@ namespace ShopEase.WebApp.Repositories
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@UserId", userId);
+                    parameters.Add("@Email", email);
                     parameters.Add("@Otp", otp);
-                    parameters.Add("@ExpiryTime", DateTime.UtcNow.AddMinutes(expiryMinutes));
-                    parameters.Add("@IsVerified", false);
-                    parameters.Add("@Attempts", 0);
+                    parameters.Add("@RowsInserted", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                     connection.Open();
-                    var result = await connection.ExecuteAsync(
+                    await connection.ExecuteAsync(
                         "[dbo].[sp_Otp_Insert]",
                         parameters,
                         commandType: CommandType.StoredProcedure);
 
-                    return result > 0;
+                    var rowsInserted = parameters.Get<int>("@RowsInserted");
+                    return rowsInserted > 0;
                 }
             }
             catch
@@ -66,7 +66,7 @@ namespace ShopEase.WebApp.Repositories
         #endregion
 
         #region VerifyOtpAsync
-        public async Task<bool> VerifyOtpAsync(int userId, string otp)
+        public async Task<bool> VerifyOtpAsync(int userId, string email, string otp)
         {
             try
             {
@@ -75,6 +75,7 @@ namespace ShopEase.WebApp.Repositories
                     var parameters = new DynamicParameters();
                     parameters.Add("@UserId", userId);
                     parameters.Add("@Otp", otp);
+                    parameters.Add("@Email", email);
                     parameters.Add("@IsVerified", dbType: DbType.Boolean, direction: ParameterDirection.Output);
 
                     connection.Open();

@@ -1,4 +1,5 @@
 ﻿$(function () {
+    debugger
     var loginForm = $('#loginForm');
     var loginBtn = $('#loginBtn');
 
@@ -21,26 +22,44 @@
                 'X-Requested-With': 'XMLHttpRequest'
             },
             success: function (response) {
-                debugger
-                if (response.statusCode == 200) {
+                debugger;
+
+                if (response.status === true) {
+
+                    if (response.returnUrl && response.returnUrl.includes("VerifyOtp")) {
+                        showSuccess(response.message || 'OTP sent successfully');
+
+                        setTimeout(function () {
+                            window.location.href = response.returnUrl;
+                        }, 500);
+
+                        return;
+                    }
+
                     showSuccess(response.message || 'Login successful');
+
                     setTimeout(function () {
-                        window.location.href = response.redirectUrl || '/Dashboard/Index';
+                        window.location.href = response.returnUrl || '/Dashboard/Index';
                     }, 500);
+
                 } else {
+
                     if (response.errors && Array.isArray(response.errors)) {
                         response.errors.forEach(function (err) {
                             if (err.propertyName) {
                                 var input = loginForm.find('[name="' + err.propertyName + '"]');
                                 var errorSpan = input.closest('.form-group').find('.field-error');
+
                                 input.addClass('is-invalid');
-                                errorSpan.removeClass('field-validation-valid').addClass('field-validation-error');
+                                errorSpan.removeClass('field-validation-valid')
+                                    .addClass('field-validation-error');
                                 errorSpan.text(err.errorMessage);
                             }
                         });
                     } else {
                         showError(response.message || 'Login failed');
                     }
+
                     setButtonLoading(loginBtn, false);
                 }
             },
