@@ -348,7 +348,7 @@ namespace Ecommerce.Web.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            var registerModel = RegisterViewModel();
+            var registerModel = new RegisterViewModel();
             if (!string.IsNullOrEmpty(AccessToken))
                 return Redirect(RouteConstants.Dashboard);
 

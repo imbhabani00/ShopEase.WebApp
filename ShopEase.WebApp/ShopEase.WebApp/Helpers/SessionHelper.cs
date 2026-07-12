@@ -106,7 +106,17 @@ namespace ShopEase.WebApp.Helpers
             session.Remove(SessionConstants.PendingEmail);
             session.Remove(SessionConstants.PendingTenantId);
         }
-
+        
         #endregion
+    }
+    public static class SessionPermissionExtension
+    {
+        public static bool HasPermission(
+            this ISession session,
+            string moduleCode,
+            string permissionType)
+        {
+            return SessionHelper.HasPermission(session, moduleCode, permissionType);
+        }
     }
 }
