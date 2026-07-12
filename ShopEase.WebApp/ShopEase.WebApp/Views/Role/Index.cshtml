@@ -1,0 +1,120 @@
+﻿@using ShopEase.WebApp.Helpers
+@{
+    ViewData["ActiveMenu"] = "Role";
+    ViewData["PageTitle"] = "Roles";
+    ViewData["BreadcrumbParent"] = "Admin";
+    ViewData["BreadcrumbCurrent"] = "Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var canAdd = Context.Session.HasPermission("ROLES", "CanAdd");
+    var canEdit = Context.Session.HasPermission("ROLES", "CanEdit");
+    var canDelete = Context.Session.HasPermission("ROLES", "CanDelete");
+}
+
+@section PageActions {
+    @if (canAdd)
+    {
+        <button class="btn btn-primary btn-sm"
+                onclick="loadPopup('/Role/LoadAdd', 'Add Role', 'sm')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Role
+        </button>
+    }
+}
+
+<div class="card">
+    <div class="card__header">
+        <span class="card__title">All Roles</span>
+        <div class="d-flex gap-8">
+            <input type="text" id="searchInput" class="form-control"
+                   placeholder="Search roles..." style="width:220px"
+                   oninput="debounceSearch()" />
+        </div>
+    </div>
+    <div class="card__body" style="padding:0">
+        <div id="roleListContainer">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var _canEdit   = @canEdit.ToString().ToLower();
+        var _canDelete = @canDelete.ToString().ToLower();
+        var _sortParam = '';
+        var _sortDir   = 'asc';
+        var _page      = 1;
+        var _searchTimer;
+
+        $(function () { loadRoleList(); });
+
+        function loadRoleList() {
+            var url = '/Role/GetList?PageNumber=' + _page +
+                '&PageSize=10' +
+                '&SearchString=' + encodeURIComponent($('#searchInput').val()) +
+                '&SortParameter=' + _sortParam +
+                '&SortDirection=' + _sortDir;
+
+            reloadPartial(url, 'roleListContainer');
+        }
+
+        function debounceSearch() {
+            clearTimeout(_searchTimer);
+            _searchTimer = setTimeout(function () {
+                _page = 1;
+                loadRoleList();
+            }, 400);
+        }
+
+        function sortBy(param) {
+            if (_sortParam === param) {
+                _sortDir = _sortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                _sortParam = param;
+                _sortDir   = 'asc';
+            }
+            loadRoleList();
+        }
+
+        function changePage(page) {
+            _page = page;
+            loadRoleList();
+        }
+
+        function saveRole(formId) {
+            var $btn = $('#saveRoleBtn');
+            setButtonLoading($btn, true);
+
+            var data = serializeForm(formId);
+            data['__RequestVerificationToken'] =
+                $('input[name="__RequestVerificationToken"]').val();
+
+            ajaxPost('/Role/Save', data, function (response) {
+                setButtonLoading($btn, false);
+                var result = handleApiResponse(response,
+                    data.RoleId > 0 ? 'Role updated.' : 'Role created.');
+                if (result !== null) {
+                    closePopup();
+                    loadRoleList();
+                }
+            }, function () {
+                setButtonLoading($btn, false);
+                showError('Failed to save role.');
+            });
+        }
+
+        function deleteRole(roleId) {
+            showConfirm('Are you sure you want to delete this role?', function () {
+                ajaxPost('/Role/Delete', { roleId: roleId }, function (response) {
+                    handleApiResponse(response, 'Role deleted.');
+                    if (response && response.status) loadRoleList();
+                });
+            });
+        }
+    </script>
+}
