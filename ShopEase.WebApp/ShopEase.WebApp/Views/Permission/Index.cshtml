@@ -1,0 +1,88 @@
+﻿Permissiona@{
+ViewData["ActiveMenu"] = "Role";
+ViewData["PageTitle"] = "Role Permissions";
+ViewData["BreadcrumbParent"] = "Admin";
+ViewData["BreadcrumbCurrent"] = "Permissions";
+Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card" style="margin-bottom:16px">
+    <div class="card__header">
+        <span class="card__title">Select Role</span>
+    </div>
+    <div class="card__body">
+        <div class="d-flex gap-12 align-center">
+            <select id="roleDropdown" class="form-control" style="max-width:280px"
+                    onchange="loadPermissionGrid()">
+                <option value="">— Select Role —</option>
+            </select>
+            <span class="text-muted" id="roleHint" style="font-size:13px">
+                Select a role to manage permissions
+            </span>
+        </div>
+    </div>
+</div>
+
+<div id="permissionGridContainer"></div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            loadDropdown(
+                '@($"{ViewData["ApiBaseUrl"]}/api/v{ViewData["ApiVersion"]}/role/dropdown")',
+                'roleDropdown',
+                null,
+                '— Select Role —'
+            );
+        });
+
+        function loadPermissionGrid() {
+            var roleId = $('#roleDropdown').val();
+            if (!roleId) {
+                $('#permissionGridContainer').html('');
+                return;
+            }
+            reloadPartial('/Permission/LoadAssignGrid?roleId=' + roleId,
+                'permissionGridContainer');
+        }
+
+        function savePermissions() {
+            var roleId = $('#roleDropdown').val();
+            if (!roleId) { showWarning('Please select a role.'); return; }
+
+            var $btn = $('#savePermBtn');
+            setButtonLoading($btn, true);
+
+            var permissions = [];
+            $('.perm-row').each(function () {
+                var $row = $(this);
+                permissions.push({
+                    moduleId  : parseInt($row.data('module-id')),
+                    moduleCode: $row.data('module-code'),
+                    moduleName: $row.data('module-name'),
+                    roleId    : parseInt(roleId),
+                    canView   : $row.find('.chk-view').is(':checked'),
+                    canAdd    : $row.find('.chk-add').is(':checked'),
+                    canEdit   : $row.find('.chk-edit').is(':checked'),
+                    canDelete : $row.find('.chk-delete').is(':checked')
+                });
+            });
+
+            ajaxPostJson('/Permission/SavePermissions',
+                { roleId: parseInt(roleId), permissions: permissions },
+                function (response) {
+                    setButtonLoading($btn, false);
+                    handleApiResponse(response, 'Permissions saved successfully.');
+                },
+                function () {
+                    setButtonLoading($btn, false);
+                    showError('Failed to save permissions.');
+                }
+            );
+        }
+
+        function toggleAll(type, checked) {
+            $('.chk-' + type).prop('checked', checked);
+        }
+    </script>
+}

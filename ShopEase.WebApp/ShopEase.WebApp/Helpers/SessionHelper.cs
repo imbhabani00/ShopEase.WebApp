@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Common;
-using System.Text.Json.Serialization;
+using ShopEase.WebApp.Models.Role;
 
 namespace ShopEase.WebApp.Helpers
 {
@@ -31,6 +31,12 @@ namespace ShopEase.WebApp.Helpers
         public static string? GetRoleCode(ISession session)
             => session.GetString(SessionConstants.RoleCode);
 
+        public static void SetRoleId(ISession session, int roleId)
+             => session.SetInt32(SessionConstants.RoleId, roleId);
+
+        public static int? GetRoleId(ISession session)
+            => session.GetInt32(SessionConstants.RoleId);
+
         public static void SetRoleName(ISession session, string roleName)
             => session.SetString(SessionConstants.RoleName, roleName);
 
@@ -48,10 +54,8 @@ namespace ShopEase.WebApp.Helpers
 
         public static string? GetUserFullName(ISession session)
             => session.GetString(SessionConstants.UserFullName);
-
         public static void SetPermissions(ISession session, List<PermissionModel> permissions)
             => session.SetString(SessionConstants.Permissions, JsonConvert.SerializeObject(permissions));
-
         public static List<PermissionModel> GetPermissions(ISession session)
         {
             var json = session.GetString(SessionConstants.Permissions);
@@ -79,5 +83,44 @@ namespace ShopEase.WebApp.Helpers
 
         public static void ClearSession(ISession session)
             => session.Clear();
+
+        #region Pending User (OTP Verification)
+
+        public static void SetPendingUserId(ISession session, int userId)
+            => session.SetInt32(SessionConstants.PendingUserId, userId);
+
+        public static int GetPendingUserId(ISession session)
+            => session.GetInt32(SessionConstants.PendingUserId) ?? 0;
+
+        public static void SetPendingEmail(ISession session, string email)
+            => session.SetString(SessionConstants.PendingEmail, email);
+
+        public static string? GetPendingEmail(ISession session)
+            => session.GetString(SessionConstants.PendingEmail);
+
+        public static void SetPendingTenantId(ISession session, int tenantId)
+            => session.SetInt32(SessionConstants.PendingTenantId, tenantId);
+
+        public static int GetPendingTenantId(ISession session)
+            => session.GetInt32(SessionConstants.PendingTenantId) ?? 0;
+
+        public static void ClearPendingUser(ISession session)
+        {
+            session.Remove(SessionConstants.PendingUserId);
+            session.Remove(SessionConstants.PendingEmail);
+            session.Remove(SessionConstants.PendingTenantId);
+        }
+
+        #endregion
+    }
+    public static class SessionPermissionExtension
+    {
+        public static bool HasPermission(
+            this ISession session,
+            string moduleCode,
+            string permissionType)
+        {
+            return SessionHelper.HasPermission(session, moduleCode, permissionType);
+        }
     }
 }

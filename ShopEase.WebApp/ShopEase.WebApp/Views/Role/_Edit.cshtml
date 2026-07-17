@@ -1,0 +1,41 @@
+﻿@model ShopEase.WebApp.Models.Role.RoleViewModel
+
+<form id="editRoleForm" novalidate>
+    <input type="hidden" asp-for="RoleId" />
+
+    <div class="form-group">
+        <label class="form-label">Role Name<span class="text-danger">*</span></label>
+        <input type="text" asp-for="RoleName" class="form-control"
+               placeholder="e.g. Administrator" />
+        <span asp-validation-for="RoleName" class="field-error"></span>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label">Role Code<span class="text-danger">*</span></label>
+        <input type="text" asp-for="RoleCode" class="form-control"
+               placeholder="e.g. ADMIN" oninput="this.value = this.value.toUpperCase()" />
+        <span asp-validation-for="RoleCode" class="field-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Status<span class="text-danger">*</span></label>
+        <select asp-for="IsActive" class="form-control">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+        </select>
+    </div>
+
+    <div class="modal-footer" style="padding:14px 0 0;margin-top:8px">
+        <button type="button" class="btn btn-secondary btn-sm"
+                onclick="closePopup()">
+            Cancel
+        </button>
+        <button type="button" class="btn btn-primary btn-sm"
+                id="editRoleBtn">
+            <span class="btn-text">Update</span>
+            <span class="btn-spinner hidden"></span>
+        </button>
+    </div>
+</form>
+<script src="~/js/role/edit.js"></script>
+<script src="~/js/common.js"></script>

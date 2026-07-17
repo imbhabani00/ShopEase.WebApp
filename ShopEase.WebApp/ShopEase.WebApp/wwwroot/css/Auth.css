@@ -18,8 +18,8 @@ body {
 .auth-page {
     display: flex;
     width: 100%;
-    max-width: 1100px;
-    min-height: 600px;
+    max-width: 1000px;
+    min-height: 466px;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 8px 40px rgba(0,0,0,0.10);

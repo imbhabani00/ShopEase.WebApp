@@ -1,17 +1,16 @@
 ﻿@using ShopEase.WebApp.Constants
-@model ShopEase.WebApp.Models.Auth.LoginViewModel
+@model ShopEase.WebApp.Models.Auth.OtpViewModel
 @{
     Layout = null;
-    ViewData["Title"] = "Sign In";
+    ViewData["Title"] = "Verify OTP";
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ShopEase — Sign In</title>
+    <title>ShopEase — Verify OTP</title>
     <link rel="stylesheet" href="~/css/auth.css" />
-    <!-- CSS ONLY (no script in head) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" />
 </head>
 <body>
@@ -54,62 +53,53 @@
         <div class="auth-right">
             <div class="auth-form-wrap">
 
-                <!-- Tabs -->
-                <div class="auth-tabs">
-                    <a class="auth-tab auth-tab--active" href="@RouteConstants.Login">Sign in</a>
-                    <a class="auth-tab" href="@RouteConstants.Register">Create account</a>
-                </div>
+                <h1 class="auth-form__title">Verify your identity</h1>
+                <p class="auth-form__sub">Enter the 6-digit code sent to your email</p>
 
-                <h1 class="auth-form__title">Welcome back</h1>
-                <p class="auth-form__sub">Sign in to your account to continue</p>
+                <div class="pending-email" style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin: 16px 0; color: #555; font-size: 14px;">
+                    OTP sent to: <strong>@ViewBag.Email</strong>
+                </div>
 
                 @if (TempData["ErrorMessage"] != null)
                 {
                     <div class="alert alert--danger">@TempData["ErrorMessage"]</div>
                 }
 
-                <form id="loginForm">
+                <form id="otpForm">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="ReturnUrl" />
 
                     <div class="form-group">
-                        <label class="form-label">Email address<span class="text-danger">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                            <input type="email" asp-for="Email" maxlength="50" class="form-input" placeholder="bsm@gmail.com" autocomplete="email" />
-                        </div>
-                        <span asp-validation-for="Email" class="field-error"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Password<span class="text-danger">*</span></label>
+                        <label class="form-label">Enter OTP<span class="text-danger">*</span></label>
                         <div class="input-wrap">
                             <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
-                            <input type="password" maxlength="20" asp-for="Password" class="form-input" placeholder="Min. 8 characters" autocomplete="current-password" id="loginPassword" />
-                            <button type="button" class="input-toggle" onclick="togglePassword('loginPassword', this)" tabindex="-1">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                            </button>
+                            <input type="text"
+                                   asp-for="Otp"
+                                   maxlength="6"
+                                   pattern="\d{6}"
+                                   inputmode="numeric"
+                                   class="form-input"
+                                   placeholder="000000"
+                                   autocomplete="off" />
                         </div>
-                        <span asp-validation-for="Password" class="field-error"></span>
-                        <div class="forgot-row">
-                            <a href="@RouteConstants.ForgotPassword" class="forgot-link">Forgot password?</a>
-                        </div>
+                        <span asp-validation-for="Otp" class="field-error"></span>
+                        <small style="color: #999; display: block; margin-top: 6px;">Enter the 6-digit code from your email</small>
                     </div>
 
-                    <button type="submit" class="btn-primary" id="loginBtn">
-                        <span class="btn-text">Sign in</span>
+                    <button type="submit" class="btn-primary" id="verifyBtn">
+                        <span class="btn-text">Verify OTP</span>
                         <span class="btn-spinner hidden"></span>
                     </button>
                 </form>
 
-                <div class="divider"><span>or continue with</span></div>
+                <div class="divider"><span>didn't receive code?</span></div>
 
-                <button class="btn-social" onclick="googleSignIn()">
-                    <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
-                    Continue with Google
+                <button type="button" class="btn-outline" id="resendBtn" style="width: 100%; border: 1px solid #534AB7; color: #534AB7; background: transparent; padding: 10px;">
+                    Resend OTP
                 </button>
 
-                <p class="auth-switch">Don't have an account? <a href="@RouteConstants.Register">Create one</a></p>
+                <p class="auth-switch" style="margin-top: 24px;">
+                    <a href="@RouteConstants.Login" style="color: #534AB7; text-decoration: none;">Back to login</a>
+                </p>
             </div>
         </div>
     </div>
@@ -118,6 +108,6 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/common.js"></script>
-    <script src="~/js/auth/login.js"></script>
+    <script src="~/js/auth/verifyotp.js"></script>
 </body>
 </html>
