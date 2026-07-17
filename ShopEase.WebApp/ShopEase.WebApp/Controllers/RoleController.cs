@@ -85,23 +85,11 @@ namespace ShopEase.WebApp.Controllers
 
         #region Save
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(RoleViewModel model)
         {
             var apiResponse = new ApiResponse();
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    apiResponse.Status = false;
-                    apiResponse.Message = "Validation failed.";
-                    apiResponse.Response = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-                    return new ObjectResult(apiResponse);
-                }
-
                 apiResponse = await _roleService.SaveAsync(model);
             }
             catch (Exception ex)
@@ -116,7 +104,6 @@ namespace ShopEase.WebApp.Controllers
 
         #region Delete
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanDelete)]
         public async Task<IActionResult> Delete(int roleId)
         {

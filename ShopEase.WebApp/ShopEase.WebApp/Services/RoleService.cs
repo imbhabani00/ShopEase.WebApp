@@ -81,7 +81,7 @@ namespace ShopEase.WebApp.Services
         {
             try
             {
-                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/{roleId}";
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/role-by-id/{roleId}";
 
                 var apiResponse = await DoHttpGet<ApiResponse>(endpoint);
 

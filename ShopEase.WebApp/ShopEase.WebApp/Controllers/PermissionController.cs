@@ -52,7 +52,7 @@ namespace Ecommerce.Web.Controllers
                 if (role != null) model.RoleName = role.RoleName;
 
                 var permissionResult = await _permissionService.GetByRoleIdAsync(roleId);
-                model.Permissions = permissionResult.Permissions;
+                model.Permissions = permissionResult;
             }
             catch (Exception ex)
             {

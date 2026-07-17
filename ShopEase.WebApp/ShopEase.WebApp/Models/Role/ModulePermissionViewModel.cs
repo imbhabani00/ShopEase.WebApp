@@ -12,10 +12,4 @@
         public bool CanEdit { get; set; }
         public bool CanDelete { get; set; }
     }
-
-    public class ModulePermissionViewModelList
-    {
-        public List<ModulePermissionViewModel> Permissions { get; set; }
-        public int TotalCount { get; set; }
-    }
 }

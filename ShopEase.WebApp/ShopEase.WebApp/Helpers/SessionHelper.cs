@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Common;
-using System.Text.Json.Serialization;
+using ShopEase.WebApp.Models.Role;
 
 namespace ShopEase.WebApp.Helpers
 {
@@ -31,6 +31,12 @@ namespace ShopEase.WebApp.Helpers
         public static string? GetRoleCode(ISession session)
             => session.GetString(SessionConstants.RoleCode);
 
+        public static void SetRoleId(ISession session, int roleId)
+             => session.SetInt32(SessionConstants.RoleId, roleId);
+
+        public static int? GetRoleId(ISession session)
+            => session.GetInt32(SessionConstants.RoleId);
+
         public static void SetRoleName(ISession session, string roleName)
             => session.SetString(SessionConstants.RoleName, roleName);
 
@@ -48,10 +54,8 @@ namespace ShopEase.WebApp.Helpers
 
         public static string? GetUserFullName(ISession session)
             => session.GetString(SessionConstants.UserFullName);
-
         public static void SetPermissions(ISession session, List<PermissionModel> permissions)
             => session.SetString(SessionConstants.Permissions, JsonConvert.SerializeObject(permissions));
-
         public static List<PermissionModel> GetPermissions(ISession session)
         {
             var json = session.GetString(SessionConstants.Permissions);
@@ -106,7 +110,7 @@ namespace ShopEase.WebApp.Helpers
             session.Remove(SessionConstants.PendingEmail);
             session.Remove(SessionConstants.PendingTenantId);
         }
-        
+
         #endregion
     }
     public static class SessionPermissionExtension

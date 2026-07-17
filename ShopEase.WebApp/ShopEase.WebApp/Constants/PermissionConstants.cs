@@ -7,7 +7,6 @@
         public const string CanEdit = "CanEdit";
         public const string CanDelete = "CanDelete";
 
-        // Module Codes - match tbl_Modules.ModuleCode
         public static class Modules
         {
             public const string Dashboard = "DASHBOARD";

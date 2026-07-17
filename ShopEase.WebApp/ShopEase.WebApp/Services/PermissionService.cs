@@ -10,7 +10,7 @@ namespace ShopEase.WebApp.Services
     #region Interface
     public interface IPermissionService
     {
-        Task<ModulePermissionViewModelList> GetByRoleIdAsync(int roleId);
+        Task<List<PermissionModel>> GetByRoleIdAsync(int roleId);
         Task<ApiResponse> SavePermissionsAsync(SavePermissionsRequest request);
     }
     #endregion
@@ -33,15 +33,15 @@ namespace ShopEase.WebApp.Services
         #endregion
 
         #region GetByRoleIdAsync
-        public async Task<ModulePermissionViewModelList> GetByRoleIdAsync(int roleId)
+        public async Task<List<PermissionModel>> GetByRoleIdAsync(int roleId)
         {
-            var list = new ModulePermissionViewModelList();
+            var list = new List<PermissionModel>();
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/permission/by-role/{roleId}";
                 var apiResponse = await DoHttpGet<ApiResponse>(endpoint);
                 if (apiResponse?.Status == true && apiResponse.Response != null)
-                    list = JsonConvert.DeserializeObject<ModulePermissionViewModelList>(
+                    list = JsonConvert.DeserializeObject<List<PermissionModel>>(
                         apiResponse.Response.ToString()!) ?? list;
             }
             catch (Exception ex)

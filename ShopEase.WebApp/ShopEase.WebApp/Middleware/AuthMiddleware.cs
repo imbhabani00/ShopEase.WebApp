@@ -35,10 +35,7 @@ namespace Ecommerce.Web.Middleware
                 path.Contains(RouteConstants.Register.ToLower()) ||
                 path.Contains(RouteConstants.VerifyOtp.ToLower()) ||
                 path.Contains(RouteConstants.ResendOtp.ToLower()) 
-
                 )
-
-
             {
                 await _next(context);
                 return;

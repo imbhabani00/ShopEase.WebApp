@@ -62,9 +62,15 @@ function loadPopup(url, title, size) {
     var $body = $('#modalBody');
 
     $box.removeClass('modal-sm modal-lg modal-xl');
-    if (size === 'sm') $box.addClass('modal-sm');
-    else if (size === 'lg') $box.addClass('modal-lg');
-    else if (size === 'xl') $box.addClass('modal-xl');
+
+    if (size === 'sm') {
+        $box.addClass('modal-sm');
+    } else if (size === 'md') {
+    } else if (size === 'lg') {
+        $box.addClass('modal-lg');
+    } else if (size === 'xl') {
+        $box.addClass('modal-xl');
+    }
 
     $title.text(title || '');
     $body.html('<div class="spinner"></div>');

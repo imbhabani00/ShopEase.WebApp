@@ -2,6 +2,7 @@
 using Ecommerce.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using ShopEase.WebApp.Configuration;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Helpers;
 using ShopEase.WebApp.Models.Auth;
@@ -19,6 +20,9 @@ namespace Ecommerce.Web.Controllers
         private readonly IOtpRepository _otpRepository;
         private readonly IEmailService _emailService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly AppSettings _appSettings;
+        private readonly IPermissionService _permissionService;
         #endregion
 
         #region Constructor
@@ -28,7 +32,10 @@ namespace Ecommerce.Web.Controllers
             IUserService userService,
             IEmailService emailService,
             IOtpRepository otpRepository,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IHttpClientFactory httpClientFactory,
+            AppSettings appSettings,
+            IPermissionService permissionService)
         {
             _accountService = accountService;
             _logger = logger;
@@ -36,6 +43,9 @@ namespace Ecommerce.Web.Controllers
             _emailService = emailService;
             _otpRepository = otpRepository;
             _httpContextAccessor = httpContextAccessor;
+            _appSettings = appSettings;
+            _httpClientFactory = httpClientFactory;
+            _permissionService = permissionService;
         }
         #endregion
 
@@ -196,30 +206,6 @@ namespace Ecommerce.Web.Controllers
                     });
                 }
 
-                // OTP verified - now get full token from API using pending email
-                //var loginModel = new LoginViewModel { Email = pendingEmail, Password = "" };
-                //var tokenResult = await _accountService.LoginAsync(loginModel);
-
-                //if (tokenResult == null || !tokenResult.Status || tokenResult.Response == null)
-                //{
-                //    return StatusCode(200, new
-                //    {
-                //        status = false,
-                //        message = "Failed to complete login. Please try again."
-                //    });
-                //}
-
-                //var token = JsonConvert.DeserializeObject<TokenResponseModel>(tokenResult.Response.ToString()!);
-
-                //if (token == null)
-                //{
-                //    return StatusCode(200, new
-                //    {
-                //        status = false,
-                //        message = "Invalid response from server."
-                //    });
-                //}
-                // ✅ Retrieve the token stashed in Step 1 — no re-login needed
                 var token = _accountService.GetTokenFromSession(_httpContextAccessor);
 
                 if (token == null)
@@ -234,6 +220,25 @@ namespace Ecommerce.Web.Controllers
                 SessionHelper.SetRoleCode(HttpContext.Session, token.RoleCode);
                 SessionHelper.SetRoleName(HttpContext.Session, token.RoleName);
                 SessionHelper.SetTenantId(HttpContext.Session, token.TenantId);
+                SessionHelper.SetRoleId(HttpContext.Session, token.RoleId);
+
+                // Load permissions from API
+                try
+                {
+                    var permissions = await _permissionService.GetByRoleIdAsync(token.RoleId);
+
+                    if (permissions != null && permissions.Count >0)
+                    {
+                        SessionHelper.SetPermissions(HttpContext.Session, permissions);
+                        _logger.LogInformation(
+                            "VerifyOtp: Permissions loaded for role {RoleId}",
+                            token.RoleId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "VerifyOtp: Failed to load permissions");
+                }
 
                 // Store refresh token in HTTP-only cookie
                 CookieHelper.SetRefreshTokenCookie(Response, token.RefreshToken, 7);
