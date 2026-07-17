@@ -1,0 +1,82 @@
+﻿@using ShopEase.WebApp.Helpers
+@model ShopEase.WebApp.Models.Role.RoleViewModelList
+
+@if (Model.Roles == null || !Model.Roles.Any())
+{
+    <div style="padding:40px;text-align:center;color:#aaa">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+             stroke="#ddd" stroke-width="1.5" style="margin-bottom:10px">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        <p>No roles found.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Role Name</th>
+                    <th>Role Code</th>
+                    <th>Status</th>
+                    <th style="width:120px;text-align:right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var role in Model.Roles)
+                {
+                    <tr>
+                        <td class="fw-600">@role.RoleName</td>
+                        <td>
+                            <span class="badge badge-info">@role.RoleCode</span>
+                        </td>
+                        <td>
+                            @if (role.IsActive)
+                            {
+                                <span class="badge badge-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Inactive</span>
+                            }
+                        </td>
+                        <td style="text-align:right">
+                            <div class="d-flex gap-8" style="justify-content:flex-end">
+                                @if (ViewContext.HttpContext.Session
+                                    .HasPermission("ROLES", "CanEdit"))
+                                {
+                                    <button class="btn btn-outline btn-icon btn-sm"
+                                            title="Edit"
+                                            onclick="loadPopup('/Role/RoleEdit?roleId=@role.RoleId','Edit Role','md')">
+                                        <svg width="13" height="13" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                    </button>
+                                }
+                                @if (ViewContext.HttpContext.Session
+                                    .HasPermission("ROLES", "CanDelete"))
+                                {
+                                    <button class="btn btn-danger btn-icon btn-sm"
+                                            title="Delete"
+                                            data-action="delete-role"
+                                            data-roleId="@role.RoleId">
+                                        <svg width="13" height="13" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                                            <path d="M10 11v6M14 11v6" />
+                                            <path d="M9 6V4h6v2" />
+                                        </svg>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

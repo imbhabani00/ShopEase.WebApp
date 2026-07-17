@@ -1,0 +1,31 @@
+﻿<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary btn-sm"
+            onclick="loadPopup('/Role/LoadAdd', 'Add Role', 'sm')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Add Role
+    </button>
+</div>
+
+<div class="card">
+    <div class="card__header">
+        <span class="card__title">All Roles</span>
+        <div class="d-flex gap-8">
+            <input type="text" id="searchInput" class="form-control"
+                   placeholder="Search roles..." style="width:220px"
+                   onkeyup="LoadRoles()" />
+        </div>
+    </div>
+    <div class="card__body" style="padding:0">
+        <div id="roleListContainer">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/role/index.js"></script>
+<script src="~/js/common.js"></script>

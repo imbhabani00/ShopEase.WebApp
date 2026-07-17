@@ -1,0 +1,113 @@
+﻿@using ShopEase.WebApp.Constants
+@model ShopEase.WebApp.Models.Auth.OtpViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Verify OTP";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopEase — Verify OTP</title>
+    <link rel="stylesheet" href="~/css/auth.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" />
+</head>
+<body>
+
+    <div class="auth-page">
+
+        <!-- Left Branding Panel -->
+        <div class="auth-left">
+            <div class="auth-left__inner">
+                <div class="brand">
+                    <div class="brand__icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
+                    </div>
+                    <span class="brand__name">ShopEase</span>
+                </div>
+
+                <div class="auth-left__copy">
+                    <h2>Your favourite brands,<br />all in one place</h2>
+                    <p>Shop smarter. Discover millions of products across every category.</p>
+                </div>
+
+                <div class="auth-left__pills">
+                    <div class="pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                        <span>Secure payments &amp; data</span>
+                    </div>
+                    <div class="pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
+                        <span>Fast &amp; reliable delivery</span>
+                    </div>
+                    <div class="pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 102.13-9.36L1 10" /></svg>
+                        <span>Hassle-free returns</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Form Panel -->
+        <div class="auth-right">
+            <div class="auth-form-wrap">
+
+                <h1 class="auth-form__title">Verify your identity</h1>
+                <p class="auth-form__sub">Enter the 6-digit code sent to your email</p>
+
+                <div class="pending-email" style="background: #f0f8ff; padding: 12px; border-radius: 8px; margin: 16px 0; color: #555; font-size: 14px;">
+                    OTP sent to: <strong>@ViewBag.Email</strong>
+                </div>
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert--danger">@TempData["ErrorMessage"]</div>
+                }
+
+                <form id="otpForm">
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label class="form-label">Enter OTP<span class="text-danger">*</span></label>
+                        <div class="input-wrap">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+                            <input type="text"
+                                   asp-for="Otp"
+                                   maxlength="6"
+                                   pattern="\d{6}"
+                                   inputmode="numeric"
+                                   class="form-input"
+                                   placeholder="000000"
+                                   autocomplete="off" />
+                        </div>
+                        <span asp-validation-for="Otp" class="field-error"></span>
+                        <small style="color: #999; display: block; margin-top: 6px;">Enter the 6-digit code from your email</small>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="verifyBtn">
+                        <span class="btn-text">Verify OTP</span>
+                        <span class="btn-spinner hidden"></span>
+                    </button>
+                </form>
+
+                <div class="divider"><span>didn't receive code?</span></div>
+
+                <button type="button" class="btn-outline" id="resendBtn" style="width: 100%; border: 1px solid #534AB7; color: #534AB7; background: transparent; padding: 10px;">
+                    Resend OTP
+                </button>
+
+                <p class="auth-switch" style="margin-top: 24px;">
+                    <a href="@RouteConstants.Login" style="color: #534AB7; text-decoration: none;">Back to login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/common.js"></script>
+    <script src="~/js/auth/verifyotp.js"></script>
+</body>
+</html>

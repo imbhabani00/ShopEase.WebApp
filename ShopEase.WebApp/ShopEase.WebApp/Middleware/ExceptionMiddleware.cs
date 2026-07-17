@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace Ecommerce.Web.Middleware
+﻿namespace Ecommerce.Web.Middleware
 {
     public class ExceptionMiddleware
     {
