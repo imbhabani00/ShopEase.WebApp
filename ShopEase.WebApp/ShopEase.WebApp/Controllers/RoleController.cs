@@ -61,7 +61,8 @@ namespace ShopEase.WebApp.Controllers
         [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanAdd)]
         public IActionResult RoleAdd()
         {
-            return PartialView("_Add", new RoleViewModel());
+            var roleAdd = new RoleViewModel();
+            return PartialView("_Add", roleAdd);
         }
         #endregion
 
@@ -103,7 +104,16 @@ namespace ShopEase.WebApp.Controllers
         #endregion
 
         #region Delete
-        [HttpPost]
+        public IActionResult DeleteConfirm(int roleId)
+        {
+            var model = new RoleViewModel()
+            {
+                RoleId = roleId
+            };
+            return PartialView("_Delete", model);
+        }
+
+        [HttpDelete]
         [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanDelete)]
         public async Task<IActionResult> Delete(int roleId)
         {

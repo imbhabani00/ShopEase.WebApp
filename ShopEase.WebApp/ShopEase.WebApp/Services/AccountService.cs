@@ -53,13 +53,13 @@ namespace Ecommerce.Web.Services
                 PasswordHash = model.Password
             };
 
-            var result = await DoHttpPost<ApiResponse>(endpoint, payload, useAuth: false);
+            var response = await DoHttpPost(endpoint, payload, useAuth: false);
 
-            return result ?? new ApiResponse
-            {
-                Status = false,
-                Message = "No response from server"
-            };
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<ApiResponse>(content)
+                ?? new ApiResponse { Status = false, Message = "No response from server" };
         }
         #endregion
 
@@ -76,13 +76,13 @@ namespace Ecommerce.Web.Services
                 RefreshToken = refreshToken
             };
 
-            var result = await DoHttpPost<ApiResponse>(endpoint, payload, useAuth: false);
+            var response = await DoHttpPost(endpoint, payload, useAuth: false);
 
-            return result ?? new ApiResponse
-            {
-                Status = false,
-                Message = "No response from server"
-            };
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<ApiResponse>(content)
+                ?? new ApiResponse { Status = false, Message = "No response from server" };
         }
         #endregion
 

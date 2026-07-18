@@ -195,29 +195,9 @@
 
         <!-- Page content -->
         <main class="page-content">
-
-            <!-- Page header (title + action buttons) -->
-            @if (ViewData["PageTitle"] != null)
-            {
-                <div class="page-header">
-                    <div class="page-header__left">
-                        <h1 class="page-header__title">@ViewData["PageTitle"]</h1>
-                        @if (ViewData["PageSubTitle"] != null)
-                        {
-                            <p class="page-header__sub">@ViewData["PageSubTitle"]</p>
-                        }
-                    </div>
-                    <div class="page-header__actions">
-                        @await RenderSectionAsync("PageActions", required: false)
-                    </div>
-                </div>
-            }
-
             <!-- Main body -->
             @RenderBody()
-
         </main>
-
     </div>
 
     <!-- ════════════════════════════════════════
