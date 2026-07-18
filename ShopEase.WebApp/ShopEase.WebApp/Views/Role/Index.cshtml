@@ -1,6 +1,15 @@
-﻿<div class="d-flex justify-content-end mb-3">
+﻿<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="page-title">
+            Roles
+        </h4>
+        <small class="page-subtitle">
+            Manage user roles and permissions
+        </small>
+    </div>
+
     <button class="btn btn-primary btn-sm"
-            onclick="loadPopup('/Role/LoadAdd', 'Add Role', 'sm')">
+            onclick="loadPopup('/Role/RoleAdd', 'Add Role', 'md')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2">
             <line x1="12" y1="5" x2="12" y2="19" />
@@ -10,15 +19,21 @@
     </button>
 </div>
 
+
 <div class="card">
     <div class="card__header">
         <span class="card__title">All Roles</span>
+
         <div class="d-flex gap-8">
-            <input type="text" id="searchInput" class="form-control"
-                   placeholder="Search roles..." style="width:220px"
+            <input type="text"
+                   id="searchInput"
+                   class="form-control"
+                   placeholder="Search roles..."
+                   style="width:220px"
                    onkeyup="LoadRoles()" />
         </div>
     </div>
+
     <div class="card__body" style="padding:0">
         <div id="roleListContainer">
             <div class="spinner"></div>

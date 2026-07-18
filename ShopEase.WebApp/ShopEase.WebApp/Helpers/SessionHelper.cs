@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Common;
-using ShopEase.WebApp.Models.Role;
 
 namespace ShopEase.WebApp.Helpers
 {

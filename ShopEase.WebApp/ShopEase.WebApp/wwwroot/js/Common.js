@@ -1,14 +1,18 @@
-﻿toastr.options = {
-    closeButton: true,
-    progressBar: true,
-    positionClass: 'toast-top-right',
-    timeOut: 3500,
-    extendedTimeOut: 1000,
-    showEasing: 'swing',
-    hideEasing: 'linear',
-    showMethod: 'fadeIn',
-    hideMethod: 'fadeOut'
-};
+﻿$(document).ready(function () {
+    if (typeof toastr !== "undefined") {
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            timeOut: 3500,
+            extendedTimeOut: 1000,
+            showEasing: 'swing',
+            hideEasing: 'linear',
+            showMethod: 'fadeIn',
+            hideMethod: 'fadeOut'
+        };
+    }
+});
 
 function showSuccess(message) { toastr.success(message || 'Operation successful'); }
 function showError(message) { toastr.error(message || 'Something went wrong'); }
@@ -273,22 +277,17 @@ function resetForm(formId) {
 
 function initFormControls($context) {
 }
-
 function setButtonLoading($btn, loading) {
-    debugger
     if (loading) {
-        $btn.prop('disabled', true)
-            .find('.btn-text').addClass('hidden').end()
-            .find('.btn-spinner').removeClass('hidden');
+        $btn.prop('disabled', true);
+        $btn.find('.btn-spinner').removeClass('hidden');
     } else {
-        $btn.prop('disabled', false)
-            .find('.btn-text').removeClass('hidden').end()
-            .find('.btn-spinner').addClass('hidden');
+        $btn.prop('disabled', false);
+        $btn.find('.btn-spinner').addClass('hidden');
     }
 }
 
 function handleApiResponse(response, successMessage) {
-    debugger
     if (!response) {
         showError('No response from server.');
         return null;

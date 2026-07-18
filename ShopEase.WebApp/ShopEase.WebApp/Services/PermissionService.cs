@@ -39,14 +39,20 @@ namespace ShopEase.WebApp.Services
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/permission/by-role/{roleId}";
-                var apiResponse = await DoHttpGet<ApiResponse>(endpoint);
+                var response = await DoHttpGet(endpoint);
+
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+
                 if (apiResponse?.Status == true && apiResponse.Response != null)
                     list = JsonConvert.DeserializeObject<List<PermissionModel>>(
                         apiResponse.Response.ToString()!) ?? list;
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("PermissionService.GetByRoleIdAsync error: {Message}", ex.Message);
+                Log.Logger.Error("GetByRoleIdAsync error: {Message}", ex.Message);
             }
             return list;
         }
@@ -59,13 +65,18 @@ namespace ShopEase.WebApp.Services
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/permission/save";
-                var result = await DoHttpPost<ApiResponse>(endpoint, request);
-                if (result != null)
-                    apiResponse = result;
+                var response = await DoHttpPost(endpoint, request);
+
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content) ?? apiResponse;
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("PermissionService.SavePermissionsAsync error: {Message}", ex.Message);
+                Log.Logger.Error("SavePermissionsAsync error: {Message}", ex.Message);
+                apiResponse.Status = false;
+                apiResponse.Message = "Error occurred";
             }
             return apiResponse;
         }

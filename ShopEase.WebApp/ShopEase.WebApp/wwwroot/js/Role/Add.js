@@ -1,9 +1,10 @@
 ﻿$(document).ready(function () {
-    $.validator.unobtrusive.parse('#editRoleForm');
+    $.validator.unobtrusive.parse('#addRoleForm');
 });
-$('#editRoleBtn').click(function (e) {
+
+$('#addRoleBtn').click(function (e) {
     e.preventDefault();
-    var form = $('#editRoleForm');
+    var form = $('#addRoleForm');
     if (!form.valid()) {
         return;
     }
@@ -13,24 +14,25 @@ $('#editRoleBtn').click(function (e) {
         data: form.serialize(),
         cache: false,
         beforeSend: function () {
-            setButtonLoading($('#editRoleBtn'), true);
+            setButtonLoading($('#addRoleBtn'), true);
         },
         success: function (response) {
             if (response.statusCode == 200) {
-                showSuccess(response.message || 'Role updated successfully');
+                showSuccess(response.message || 'Role saved successfully');
                 setTimeout(function () {
                     closePopup();
                     LoadRoles();
                 }, 500);
             }
             else {
-                setButtonLoading($('#editRoleBtn'), false);
-                showError(response.message || 'Role update failed');
+                setButtonLoading($('#addRoleBtn'), false);
+                showError(response.message || 'Role save failed');
             }
         },
         error: function () {
-            setButtonLoading($('#editRoleBtn'), false);
-            showError('Role update failed. Please try again.');
+
+            setButtonLoading($('#addRoleBtn'), false);
+            showError('Role save failed. Please try again.');
         }
     });
 });

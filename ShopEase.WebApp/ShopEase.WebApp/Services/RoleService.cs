@@ -62,7 +62,12 @@ namespace ShopEase.WebApp.Services
                 query.Append($"SortDirection={sortParams.SortDirection}&");
                 query.Append($"StatusId={sortParams.StatusId}");
 
-                var apiResponse = await DoHttpGet<ApiResponse>(query.ToString());
+                var response = await DoHttpGet(query.ToString());
+
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
 
                 if (apiResponse?.Status == true && apiResponse.Response != null)
                     viewModel = JsonConvert.DeserializeObject<RoleViewModelList>(
@@ -70,8 +75,9 @@ namespace ShopEase.WebApp.Services
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("RoleService.GetListAsync error: {Message}", ex.Message);
+                Log.Logger.Error("GetListAsync error: {Message}", ex.Message);
             }
+
             return viewModel;
         }
         #endregion
@@ -82,17 +88,21 @@ namespace ShopEase.WebApp.Services
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/role-by-id/{roleId}";
+                var response = await DoHttpGet(endpoint, useAuth: true);
 
-                var apiResponse = await DoHttpGet<ApiResponse>(endpoint);
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
 
                 if (apiResponse?.Status == true && apiResponse.Response != null)
-                    return JsonConvert.DeserializeObject<RoleViewModel>(
-                        apiResponse.Response.ToString()!);
+                    return JsonConvert.DeserializeObject<RoleViewModel>(apiResponse.Response.ToString()!);
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("RoleService.GetByIdAsync error: {Message}", ex.Message);
+                Log.Logger.Error("GetByIdAsync error: {Message}", ex.Message);
             }
+
             return null;
         }
         #endregion
@@ -103,13 +113,17 @@ namespace ShopEase.WebApp.Services
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/save";
+                var response = await DoHttpPost(endpoint, model, useAuth: true);
 
-                var result = await DoHttpPost<ApiResponse>(endpoint, model, useAuth: true);
-                return result ?? new ApiResponse { Status = false, Message = "No response" };
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<ApiResponse>(content)
+                    ?? new ApiResponse { Status = false };
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("RoleService.SaveAsync error: {Message}", ex.Message);
+                Log.Logger.Error("SaveAsync error: {Message}", ex.Message);
                 return new ApiResponse { Status = false, Message = "Error occurred" };
             }
         }
@@ -120,10 +134,14 @@ namespace ShopEase.WebApp.Services
         {
             try
             {
-                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/{roleId}";
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/delete/{roleId}";
+                var response = await DoHttpDelete(endpoint);
 
-                var result = await DoHttpDelete<ApiResponse>(endpoint);
-                return result ?? new ApiResponse { Status = false, Message = "No response" };
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+
+                return apiResponse ?? new ApiResponse { Status = false, Message = "Invalid response" };
             }
             catch (Exception ex)
             {

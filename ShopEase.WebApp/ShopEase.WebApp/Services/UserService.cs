@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Web.Services.Base;
+using Newtonsoft.Json;
 using ShopEase.WebApp.Configuration;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Auth;
@@ -42,9 +43,15 @@ namespace ShopEase.WebApp.Services
                 if (registerViewModel.RoleId == 0)
                     registerViewModel.RoleId = RoleConstants.Customer;
                 registerViewModel.IsActive = RoleConstants.IsActive;
+
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/register";
-                var result = await DoHttpPost<ApiResponse>(endpoint, registerViewModel, useAuth: false);
-                return result ?? new ApiResponse { Status = false, Message = "No response" };
+                var response = await DoHttpPost(endpoint, registerViewModel, useAuth: false);
+
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<ApiResponse>(content)
+                    ?? new ApiResponse { Status = false, Message = "No response" };
             }
             catch (Exception ex)
             {
