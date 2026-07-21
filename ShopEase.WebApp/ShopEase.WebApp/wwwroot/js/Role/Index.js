@@ -1,17 +1,17 @@
-﻿var pageNumber = 1;
-var pageSize = 10;
-
-$(document).ready(function () {
-    LoadRoles();
-    $(document).on('keyup', '#searchInput', function () {
-        pageNumber = 1;
-        LoadRoles();
-    });
+﻿$(document).ready(function () {
+    debugger
+    LoadData();
 });
 
-function LoadRoles() {
+function LoadData() {
     debugger
-    var search = $('#searchInput').val();
+    LoadRoles();
+}
+
+function LoadRoles() {
+    var search = $('#roleSearchInput').val();
+    var pageNumber = $("#hdn_PageNumber").val();
+    var pageSize = $("#hdn_PageSize").val();
 
     $('#roleListContainer').html('<div class="spinner"></div>');
 
@@ -19,9 +19,9 @@ function LoadRoles() {
         url: '/Role/GetList',
         type: 'GET',
         data: {
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            search: search
+            PageNumber: pageNumber,
+            PageSize: pageSize,
+            SearchString: search
         },
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -47,10 +47,4 @@ function LoadRoles() {
             );
         }
     });
-}
-
-// Change page (accessible globally)
-function ChangePage(newPageNumber) {
-    pageNumber = newPageNumber;
-    LoadRoles();
 }
