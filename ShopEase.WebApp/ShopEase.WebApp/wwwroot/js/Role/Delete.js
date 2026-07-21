@@ -1,5 +1,4 @@
 ﻿$('#deleteRoleBtn').click(function () {
-    debugger
     $.ajax({
         url: '/Role/Delete',
         type: 'DELETE',
@@ -11,9 +10,7 @@
             setButtonLoading($('#deleteRoleBtn'), true);
         },
         success: function (response) {
-            debugger
             if (response.statusCode == 200) {
-                debugger
                 showSuccess(response.message || 'Role deleted successfully');
                 closePopup();
                 LoadRoles();

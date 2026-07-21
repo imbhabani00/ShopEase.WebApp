@@ -1,29 +1,41 @@
 ﻿@using ShopEase.WebApp.Helpers
 @model ShopEase.WebApp.Models.Role.RoleViewModelList
+<style>
+    .empty-state {
+        padding: 50px 20px;
+        text-align: center;
+    }
 
-@if (Model.Roles == null || !Model.Roles.Any())
-{
-    <div style="padding:40px;text-align:center;color:#aaa">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-             stroke="#ddd" stroke-width="1.5" style="margin-bottom:10px">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        </svg>
-        <p>No roles found.</p>
-    </div>
-}
-else
-{
-    <div class="table-wrap">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Role Name</th>
-                    <th>Role Code</th>
-                    <th>Status</th>
-                    <th style="width:120px;text-align:right">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
+        .empty-state svg {
+            margin-bottom: 15px;
+        }
+
+        .empty-state h5 {
+            margin: 0;
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            margin-top: 8px;
+            color: #888;
+            font-size: 14px;
+        }
+</style>
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Role Name</th>
+                <th>Role Code</th>
+                <th>Status</th>
+                <th style="width:120px;text-align:right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Roles != null && Model.Roles.Count > 0)
+            {
                 @foreach (var role in Model.Roles)
                 {
                     <tr>
@@ -42,12 +54,11 @@ else
                             }
                         </td>
                         <td style="text-align:right">
-                            <div class="d-flex gap-8" style="justify-content:flex-end">
-                                @if (ViewContext.HttpContext.Session
-                                    .HasPermission("ROLES", "CanEdit"))
+                            <div class="d-flex gap-8 justify-content-end">
+
+                                @if (ViewContext.HttpContext.Session.HasPermission("ROLES", "CanEdit"))
                                 {
-                                    <button class="btn btn-outline btn-icon btn-sm"
-                                            title="Edit"
+                                    <button class="btn btn-outline btn-icon btn-sm" title="Edit"
                                             onclick="loadPopup('/Role/RoleEdit?roleId=@role.RoleId','Edit Role','md')">
                                         <svg width="13" height="13" viewBox="0 0 24 24"
                                              fill="none" stroke="currentColor" stroke-width="2">
@@ -56,11 +67,10 @@ else
                                         </svg>
                                     </button>
                                 }
-                                @if (ViewContext.HttpContext.Session
-                                    .HasPermission("ROLES", "CanDelete"))
+
+                                @if (ViewContext.HttpContext.Session.HasPermission("ROLES", "CanDelete"))
                                 {
-                                    <button class="btn btn-danger btn-icon btn-sm"
-                                            title="Delete"
+                                    <button class="btn btn-danger btn-icon btn-sm" title="Delete"
                                             onclick="loadPopup('/Role/DeleteConfirm?roleId=@role.RoleId','Delete Role','md')">
                                         <svg width="13" height="13" viewBox="0 0 24 24"
                                              fill="none" stroke="currentColor" stroke-width="2">
@@ -75,7 +85,39 @@ else
                         </td>
                     </tr>
                 }
-            </tbody>
-        </table>
-    </div>
-}
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+
+                            <svg width="72"
+                                 height="72"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="#c5c5c5"
+                                 stroke-width="1.5">
+
+                                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                                <line x1="7" y1="8" x2="17" y2="8"></line>
+                                <line x1="7" y1="12" x2="17" y2="12"></line>
+                                <line x1="7" y1="16" x2="13" y2="16"></line>
+
+                            </svg>
+
+                            <h5>No Roles Found</h5>
+
+                            <p>
+                                There are no roles available.
+                                Click <strong>Add Role</strong> to create one.
+                            </p>
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_Pagination" model="Model.Pager" />
+</div>

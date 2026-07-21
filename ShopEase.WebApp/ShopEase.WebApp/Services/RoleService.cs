@@ -63,15 +63,19 @@ namespace ShopEase.WebApp.Services
                 query.Append($"StatusId={sortParams.StatusId}");
 
                 var response = await DoHttpGet(query.ToString());
-
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
-
                 if (apiResponse?.Status == true && apiResponse.Response != null)
-                    viewModel = JsonConvert.DeserializeObject<RoleViewModelList>(
-                        apiResponse.Response.ToString()!) ?? viewModel;
+                {
+                    viewModel = JsonConvert.DeserializeObject<RoleViewModelList>(apiResponse.Response.ToString()!) ?? viewModel;
+                    viewModel.Pager = new Pager
+                    {
+                        CurrentPage = sortParams.PageNumber.Value,
+                        PageSize = sortParams.PageSize.Value,
+                        TotalItems = viewModel.TotalCount
+                    };
+                }
             }
             catch (Exception ex)
             {
