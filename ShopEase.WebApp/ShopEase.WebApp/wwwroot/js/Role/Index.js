@@ -1,11 +1,42 @@
-﻿$(document).ready(function () {
-    debugger
+﻿var searchDebounceTimer = null;
+
+$(document).ready(function () {
     LoadData();
+    $('#roleSearchBtn').on('click', function () {
+        ChangeSearch();
+    });
+
+    $('#roleSearchInput').on('keyup', function (e) {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            ChangeSearch();
+            return;
+        }
+
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function () {
+            ChangeSearch();
+        }, 400);
+    });
 });
 
 function LoadData() {
-    debugger
     LoadRoles();
+}
+
+function ChangeSearch() {
+    $("#hdn_PageNumber").val(1);
+    LoadData();
+}
+
+function ChangePage(page) {
+    $("#hdn_PageNumber").val(page);
+    LoadData();
+}
+
+function ChangePageSize(size) {
+    $("#hdn_PageSize").val(size);
+    $("#hdn_PageNumber").val(1);
+    LoadData();
 }
 
 function LoadRoles() {

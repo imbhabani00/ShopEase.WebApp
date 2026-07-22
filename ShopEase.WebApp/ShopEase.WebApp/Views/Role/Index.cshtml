@@ -1,4 +1,39 @@
-﻿<div class="d-flex justify-content-between align-items-center mb-3">
+﻿
+<style>
+    .search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+        .search-box .form-control {
+            padding-right: 34px;
+        }
+
+    .search-icon-btn {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #888;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        border-radius: 6px;
+        transition: color .15s ease, background .15s ease;
+    }
+
+        .search-icon-btn:hover {
+            color: #534AB7;
+            background: rgba(83, 74, 183, 0.08);
+        }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h4 class="page-title">
             Roles
@@ -25,11 +60,21 @@
         <span class="card__title">All Roles</span>
 
         <div class="d-flex gap-8">
-            <input type="text"
-                   id="roleSearchInput"
-                   class="form-control"
-                   placeholder="Search roles..."
-                   style="width:220px"/>
+            <div class="search-box">
+                <input type="text"
+                       id="roleSearchInput"
+                       class="form-control"
+                       placeholder="Search roles..."
+                       style="width:220px" />
+
+                <button type="button" class="search-icon-btn" id="roleSearchBtn" title="Search">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -42,6 +87,7 @@
 
 <input type="hidden" id="hdn_PageNumber" value="1" />
 <input type="hidden" id="hdn_PageSize" value="10" />
+
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/role/index.js"></script>

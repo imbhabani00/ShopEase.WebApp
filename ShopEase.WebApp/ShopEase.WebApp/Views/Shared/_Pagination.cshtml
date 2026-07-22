@@ -1,66 +1,208 @@
 ﻿@model ShopEase.WebApp.Models.Common.Pager
 
-@if (Model != null && Model.TotalPages > 1)
+<style>
+    .pager-wrap {
+        padding: 14px 18px;
+        border-top: 1px solid #eee;
+    }
+
+    /* Custom page-size dropdown */
+    .pager-dropdown {
+        position: relative;
+        width: 90px;
+        font-size: 13px;
+    }
+
+    .pager-dropdown-toggle {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 12px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        color: #444;
+        font-weight: 500;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+        .pager-dropdown-toggle:hover,
+        .pager-dropdown-toggle:focus {
+            border-color: #534AB7;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(83, 74, 183, 0.15);
+        }
+
+    .pager-dropdown-menu {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        margin-bottom: 6px;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        list-style: none;
+        padding: 4px;
+        display: none;
+        z-index: 20;
+    }
+
+        .pager-dropdown-menu.open {
+            display: block;
+        }
+
+    .pager-dropdown-item {
+        padding: 7px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        color: #444;
+        transition: background .15s ease, color .15s ease;
+    }
+
+        .pager-dropdown-item:hover {
+            background: rgba(83, 74, 183, 0.1);
+            color: #534AB7;
+        }
+
+        .pager-dropdown-item.selected {
+            background: #534AB7;
+            color: #fff;
+        }
+
+    /* Page number links */
+    .pager-list {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .pager-item {
+        min-width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pager-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 34px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #555;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all .15s ease;
+        user-select: none;
+    }
+
+        .pager-link:hover {
+            background: rgba(83, 74, 183, 0.08);
+            color: #534AB7;
+        }
+
+    .pager-item.active .pager-link {
+        background: #534AB7;
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(83, 74, 183, 0.35);
+    }
+
+        .pager-item.active .pager-link:hover {
+            background: #534AB7;
+            color: #fff;
+        }
+
+    .pager-item.disabled .pager-link {
+        color: #ccc;
+        cursor: not-allowed;
+        pointer-events: none;
+        background: transparent;
+    }
+
+    .pager-nav {
+        font-size: 12px;
+        letter-spacing: .3px;
+        padding: 0 14px;
+    }
+</style>
+
+@if (Model != null)
 {
-    <div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="d-flex justify-content-between align-items-center pager-wrap">
 
-        <div>
+        <div class="pager-dropdown" id="pagerSizeDropdown">
+            <button type="button" class="pager-dropdown-toggle" onclick="TogglePagerDropdown()">
+                <span id="pagerSizeLabel">@Model.PageSize</span>
+                <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                    <path d="M0 0l5 6 5-6z" fill="#888" />
+                </svg>
+            </button>
 
-            <select class="form-select"
-                    style="width:90px"
-                    onchange="ChangePageSize(this.value)">
-
-                <option value="10" selected="@(Model.PageSize == 10)">10</option>
-                <option value="25" selected="@(Model.PageSize == 25)">25</option>
-                <option value="50" selected="@(Model.PageSize == 50)">50</option>
-                <option value="100" selected="@(Model.PageSize == 100)">100</option>
-
-            </select>
-
+            <ul class="pager-dropdown-menu" id="pagerSizeMenu">
+                <li class="pager-dropdown-item @(Model.PageSize == 10 ? "selected" : "")" onclick="SelectPageSize(10)">10</li>
+                <li class="pager-dropdown-item @(Model.PageSize == 25 ? "selected" : "")" onclick="SelectPageSize(25)">25</li>
+                <li class="pager-dropdown-item @(Model.PageSize == 50 ? "selected" : "")" onclick="SelectPageSize(50)">50</li>
+                <li class="pager-dropdown-item @(Model.PageSize == 100 ? "selected" : "")" onclick="SelectPageSize(100)">100</li>
+            </ul>
         </div>
 
-        <ul class="pagination">
-
-            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-
-                <a class="page-link"
-                   href="javascript:void(0)"
-                   onclick="ChangePage(@(Model.CurrentPage - 1))">
-
-                    Previous
-
-                </a>
-
-            </li>
-
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-
-                    <a class="page-link"
-                       href="javascript:void(0)"
-                       onclick="ChangePage(@i)">
-
-                        @i
-
+        @if (Model.TotalPages >= 1)
+        {
+            <ul class="pager-list">
+                <li class="pager-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="pager-link pager-nav" href="javascript:void(0)" onclick="ChangePage(@(Model.CurrentPage - 1))">
+                        Prev
                     </a>
-
                 </li>
-            }
 
-            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="pager-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="pager-link" href="javascript:void(0)" onclick="ChangePage(@i)">@i</a>
+                    </li>
+                }
 
-                <a class="page-link"
-                   href="javascript:void(0)"
-                   onclick="ChangePage(@(Model.CurrentPage + 1))">
-
-                    Next
-
-                </a>
-
-            </li>
-
-        </ul>
-
+                <li class="pager-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="pager-link pager-nav" href="javascript:void(0)" onclick="ChangePage(@(Model.CurrentPage + 1))">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        }
     </div>
 }
+
+<script>
+    function TogglePagerDropdown() {
+        $('#pagerSizeMenu').toggleClass('open');
+    }
+
+    function SelectPageSize(size) {
+        $('#pagerSizeLabel').text(size);
+        $('#pagerSizeMenu').removeClass('open');
+        $('#pagerSizeMenu .pager-dropdown-item').removeClass('selected');
+        $('#pagerSizeMenu .pager-dropdown-item').filter(function () {
+            return $(this).text().trim() === String(size);
+        }).addClass('selected');
+        ChangePageSize(size);
+    }
+
+    $(document).off('click.pagerDropdown').on('click.pagerDropdown', function (e) {
+        if (!$(e.target).closest('#pagerSizeDropdown').length) {
+            $('#pagerSizeMenu').removeClass('open');
+        }
+    });
+</script>
