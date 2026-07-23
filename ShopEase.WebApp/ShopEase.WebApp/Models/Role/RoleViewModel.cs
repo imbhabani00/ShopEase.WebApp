@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ShopEase.WebApp.Models.Common;
+﻿using ShopEase.WebApp.Models.Common;
 using System.ComponentModel.DataAnnotations;
 
 namespace ShopEase.WebApp.Models.Role
