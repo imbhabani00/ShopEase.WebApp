@@ -1026,3 +1026,54 @@ select.form-control {
         padding: 0;
     }
 }
+
+/*Every list page else part*/
+
+.empty-state {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+    .empty-state svg {
+        margin-bottom: 15px;
+    }
+
+    .empty-state h5 {
+        margin: 0;
+        color: #333;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        margin-top: 8px;
+        color: #888;
+        font-size: 14px;
+    }
+
+/* sorting*/
+
+.sort-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #333;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+    .sort-btn svg {
+        color: #888;
+        transition: color 0.2s ease;
+    }
+
+    .sort-btn:hover {
+        color: #534AB7;
+    }
+
+        .sort-btn:hover svg {
+            color: #534AB7;
+        }
