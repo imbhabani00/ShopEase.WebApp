@@ -1,35 +1,49 @@
 ﻿@using ShopEase.WebApp.Helpers
 @model ShopEase.WebApp.Models.Role.RoleViewModelList
 <style>
-    .empty-state {
-        padding: 50px 20px;
-        text-align: center;
-    }
 
-        .empty-state svg {
-            margin-bottom: 15px;
-        }
-
-        .empty-state h5 {
-            margin: 0;
-            color: #333;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .empty-state p {
-            margin-top: 8px;
-            color: #888;
-            font-size: 14px;
-        }
+   
 </style>
 <div class="table-wrap">
     <table class="data-table">
         <thead>
             <tr>
-                <th>Role Name</th>
-                <th>Role Code</th>
-                <th>Status</th>
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('RoleName')">
+                        Role Name
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('RoleCode')">
+                        Role Code
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('Status')">
+                        Status
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
                 <th style="width:120px;text-align:right">Actions</th>
             </tr>
         </thead>
