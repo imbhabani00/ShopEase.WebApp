@@ -30,11 +30,6 @@ namespace ShopEase.WebApp.Controllers
         [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanView)]
         public IActionResult Index()
         {
-            ViewData["ActiveMenu"] = "Role";
-            ViewData["PageTitle"] = "Roles";
-            ViewData["PageSubTitle"] = "Manage system roles";
-            ViewData["BreadcrumbParent"] = "Admin";
-            ViewData["BreadcrumbCurrent"] = "Roles";
             return View();
         }
         #endregion
