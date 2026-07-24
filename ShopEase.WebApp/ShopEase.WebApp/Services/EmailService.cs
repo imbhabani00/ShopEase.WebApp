@@ -1,6 +1,7 @@
 ﻿using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Email;
 
 namespace Ecommerce.Application.Services
@@ -10,7 +11,7 @@ namespace Ecommerce.Application.Services
     {
         Task SendOtpAsync(string toEmail, string toName, string otp);
         Task SendResetPasswordAsync(string toEmail, string toName, string resetLink);
-        Task SendWelcomeAsync(string toEmail, string toName);
+        Task SendWelcomeAsync(string toEmail, string toName, string loginEmail, string temporaryPassword);
         Task SendAsync(string toEmail, string toName, string subject, string htmlBody);
     }
     #endregion
@@ -70,17 +71,34 @@ namespace Ecommerce.Application.Services
         #endregion
 
         #region SendWelcomeAsync
-        public async Task SendWelcomeAsync(string toEmail, string toName)
+        public async Task SendWelcomeAsync(string toEmail, string toName, string loginEmail, string temporaryPassword)
         {
             try
             {
                 var subject = "Welcome to ShopEase!";
-                var htmlBody = await RenderTemplateAsync("WelcomeEmail", new { Name = toName });
-                await SendAsync(toEmail, toName, subject, htmlBody);
+
+                var htmlBody = await RenderTemplateAsync(
+                    "WelcomeEmail",
+                    new
+                    {
+                        Name = toName,
+                        Email = loginEmail,
+                        Password = temporaryPassword,
+                        LoginUrl = RouteConstants.Login
+                    });
+
+                await SendAsync(
+                    toEmail,
+                    toName,
+                    subject,
+                    htmlBody);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "SendWelcomeAsync: Error sending welcome email");
+                _logger.LogError(ex,
+                    "SendWelcomeAsync failed for {Email}",
+                    toEmail);
+
                 throw;
             }
         }

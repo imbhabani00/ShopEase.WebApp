@@ -479,3 +479,7 @@ body {
         border-radius: 12px;
     }
 }
+
+.hidden {
+    display: none !important;
+}

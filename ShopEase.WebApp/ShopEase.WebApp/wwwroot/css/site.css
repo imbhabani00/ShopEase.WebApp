@@ -875,7 +875,11 @@ select.form-control {
     background-repeat: no-repeat;
     background-position: right 10px center;
     padding-right: 32px;
+    accent-color: var(--color-primary);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--color-bg);
 }
+
 
 .field-error {
     display: block;
@@ -1112,3 +1116,5 @@ select.form-control {
         color: #534AB7;
         background: rgba(83, 74, 183, 0.08);
     }
+
+
