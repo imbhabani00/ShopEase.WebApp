@@ -55,13 +55,53 @@ namespace ShopEase.WebApp.Helpers
             => session.GetString(SessionConstants.UserFullName);
         public static void SetPermissions(ISession session, List<PermissionModel> permissions)
             => session.SetString(SessionConstants.Permissions, JsonConvert.SerializeObject(permissions));
+
+        public static void SetUserEmail(ISession session, string email)
+            => session.SetString(SessionConstants.UserEmail, email);
+
+        public static string? GetUserEmail(ISession session)
+            => session.GetString(SessionConstants.UserEmail);
         public static List<PermissionModel> GetPermissions(ISession session)
         {
             var json = session.GetString(SessionConstants.Permissions);
             if (string.IsNullOrEmpty(json)) return new List<PermissionModel>();
             return JsonConvert.DeserializeObject<List<PermissionModel>>(json) ?? new List<PermissionModel>();
         }
+        public static void SetOtpVerifiedForPasswordChange(ISession session, bool value)
+             => session.SetString(SessionConstants.OtpVerifiedForPasswordChange, value.ToString());
 
+        public static bool GetOtpVerifiedForPasswordChange(ISession session)
+        {
+            var value = session.GetString(SessionConstants.OtpVerifiedForPasswordChange);
+            return !string.IsNullOrEmpty(value) && bool.Parse(value);
+        }
+
+        public static void ClearOtpVerifiedForPasswordChange(ISession session)
+            => session.Remove(SessionConstants.OtpVerifiedForPasswordChange);
+
+        #region Force Password Change
+
+        public static void SetForcePasswordChange(ISession session, bool value)
+        {
+            session.SetString(
+                SessionConstants.ForcePasswordChange,
+                value.ToString());
+        }
+
+        public static bool GetForcePasswordChange(ISession session)
+        {
+            var value = session.GetString(SessionConstants.ForcePasswordChange);
+
+            return !string.IsNullOrEmpty(value)
+                && bool.Parse(value);
+        }
+
+        public static void ClearForcePasswordChange(ISession session)
+        {
+            session.Remove(SessionConstants.ForcePasswordChange);
+        }
+
+        #endregion
         public static bool HasPermission(ISession session, string moduleCode, string permissionType)
         {
             var permissions = GetPermissions(session);

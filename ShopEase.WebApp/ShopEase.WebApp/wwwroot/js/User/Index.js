@@ -39,10 +39,27 @@ function ChangePageSize(size) {
     LoadData();
 }
 
+function SortData(column) {
+    var currentColumn = $("#hdn_SortParameter").val();
+    var currentDirection = $("#hdn_SortDirection").val();
+    if (currentColumn === column) {
+        currentDirection = currentDirection === "ASC" ? "DESC" : "ASC";
+    } else {
+        currentColumn = column;
+        currentDirection = "ASC";
+    }
+    $("#hdn_SortParameter").val(currentColumn);
+    $("#hdn_SortDirection").val(currentDirection);
+    $("#hdn_PageNumber").val(1);
+    LoadData();
+}
+
 function LoadUsers() {
     var search = $('#userSearchInput').val();
     var pageNumber = $("#hdn_PageNumber").val();
     var pageSize = $("#hdn_PageSize").val();
+    var sortParameter = $("#hdn_SortParameter").val();
+    var sortDirection = $("#hdn_SortDirection").val();
 
     $('#userListContainer').html('<div class="spinner"></div>');
 
@@ -52,7 +69,9 @@ function LoadUsers() {
         data: {
             PageNumber: pageNumber,
             PageSize: pageSize,
-            SearchString: search
+            SearchString: search,
+            SortParameter: sortParameter,
+            SortDirection: sortDirection
         },
         headers: {
             'X-Requested-With': 'XMLHttpRequest'

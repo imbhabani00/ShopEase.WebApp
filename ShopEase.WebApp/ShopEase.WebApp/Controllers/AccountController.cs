@@ -54,7 +54,10 @@ namespace Ecommerce.Web.Controllers
         public IActionResult Login(string? returnUrl = null)
         {
             if (!string.IsNullOrEmpty(AccessToken))
-                return Redirect(RouteConstants.Dashboard);
+            {
+                var forcePasswordChange = SessionHelper.GetForcePasswordChange(HttpContext.Session);
+                return Redirect(forcePasswordChange ? RouteConstants.ChangePassword : RouteConstants.Dashboard);
+            }
 
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
@@ -102,6 +105,29 @@ namespace Ecommerce.Web.Controllers
                     {
                         status = false,
                         message = "Invalid response from server."
+                    });
+                }
+
+                if (token.ForcePasswordChange)
+                {
+                    SessionHelper.SetAccessToken(HttpContext.Session, token.AccessToken);
+                    SessionHelper.SetRefreshToken(HttpContext.Session, token.RefreshToken);
+                    SessionHelper.SetUserId(HttpContext.Session, token.UserId);
+                    SessionHelper.SetRoleCode(HttpContext.Session, token.RoleCode);
+                    SessionHelper.SetRoleName(HttpContext.Session, token.RoleName);
+                    SessionHelper.SetTenantId(HttpContext.Session, token.TenantId);
+                    SessionHelper.SetRoleId(HttpContext.Session, token.RoleId);
+                    SessionHelper.SetForcePasswordChange(HttpContext.Session, true);
+
+                    CookieHelper.SetRefreshTokenCookie(Response, token.RefreshToken, 7);
+
+                    _logger.LogInformation("Login: User {UserId} requires forced password change, OTP skipped", token.UserId);
+
+                    return StatusCode(200, new
+                    {
+                        status = true,
+                        message = "Please set a new password to continue.",
+                        returnUrl = RouteConstants.ChangePassword
                     });
                 }
 
@@ -221,6 +247,7 @@ namespace Ecommerce.Web.Controllers
                 SessionHelper.SetRoleName(HttpContext.Session, token.RoleName);
                 SessionHelper.SetTenantId(HttpContext.Session, token.TenantId);
                 SessionHelper.SetRoleId(HttpContext.Session, token.RoleId);
+                SessionHelper.SetForcePasswordChange( HttpContext.Session,token.ForcePasswordChange);
 
                 // Load permissions from API
                 try
@@ -251,12 +278,15 @@ namespace Ecommerce.Web.Controllers
 
                 _logger.LogInformation("Login: User {UserId} OTP verified and logged in successfully", token.UserId);
 
+                var forcePasswordChange = SessionHelper.GetForcePasswordChange(HttpContext.Session);
+
                 return StatusCode(200, new
                 {
                     status = true,
                     message = "Login successful",
-                    returnUrl = RouteConstants.Dashboard,
-                    statusCode = 200
+                    returnUrl = forcePasswordChange
+                        ? RouteConstants.ChangePassword
+                        : RouteConstants.Dashboard
                 });
             }
             catch (Exception ex)
@@ -361,10 +391,86 @@ namespace Ecommerce.Web.Controllers
         }
         #endregion
 
-        #region Register POST
+        //#region Register POST
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return StatusCode(200, new
+        //        {
+        //            status = false,
+        //            message = "Invalid input",
+        //            errors = ModelState
+        //                .Where(x => x.Value.Errors.Count > 0)
+        //                .Select(x => new
+        //                {
+        //                    propertyName = x.Key,
+        //                    errorMessage = x.Value.Errors.First().ErrorMessage
+        //                })
+        //        });
+
+        //    try
+        //    {
+        //        registerViewModel.PasswordHash = registerViewModel.Password;
+        //        registerViewModel.RoleId = 3; // Default: Buyer role
+        //        registerViewModel.IsActive = true;
+
+        //        var result = await _userService.UserSaveAsync(registerViewModel);
+
+        //        if (result == null || !result.Status)
+        //        {
+        //            return StatusCode(200, new
+        //            {
+        //                status = false,
+        //                message = result?.Message ?? "Registration failed"
+        //            });
+        //        }
+
+        //        _logger.LogInformation("Register: New user registered successfully");
+
+        //        return StatusCode(200, new
+        //        {
+        //            status = true,
+        //            message = "Registration successful. Please login.",
+        //            returnUrl = RouteConstants.Login
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Register: Error occurred");
+        //        return StatusCode(200, new
+        //        {
+        //            status = false,
+        //            message = "An error occurred. Please try again."
+        //        });
+        //    }
+        //}
+        //#endregion
+
+        #region Profile
+        public async Task Profile()
+        {
+            var loginViewModel = new LoginViewModel();
+        }
+        #endregion
+
+        #region ChangePassword GET
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            var model = new ChangePasswordViewModel();
+            if (string.IsNullOrEmpty(AccessToken))
+                return Redirect(RouteConstants.Login);
+            ViewBag.IsForced = SessionHelper.GetForcePasswordChange(HttpContext.Session);
+            return View("_ChangePassword", model);
+        }
+        #endregion
+
+        #region ChangePassword POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
                 return StatusCode(200, new
@@ -373,55 +479,116 @@ namespace Ecommerce.Web.Controllers
                     message = "Invalid input",
                     errors = ModelState
                         .Where(x => x.Value.Errors.Count > 0)
-                        .Select(x => new
-                        {
-                            propertyName = x.Key,
-                            errorMessage = x.Value.Errors.First().ErrorMessage
-                        })
+                        .Select(x => new { propertyName = x.Key, errorMessage = x.Value.Errors.First().ErrorMessage })
                 });
 
             try
             {
-                registerViewModel.PasswordHash = registerViewModel.Password;
-                registerViewModel.RoleId = 3; // Default: Buyer role
-                registerViewModel.IsActive = true;
+                var userId = SessionHelper.GetUserId(HttpContext.Session);
+                if (userId == null || userId == 0)
+                {
+                    return StatusCode(200, new { status = false, message = "Session expired. Please login again." });
+                }
 
-                var result = await _userService.UserSaveAsync(registerViewModel);
+                // For voluntary changes, require that OTP was verified in this session
+                var isForced = SessionHelper.GetForcePasswordChange(HttpContext.Session);
+                var otpVerifiedForChange = SessionHelper.GetOtpVerifiedForPasswordChange(HttpContext.Session);
+
+                if (!isForced && !otpVerifiedForChange)
+                {
+                    return StatusCode(200, new { status = false, message = "OTP verification required before changing password." });
+                }
+
+                var result = await _accountService.ChangePasswordAsync(userId.Value, model.NewPassword);
 
                 if (result == null || !result.Status)
                 {
-                    return StatusCode(200, new
-                    {
-                        status = false,
-                        message = result?.Message ?? "Registration failed"
-                    });
+                    return StatusCode(200, new { status = false, message = result?.Message ?? "Failed to change password." });
                 }
 
-                _logger.LogInformation("Register: New user registered successfully");
+                // Clear the forced flag / otp-verified flag now that it's done
+                SessionHelper.SetForcePasswordChange(HttpContext.Session, false);
+                SessionHelper.ClearOtpVerifiedForPasswordChange(HttpContext.Session);
+
+                _logger.LogInformation("ChangePassword: User {UserId} changed password successfully", userId);
 
                 return StatusCode(200, new
                 {
                     status = true,
-                    message = "Registration successful. Please login.",
-                    returnUrl = RouteConstants.Login
+                    message = "Password changed successfully.",
+                    returnUrl = RouteConstants.Dashboard
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Register: Error occurred");
-                return StatusCode(200, new
-                {
-                    status = false,
-                    message = "An error occurred. Please try again."
-                });
+                _logger.LogError(ex, "ChangePassword: Error occurred");
+                return StatusCode(200, new { status = false, message = "An error occurred. Please try again." });
             }
         }
         #endregion
 
-        #region Profile
-        public async Task Profile()
+        #region RequestPasswordChangeOtp POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestPasswordChangeOtp()
         {
-            var loginViewModel = new LoginViewModel();
+            try
+            {
+                var userId = SessionHelper.GetUserId(HttpContext.Session);
+                if (userId == null || userId == 0)
+                    return StatusCode(200, new { status = false, message = "Session expired. Please login again." });
+
+                var email = SessionHelper.GetUserEmail(HttpContext.Session); // add this getter if not present, or fetch via a lightweight profile call
+
+                var otp = new Random().Next(100000, 999999).ToString();
+                var otpSaved = await _otpRepository.SaveOtpAsync(email, userId.Value, otp, 10);
+
+                if (!otpSaved)
+                    return StatusCode(200, new { status = false, message = "Failed to generate OTP. Please try again." });
+
+                await _emailService.SendOtpAsync(email, email.Split('@')[0], otp);
+
+                return StatusCode(200, new { status = true, message = "OTP sent to your email." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RequestPasswordChangeOtp: Error occurred");
+                return StatusCode(200, new { status = false, message = "An error occurred. Please try again." });
+            }
+        }
+        #endregion
+
+        #region VerifyPasswordChangeOtp POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyPasswordChangeOtp(OtpViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return StatusCode(200, new { status = false, message = "Invalid OTP format" });
+
+            try
+            {
+                var userId = SessionHelper.GetUserId(HttpContext.Session);
+                var email = SessionHelper.GetUserEmail(HttpContext.Session);
+
+                if (userId == null || userId == 0)
+                    return StatusCode(200, new { status = false, message = "Session expired. Please login again." });
+
+                var isOtpValid = await _otpRepository.VerifyOtpAsync(userId.Value, email, model.Otp);
+
+                if (!isOtpValid)
+                    return StatusCode(200, new { status = false, message = "Invalid or expired OTP. Please try again." });
+
+                await _otpRepository.InvalidateOtpAsync(userId.Value);
+                SessionHelper.SetOtpVerifiedForPasswordChange(HttpContext.Session, true);
+
+                return StatusCode(200, new { status = true, message = "OTP verified.", returnUrl = RouteConstants.ChangePassword });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "VerifyPasswordChangeOtp: Error occurred");
+                return StatusCode(200, new { status = false, message = "An error occurred. Please try again." });
+            }
         }
         #endregion
     }

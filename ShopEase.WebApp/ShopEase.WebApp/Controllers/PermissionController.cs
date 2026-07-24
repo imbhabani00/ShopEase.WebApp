@@ -6,7 +6,7 @@ using ShopEase.WebApp.Models.Role;
 using ShopEase.WebApp.Services;
 
 namespace Ecommerce.Web.Controllers
-{
+{  
     public class PermissionController : BaseController
     {
         #region Properties

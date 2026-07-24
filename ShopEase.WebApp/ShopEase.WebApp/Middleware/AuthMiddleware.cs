@@ -34,7 +34,7 @@ namespace Ecommerce.Web.Middleware
                 path.Contains(RouteConstants.Logout.ToLower()) ||
                 path.Contains(RouteConstants.Register.ToLower()) ||
                 path.Contains(RouteConstants.VerifyOtp.ToLower()) ||
-                path.Contains(RouteConstants.ResendOtp.ToLower()) 
+                path.Contains(RouteConstants.ResendOtp.ToLower())
                 )
             {
                 await _next(context);
@@ -47,6 +47,17 @@ namespace Ecommerce.Web.Middleware
             if (string.IsNullOrEmpty(accessToken))
             {
                 context.Response.Redirect(RouteConstants.Login);
+                return;
+            }
+
+            // Enforce forced password change — block everything except ChangePassword-related endpoints
+            var forcePasswordChange = context.Session.GetString(SessionConstants.ForcePasswordChange) == "true";
+            if (forcePasswordChange &&
+                !path.Contains(RouteConstants.ChangePassword.ToLower()) &&
+                !path.Contains(RouteConstants.RequestPasswordChangeOtp.ToLower()) &&
+                !path.Contains(RouteConstants.VerifyPasswordChangeOtp.ToLower()))
+            {
+                context.Response.Redirect(RouteConstants.ChangePassword);
                 return;
             }
 
