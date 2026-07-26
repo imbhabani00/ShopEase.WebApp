@@ -126,8 +126,7 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
         dataType: 'json',
         headers: accessToken ? { 'Authorization': 'Bearer ' + accessToken } : {},
         success: function (response) {
-            debugger
-            if (typeof response === 'string') {
++            if (typeof response === 'string') {
                 try {
                     response = JSON.parse(response);
                 } catch (e) {
@@ -152,8 +151,7 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
             }
 
             $.each(data, function (i, item) {
-                debugger
-                var id = item.id || item.Id || item.value || item.Value || '';
++                var id = item.id || item.Id || item.value || item.Value || '';
                 var name = item.name || item.Name || item.text || item.Text || '';
 
                 var $opt = $('<option>', { value: id, text: name });

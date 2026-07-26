@@ -16,7 +16,7 @@ namespace ShopEase.WebApp.Services
         Task<ApiResponse> SaveAsync(RoleViewModel model);
         Task<ApiResponse> DeleteAsync(int roleId);
         Task<List<PermissionModel>> GetByRoleIdAsync(int roleId);
-        Task<ApiResponse> SavePermissionsAsync(SavePermissionsRequest request);
+        Task<ApiResponse> SavePermissionsAsync(List<SavePermissionsRequest> requests);
     }
     #endregion
 
@@ -161,36 +161,47 @@ namespace ShopEase.WebApp.Services
         public async Task<List<PermissionModel>> GetByRoleIdAsync(int roleId)
         {
             var list = new List<PermissionModel>();
+
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/by-role/{roleId}";
                 var response = await DoHttpGet(endpoint);
 
                 response.EnsureSuccessStatusCode();
+
                 var content = await response.Content.ReadAsStringAsync();
 
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
 
                 if (apiResponse?.Status == true && apiResponse.Response != null)
-                    list = JsonConvert.DeserializeObject<List<PermissionModel>>(
-                        apiResponse.Response.ToString()!) ?? list;
+                {
+                    var permissionList = JsonConvert.DeserializeObject<PermissionAssignViewModel>(
+                        apiResponse.Response.ToString()!);
+
+                    if (permissionList != null)
+                    {
+                        list = permissionList.Permissions ?? new List<PermissionModel>();
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("GetByRoleIdAsync error: {Message}", ex.Message);
+                Log.Logger.Error(ex, "GetByRoleIdAsync error");
             }
+
             return list;
+        
         }
         #endregion
 
         #region SavePermissionsAsync
-        public async Task<ApiResponse> SavePermissionsAsync(SavePermissionsRequest request)
+        public async Task<ApiResponse> SavePermissionsAsync(List<SavePermissionsRequest> requests)
         {
             var apiResponse = new ApiResponse();
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/permission-save";
-                var response = await DoHttpPost(endpoint, request);
+                var response = await DoHttpPost(endpoint, requests);
 
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();

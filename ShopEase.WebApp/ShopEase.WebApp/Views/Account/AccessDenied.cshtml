@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ShopEase — Access Denied</title>
     <style>
-            /* ---------- RESET ---------- */
             * {
                 margin: 0;
                 padding: 0;
@@ -23,203 +22,87 @@
                 align-items: center;
                 justify-content: center;
                 padding: 20px;
-                background: #0b0a0f;
-                /* dark but not too heavy */
-                background: radial-gradient(circle at 30% 40%, #1a142b, #0d0b14 80%);
-                position: relative;
+                background: #f4f5f7;
             }
 
-            /* ---------- CARD - clean, centered ---------- */
             .card {
-                background: rgba(18, 15, 30, 0.75);
-                backdrop-filter: blur(14px);
-                -webkit-backdrop-filter: blur(14px);
-                border-radius: 36px;
-                max-width: 480px;
+                background: #ffffff;
+                border-radius: 16px;
+                max-width: 420px;
                 width: 100%;
-                padding: 44px 36px 40px;
+                padding: 40px 32px;
                 text-align: center;
-                border: 1px solid rgba(255, 70, 70, 0.15);
-                box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 0, 0, 0.05) inset;
-                transition: transform 0.2s ease;
+                border: 1px solid #e5e7eb;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
             }
 
-                .card:hover {
-                    transform: translateY(-2px);
+            .icon-circle {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                background: #fef2f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+            }
+
+                .icon-circle svg {
+                    width: 28px;
+                    height: 28px;
+                    stroke: #dc2626;
                 }
 
-            /* ---------- EMOJI ---------- */
-            .emoji {
-                font-size: 72px;
-                line-height: 1.2;
-                margin-bottom: 4px;
-                filter: drop-shadow(0 0 20px rgba(255, 50, 0, 0.3));
-            }
-
-            /* ---------- HEADINGS ---------- */
             h1 {
-                font-size: 28px;
+                font-size: 20px;
                 font-weight: 700;
-                color: #fca5a5;
-                text-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
-                margin-bottom: 10px;
-                letter-spacing: -0.3px;
+                color: #111827;
+                margin-bottom: 8px;
             }
 
-            .subhead {
-                font-size: 16px;
-                font-weight: 500;
-                color: #f87171;
-                margin-bottom: 6px;
-            }
-
-                .subhead strong {
-                    color: #fbbf24;
-                    font-weight: 700;
-                }
-
-            /* ---------- BODY TEXT (simple english) ---------- */
             .msg {
-                color: #c4c4d0;
-                font-size: 15px;
+                color: #6b7280;
+                font-size: 14px;
                 line-height: 1.6;
-                margin-bottom: 6px;
+                margin-bottom: 4px;
             }
 
             .msg-small {
-                color: #8a8a9a;
-                font-size: 14px;
-                line-height: 1.5;
-                margin-bottom: 14px;
-            }
-
-            /* ---------- WARNING BADGE ---------- */
-            .badge {
-                display: inline-block;
-                background: rgba(185, 28, 28, 0.2);
-                border: 1px solid rgba(255, 80, 80, 0.15);
-                border-radius: 40px;
-                padding: 5px 18px 5px 16px;
+                color: #9ca3af;
                 font-size: 13px;
-                font-weight: 600;
-                color: #fca5a5;
-                letter-spacing: 0.4px;
-                text-transform: uppercase;
-                margin: 12px auto 18px;
+                line-height: 1.5;
+                margin-bottom: 24px;
             }
 
-                .badge span {
-                    font-size: 16px;
-                    margin-right: 6px;
-                }
-
-            /* ---------- BUTTON (danger + funny) ---------- */
             .btn-logout {
-                background: linear-gradient(145deg, #b91c1c, #7f1d1d);
+                background: #dc2626;
                 border: none;
-                padding: 14px 34px;
-                border-radius: 60px;
+                padding: 11px 28px;
+                border-radius: 8px;
                 font-family: inherit;
-                font-size: 17px;
-                font-weight: 700;
+                font-size: 14px;
+                font-weight: 600;
                 color: #fff;
                 cursor: pointer;
-                box-shadow: 0 8px 28px rgba(185, 28, 28, 0.4);
-                transition: all 0.2s ease;
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                margin-top: 4px;
+                transition: background .15s ease;
+                width: 100%;
             }
 
                 .btn-logout:hover {
-                    background: linear-gradient(145deg, #dc2626, #991b1b);
-                    transform: scale(1.02);
-                    box-shadow: 0 12px 36px rgba(220, 38, 38, 0.5);
+                    background: #b91c1c;
                 }
 
-                .btn-logout:active {
-                    transform: scale(0.96);
-                }
-
-            /* small funny label under button */
-            .btn-footnote {
-                display: block;
-                font-size: 12px;
-                color: #6b6b7a;
-                margin-top: 12px;
-                letter-spacing: 0.3px;
-            }
-
-                .btn-footnote .skull {
-                    font-size: 15px;
-                    display: inline-block;
-                    animation: wiggle 2s infinite;
-                }
-
-            @@keyframes wiggle {
-                0%,
-                100% {
-                    transform: rotate(0deg);
-                }
-
-                50% {
-                    transform: rotate(10deg);
-                }
-            }
-
-            /* ---------- FOOTER (funny pro tip) ---------- */
             .footer-note {
-                margin-top: 26px;
-                padding-top: 18px;
-                border-top: 1px solid rgba(255, 255, 255, 0.04);
-                font-size: 13px;
-                color: #6b6b7a;
-                letter-spacing: 0.2px;
+                margin-top: 20px;
+                padding-top: 16px;
+                border-top: 1px solid #f1f2f4;
+                font-size: 12.5px;
+                color: #9ca3af;
             }
 
-                .footer-note .highlight {
-                    color: #f59e0b;
-                    font-weight: 500;
-                }
-
-                .footer-note .danger {
-                    color: #f87171;
-                    font-weight: 500;
-                }
-
-                .footer-note .warn {
-                    color: #fbbf24;
-                    font-weight: 500;
-                }
-
-            /* ---------- RESPONSIVE ---------- */
             @@media (max-width: 480px) {
                 .card {
-                    padding: 32px 20px 28px;
-                }
-
-                .emoji {
-                    font-size: 58px;
-                }
-
-                h1 {
-                    font-size: 22px;
-                }
-
-                .subhead {
-                    font-size: 14px;
-                }
-
-                .msg {
-                    font-size: 14px;
-                }
-
-                .btn-logout {
-                    font-size: 15px;
-                    padding: 12px 28px;
-                    width: 100%;
-                    justify-content: center;
+                    padding: 30px 22px;
                 }
             }
     </style>
@@ -228,48 +111,31 @@
 
     <div class="card">
 
-        <!-- EMOJI (funny + dangerous) -->
-        <div class="emoji">🤡🔪</div>
-
-        <!-- TITLE -->
-        <h1>⛔ ACCESS DENIED</h1>
-
-        <!-- SUB HEAD (funny threat) -->
-        <p class="subhead">
-            <strong>⚠️ WHOA!</strong> You tried to skip setting a new password.
-        </p>
-
-        <!-- MAIN MESSAGE (simple english) -->
-        <p class="msg">
-            That's like bringing a <strong style="color:#fbbf24;">spork</strong> to a
-            <strong style="color:#f87171;">nuclear fight</strong>.
-        </p>
-        <p class="msg msg-small">
-            This door has <strong style="color:#fbbf24;">sassy traps</strong> and a
-            <strong style="color:#f87171;">super grumpy AI</strong> guarding it.
-        </p>
-
-        <!-- BADGE (warning) -->
-        <div class="badge">
-            <span>🔥</span> YOU'VE BEEN WARNED
+        <div class="icon-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M4.9 4.9l14.2 14.2" />
+            </svg>
         </div>
 
-        <!-- LOGOUT FORM -->
+        <h1>Access Denied</h1>
+
+        <p class="msg">
+            Looks like you don't have permission to view this page.
+        </p>
+        <p class="msg-small">
+            Maybe your account just isn't invited to this party yet.
+        </p>
+
         <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
-            @@Html.AntiForgeryToken()
+            @Html.AntiForgeryToken()
             <button type="submit" class="btn-logout">
-                <span>🚪</span> Log Me Out
+                Logout
             </button>
-            <span class="btn-footnote">
-                <span class="skull">💀</span> click only if you have insurance <span class="skull">💀</span>
-            </span>
         </form>
 
-        <!-- FOOTER (funny pro tip) -->
         <div class="footer-note">
-            ⚡ <span class="highlight">pro tip:</span> passwords are like underwear —
-            <span class="danger">change them often</span>,
-            and <span class="warn">never share</span> with a clown 🤡
+            If you think this is a mistake, contact your administrator.
         </div>
 
     </div>

@@ -70,7 +70,6 @@
 
     // STEP 3: Submit new password
     $('#changePasswordForm').submit(function (e) {
-        debugger
         e.preventDefault();
         var form = $(this);
 
@@ -92,7 +91,6 @@
                 setButtonLoading($('#changePasswordBtn'), true);
             },
             success: function (response) {
-                debugger
                 if (response.status) {
                     showSuccess(response.message || 'Password changed successfully');
                     setTimeout(function () {
@@ -104,7 +102,6 @@
                 }
             },
             error: function () {
-                debugger
                 setButtonLoading($('#changePasswordBtn'), false);
                 showError('Failed to change password. Please try again.');
             }

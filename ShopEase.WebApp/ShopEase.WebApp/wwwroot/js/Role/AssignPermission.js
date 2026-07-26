@@ -1,22 +1,24 @@
-﻿$(document).ready(function () {
-    $(document).on('change', '.select-all-checkbox', function () {
+﻿$(function () {
+    $(document).off('change', '.select-all-checkbox').on('change', '.select-all-checkbox', function () {
         var $block = $(this).closest('.permission-module-block');
-        $block.find('.action-checkbox').prop('checked', $(this).is(':checked'));
+        var isChecked = $(this).is(':checked');
+        $block.find('.action-checkbox').prop('checked', isChecked);
     });
 
-    $(document).on('change', '.action-checkbox', function () {
+    $(document).off('change', '.action-checkbox').on('change', '.action-checkbox', function () {
         var $block = $(this).closest('.permission-module-block');
         var total = $block.find('.action-checkbox').length;
         var checked = $block.find('.action-checkbox:checked').length;
         $block.find('.select-all-checkbox').prop('checked', total === checked);
     });
 
-    $('#savePermissionBtn').on('click', function () {
+    $(document).off('click', '#savePermissionBtn').on('click', '#savePermissionBtn', function () {
         var roleId = $('#RoleId').val();
-        var permissions = [];
+        var requests = [];
 
         $('.permission-module-block').each(function () {
-            permissions.push({
+            requests.push({
+                RoleId: parseInt(roleId),
                 ModuleId: $(this).data('module-id'),
                 CanView: $(this).find('[data-action="CanView"]').is(':checked'),
                 CanAdd: $(this).find('[data-action="CanAdd"]').is(':checked'),
@@ -30,16 +32,18 @@
             url: '/Role/SavePermissions',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ RoleId: roleId, Permissions: permissions }),
+            headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+            data: JSON.stringify(requests),
             success: function (res) {
                 if (res.status) {
+                    showSuccess(res.message || 'Permissions saved successfully.');
                     closePopup();
                 } else {
-                    alert(res.message || 'Failed to save permissions.');
+                    showError(res.message || 'Failed to save permissions.');
                 }
             },
             error: function () {
-                alert('An error occurred.');
+                showError('An error occurred while saving permissions.');
             }
         });
     });
