@@ -1,51 +1,102 @@
-﻿$(function () {
-    var pageNumber = 1;
-    var pageSize = 10;
+﻿var searchDebounceTimer = null;
 
-    // Load roles on page load
-    LoadRoles();
-
-    // Search on keyup
-    $(document).on('keyup', '#searchInput', function () {
-        pageNumber = 1; 
-        LoadRoles();
+$(document).ready(function () {
+    LoadData();
+    $('#roleSearchBtn').on('click', function () {
+        ChangeSearch();
     });
-    function LoadRoles() {
-        var search = $('#searchInput').val();
 
-        $('#roleListContainer').html('<div class="spinner"></div>');
+    $('#roleSearchInput').on('keyup', function (e) {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            ChangeSearch();
+            return;
+        }
 
-        $.ajax({
-            url: '/Role/GetList',
-            type: 'GET',
-            data: {
-                pageNumber: pageNumber,
-                pageSize: pageSize,
-                search: search
-            },
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            cache: false,
-            success: function (data) {
-                if (data && data.trim().length > 0) {
-                    $('#roleListContainer').html(data);
-                } else {
-                    $('#roleListContainer').html(
-                        '<div style="padding:40px;text-align:center;color:#aaa">' +
-                        '<p>No roles found.</p>' +
-                        '</div>'
-                    );
-                }
-            },
-            error: function () {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function () {
+            ChangeSearch();
+        }, 400);
+    });
+});
+
+function LoadData() {
+    LoadRoles();
+}
+
+function ChangeSearch() {
+    $("#hdn_PageNumber").val(1);
+    LoadData();
+}
+
+function ChangePage(page) {
+    $("#hdn_PageNumber").val(page);
+    LoadData();
+}
+
+function ChangePageSize(size) {
+    $("#hdn_PageSize").val(size);
+    $("#hdn_PageNumber").val(1);
+    LoadData();
+}
+
+function SortData(column) {
+    var currentColumn = $("#hdn_SortParameter").val();
+    var currentDirection = $("#hdn_SortDirection").val();
+    if (currentColumn === column) {
+        currentDirection = currentDirection === "ASC" ? "DESC" : "ASC";
+    } else {
+        currentColumn = column;
+        currentDirection = "ASC";
+    }
+    $("#hdn_SortParameter").val(currentColumn);
+    $("#hdn_SortDirection").val(currentDirection);
+    $("#hdn_PageNumber").val(1);
+    LoadData();
+}
+
+
+function LoadRoles() {
+    var search = $('#roleSearchInput').val();
+    var pageNumber = $("#hdn_PageNumber").val();
+    var pageSize = $("#hdn_PageSize").val();
+    var sortParameter = $("#hdn_SortParameter").val();
+    var sortDirection = $("#hdn_SortDirection").val();
+
+
+    $('#roleListContainer').html('<div class="spinner"></div>');
+
+    $.ajax({
+        url: '/Role/GetList',
+        type: 'GET',
+        data: {
+            PageNumber: pageNumber,
+            PageSize: pageSize,
+            SearchString: search,
+            SortParameter: sortParameter,
+            SortDirection: sortDirection
+        },
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        cache: false,
+        success: function (data) {
+            if (data && data.trim().length > 0) {
+                $('#roleListContainer').html(data);
+            } else {
                 $('#roleListContainer').html(
-                    '<div style="padding:20px;text-align:center;color:#d32f2f">' +
-                    '<p>Failed to load roles. Please try again.</p>' +
-                    '<button class="btn btn-sm btn-primary" onclick="location.reload()">Retry</button>' +
+                    '<div style="padding:40px;text-align:center;color:#aaa">' +
+                    '<p>No roles found.</p>' +
                     '</div>'
                 );
             }
-        });
-    }
-});
+        },
+        error: function () {
+            $('#roleListContainer').html(
+                '<div style="padding:20px;text-align:center;color:#d32f2f">' +
+                '<p>Failed to load roles. Please try again.</p>' +
+                '<button class="btn btn-sm btn-primary" onclick="location.reload()">Retry</button>' +
+                '</div>'
+            );
+        }
+    });
+}

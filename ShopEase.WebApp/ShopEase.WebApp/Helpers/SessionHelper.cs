@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Common;
-using ShopEase.WebApp.Models.Role;
-
+using ShopEase.WebApp.Models.Permission;
 namespace ShopEase.WebApp.Helpers
 {
     public class SessionHelper
@@ -56,29 +55,65 @@ namespace ShopEase.WebApp.Helpers
             => session.GetString(SessionConstants.UserFullName);
         public static void SetPermissions(ISession session, List<PermissionModel> permissions)
             => session.SetString(SessionConstants.Permissions, JsonConvert.SerializeObject(permissions));
+
+        public static void SetUserEmail(ISession session, string email)
+            => session.SetString(SessionConstants.UserEmail, email);
+
+        public static string? GetUserEmail(ISession session)
+            => session.GetString(SessionConstants.UserEmail);
         public static List<PermissionModel> GetPermissions(ISession session)
         {
             var json = session.GetString(SessionConstants.Permissions);
             if (string.IsNullOrEmpty(json)) return new List<PermissionModel>();
             return JsonConvert.DeserializeObject<List<PermissionModel>>(json) ?? new List<PermissionModel>();
         }
+        public static void SetOtpVerifiedForPasswordChange(ISession session, bool value)
+             => session.SetString(SessionConstants.OtpVerifiedForPasswordChange, value.ToString());
 
-        public static bool HasPermission(ISession session, string moduleCode, string permissionType)
+        public static bool GetOtpVerifiedForPasswordChange(ISession session)
         {
+            var value = session.GetString(SessionConstants.OtpVerifiedForPasswordChange);
+            return !string.IsNullOrEmpty(value) && bool.Parse(value);
+        }
+
+        public static void ClearOtpVerifiedForPasswordChange(ISession session)
+            => session.Remove(SessionConstants.OtpVerifiedForPasswordChange);
+
+        #region Force Password Change
+
+        public static void SetForcePasswordChange(ISession session, bool value)
+        {
+            session.SetString(
+                SessionConstants.ForcePasswordChange,
+                value.ToString());
+        }
+
+        public static bool GetForcePasswordChange(ISession session)
+        {
+            var value = session.GetString(SessionConstants.ForcePasswordChange);
+
+            return !string.IsNullOrEmpty(value)
+                && bool.Parse(value);
+        }
+
+        public static void ClearForcePasswordChange(ISession session)
+        {
+            session.Remove(SessionConstants.ForcePasswordChange);
+        }
+
+        #endregion
+        public static bool HasPermission(ISession session, string flatPermissionKey)
+        {
+            if (!PermissionMap.Map.TryGetValue(flatPermissionKey, out var mapping))
+                return false;
+
             var permissions = GetPermissions(session);
             var module = permissions.FirstOrDefault(p =>
-                p.ModuleCode.Equals(moduleCode, StringComparison.OrdinalIgnoreCase));
+                p.ModuleCode.Equals(mapping.ModuleCode, StringComparison.OrdinalIgnoreCase));
 
             if (module == null) return false;
 
-            return permissionType switch
-            {
-                PermissionConstants.CanView => module.CanView,
-                PermissionConstants.CanAdd => module.CanAdd,
-                PermissionConstants.CanEdit => module.CanEdit,
-                PermissionConstants.CanDelete => module.CanDelete,
-                _ => false
-            };
+            return mapping.Selector(module);
         }
 
         public static void ClearSession(ISession session)
@@ -111,16 +146,26 @@ namespace ShopEase.WebApp.Helpers
             session.Remove(SessionConstants.PendingTenantId);
         }
 
+        public static PermissionViewModel BuildPermissionViewModel(ISession session)
+        {
+            var vm = new PermissionViewModel();
+
+            foreach (var key in PermissionMap.Map.Keys)
+            {
+                vm.Permissions[key] = HasPermission(session, key);
+            }
+
+            return vm;
+        }
+
         #endregion
     }
+   
     public static class SessionPermissionExtension
     {
-        public static bool HasPermission(
-            this ISession session,
-            string moduleCode,
-            string permissionType)
-        {
-            return SessionHelper.HasPermission(session, moduleCode, permissionType);
-        }
+        public static bool HasPermission(this ISession session, string flatPermissionKey)
+            => SessionHelper.HasPermission(session, flatPermissionKey);
     }
+
 }
+

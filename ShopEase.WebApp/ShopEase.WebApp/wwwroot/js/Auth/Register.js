@@ -1,6 +1,5 @@
 ﻿$(document).ready(function () {
     $("#registerForm").on("submit", function (e) {
-        debugger
         e.preventDefault();
         var password = $("#regPassword").val().trim();
         var confirmPassword = $("#regConfirmPassword").val().trim();
@@ -29,10 +28,8 @@
 });
 
 $(function () {
-    debugger
     var registerForm = $('#registerForm');
     var registerBtn = $('#registerBtn');
-
     registerBtn.on('click', function (e) {
         e.preventDefault();
         if (!registerForm.valid()) {

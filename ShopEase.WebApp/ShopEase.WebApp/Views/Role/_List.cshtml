@@ -1,29 +1,56 @@
-﻿@using ShopEase.WebApp.Helpers
+﻿@using ShopEase.WebApp.Constants
+@using ShopEase.WebApp.Models.Permission
 @model ShopEase.WebApp.Models.Role.RoleViewModelList
-
-@if (Model.Roles == null || !Model.Roles.Any())
-{
-    <div style="padding:40px;text-align:center;color:#aaa">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-             stroke="#ddd" stroke-width="1.5" style="margin-bottom:10px">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        </svg>
-        <p>No roles found.</p>
-    </div>
+@{
+    var permissions = (PermissionViewModel)ViewBag.Permissions;
 }
-else
-{
-    <div class="table-wrap">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Role Name</th>
-                    <th>Role Code</th>
-                    <th>Status</th>
-                    <th style="width:120px;text-align:right">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
+
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('RoleName')">
+                        Role Name
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('RoleCode')">
+                        Role Code
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('Status')">
+                        Status
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
+                <th style="width:120px;text-align:right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Roles != null && Model.Roles.Count > 0)
+            {
                 @foreach (var role in Model.Roles)
                 {
                     <tr>
@@ -42,12 +69,11 @@ else
                             }
                         </td>
                         <td style="text-align:right">
-                            <div class="d-flex gap-8" style="justify-content:flex-end">
-                                @if (ViewContext.HttpContext.Session
-                                    .HasPermission("ROLES", "CanEdit"))
+                            <div class="d-flex gap-8 justify-content-end">
+
+                                @if (permissions.Has(PermissionConstants.Role_Edit))
                                 {
-                                    <button class="btn btn-outline btn-icon btn-sm"
-                                            title="Edit"
+                                    <button class="btn btn-outline btn-icon btn-sm" title="Edit"
                                             onclick="loadPopup('/Role/RoleEdit?roleId=@role.RoleId','Edit Role','md')">
                                         <svg width="13" height="13" viewBox="0 0 24 24"
                                              fill="none" stroke="currentColor" stroke-width="2">
@@ -56,13 +82,21 @@ else
                                         </svg>
                                     </button>
                                 }
-                                @if (ViewContext.HttpContext.Session
-                                    .HasPermission("ROLES", "CanDelete"))
+
+                                @if (permissions.Has(PermissionConstants.Permissions_Edit))
                                 {
-                                    <button class="btn btn-danger btn-icon btn-sm"
-                                            title="Delete"
-                                            data-action="delete-role"
-                                            data-roleId="@role.RoleId">
+                                    <button class="btn btn-outline btn-icon btn-sm" title="Assign Permissions"
+                                            onclick="loadPopup('/Role/LoadAssignGrid?roleId=@role.RoleId','Assign Permissions','lg')">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                        </svg>
+                                    </button>
+                                }
+
+                                @if (permissions.Has(PermissionConstants.Role_Delete))
+                                {
+                                    <button class="btn btn-danger btn-icon btn-sm" title="Delete"
+                                            onclick="loadPopup('/Role/DeleteConfirm?roleId=@role.RoleId','Delete Role','md')">
                                         <svg width="13" height="13" viewBox="0 0 24 24"
                                              fill="none" stroke="currentColor" stroke-width="2">
                                             <polyline points="3 6 5 6 21 6" />
@@ -72,11 +106,30 @@ else
                                         </svg>
                                     </button>
                                 }
+
                             </div>
                         </td>
                     </tr>
                 }
-            </tbody>
-        </table>
-    </div>
-}
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <img src="~/images/permission.png" />
+                            <h5>No Roles Found</h5>
+
+                            <p>
+                                There are no roles available.
+                                Click <strong>Add Role</strong> to create one.
+                            </p>
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_Pagination" model="Model.Pager" />
+</div>

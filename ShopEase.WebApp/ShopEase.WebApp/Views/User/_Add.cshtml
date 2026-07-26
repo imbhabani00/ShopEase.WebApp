@@ -1,0 +1,86 @@
+﻿@model ShopEase.WebApp.Models.User.UserViewModel
+
+<form id="addUserForm">
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="form-group">
+        <label asp-for="FirstName" class="form-label">
+            First Name <span class="text-danger">*</span>
+        </label>
+        <input asp-for="FirstName"
+               class="form-control"
+               placeholder="Enter first name" />
+        <span asp-validation-for="FirstName" class="field-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MiddleName" class="form-label">
+            Middle Name
+        </label>
+        <input asp-for="MiddleName"
+               class="form-control"
+               placeholder="Enter middle name" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LastName" class="form-label">
+            Last Name <span class="text-danger">*</span>
+        </label>
+        <input asp-for="LastName"
+               class="form-control"
+               placeholder="Enter last name" />
+        <span asp-validation-for="LastName" class="field-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email" class="form-label">
+            Email <span class="text-danger">*</span>
+        </label>
+        <input asp-for="Email"
+               type="email"
+               class="form-control"
+               placeholder="Enter email address" />
+        <span asp-validation-for="Email" class="field-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PhoneNumber" class="form-label">
+            Phone Number <span class="text-danger">*</span>
+        </label>
+        <input asp-for="PhoneNumber"
+               type="tel"
+               class="form-control"
+               placeholder="Enter phone number" />
+        <span asp-validation-for="PhoneNumber" class="field-error"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RoleId" class="form-label">
+            Role <span class="text-danger">*</span>
+        </label>
+        <select asp-for="RoleId"class="form-control">
+        </select>
+        <span asp-validation-for="RoleId" class="field-error"></span>
+    </div>
+
+    <div class="modal-footer" style="padding:14px 0 0; margin-top:8px;">
+        <button type="button"
+                class="btn btn-secondary btn-sm"
+                onclick="closePopup()">
+            Cancel
+        </button>
+
+        <button type="button"
+                class="btn btn-primary btn-sm"
+                id="addUserBtn">
+            <span class="btn-text">Save</span>
+            <span class="btn-spinner hidden"></span>
+        </button>
+    </div>
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/user/add.js"></script>

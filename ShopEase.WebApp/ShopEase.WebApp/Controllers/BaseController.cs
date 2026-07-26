@@ -18,17 +18,8 @@ namespace Ecommerce.Web.Controllers
         #endregion
 
         #region Permission Helpers
-        protected bool CanView(string moduleCode)
-            => SessionHelper.HasPermission(HttpContext.Session, moduleCode, PermissionConstants.CanView);
-
-        protected bool CanAdd(string moduleCode)
-            => SessionHelper.HasPermission(HttpContext.Session, moduleCode, PermissionConstants.CanAdd);
-
-        protected bool CanEdit(string moduleCode)
-            => SessionHelper.HasPermission(HttpContext.Session, moduleCode, PermissionConstants.CanEdit);
-
-        protected bool CanDelete(string moduleCode)
-            => SessionHelper.HasPermission(HttpContext.Session, moduleCode, PermissionConstants.CanDelete);
+        protected bool HasPermission(string flatPermissionKey)
+            => SessionHelper.HasPermission(HttpContext.Session, flatPermissionKey);
         #endregion
 
         #region TempData Helpers
@@ -42,7 +33,11 @@ namespace Ecommerce.Web.Controllers
         #region OnActionExecuting
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            // SetBaseViewModel will go here later
+            if (!string.IsNullOrEmpty(AccessToken))
+            {
+                ViewBag.Permissions = SessionHelper.BuildPermissionViewModel(HttpContext.Session);
+            }
+
             base.OnActionExecuting(context);
         }
         #endregion

@@ -18,8 +18,7 @@ namespace ShopEase.WebApp.Models.Role
     public class RoleViewModelList
     {
         public List<RoleViewModel> Roles { get; set; }
+        public Pager Pager { get; set; }
         public int TotalCount { get; set; }
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
     }
 }

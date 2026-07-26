@@ -27,14 +27,14 @@ namespace Ecommerce.Web.Middleware
         public async Task InvokeAsync(HttpContext context, IHttpClientFactory httpClientFactory, AppSettings appSettings)
         {
             var path = context.Request.Path.Value?.ToLower();
-
+            _logger.LogWarning("AuthMiddleware HIT: {Path}", path);
             // Skip auth for login/logout
             if (path == null ||
                 path.Contains(RouteConstants.Login.ToLower()) ||
                 path.Contains(RouteConstants.Logout.ToLower()) ||
                 path.Contains(RouteConstants.Register.ToLower()) ||
                 path.Contains(RouteConstants.VerifyOtp.ToLower()) ||
-                path.Contains(RouteConstants.ResendOtp.ToLower()) 
+                path.Contains(RouteConstants.ResendOtp.ToLower())
                 )
             {
                 await _next(context);
@@ -48,6 +48,29 @@ namespace Ecommerce.Web.Middleware
             {
                 context.Response.Redirect(RouteConstants.Login);
                 return;
+            }
+
+            // Enforce forced password change — block everything except ChangePassword-related endpoints
+            var forcePasswordChange = context.Session.GetString(SessionConstants.ForcePasswordChange) == "true";
+            _logger.LogWarning("AuthMiddleware: path={Path}, sessionId={SessionId}, forcePasswordChange={Value}",
+                        path, context.Session.Id, forcePasswordChange);
+            if (forcePasswordChange)
+            {
+                var allowedWhileForced = new[]
+                {
+                    RouteConstants.ChangePassword.ToLower(),
+                    RouteConstants.RequestPasswordChangeOtp.ToLower(),
+                    RouteConstants.VerifyPasswordChangeOtp.ToLower(),
+                    RouteConstants.Logout.ToLower(),
+                    RouteConstants.AccessDenied.ToLower()
+                };
+
+                if (!allowedWhileForced.Any(p => path.Contains(p)))
+                {
+                    _logger.LogWarning("AuthMiddleware: forcePasswordChange=true, blocking path {Path}, redirecting to AccessDenied", path);
+                    context.Response.Redirect(RouteConstants.AccessDenied);
+                    return;
+                }
             }
 
             // Check if access token is about to expire (within 5 minutes)

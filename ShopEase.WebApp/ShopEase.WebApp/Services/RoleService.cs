@@ -15,6 +15,8 @@ namespace ShopEase.WebApp.Services
         Task<RoleViewModel?> GetByIdAsync(int roleId);
         Task<ApiResponse> SaveAsync(RoleViewModel model);
         Task<ApiResponse> DeleteAsync(int roleId);
+        Task<List<PermissionModel>> GetByRoleIdAsync(int roleId);
+        Task<ApiResponse> SavePermissionsAsync(List<SavePermissionsRequest> requests);
     }
     #endregion
 
@@ -62,16 +64,26 @@ namespace ShopEase.WebApp.Services
                 query.Append($"SortDirection={sortParams.SortDirection}&");
                 query.Append($"StatusId={sortParams.StatusId}");
 
-                var apiResponse = await DoHttpGet<ApiResponse>(query.ToString());
-
+                var response = await DoHttpGet(query.ToString());
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
                 if (apiResponse?.Status == true && apiResponse.Response != null)
-                    viewModel = JsonConvert.DeserializeObject<RoleViewModelList>(
-                        apiResponse.Response.ToString()!) ?? viewModel;
+                {
+                    viewModel = JsonConvert.DeserializeObject<RoleViewModelList>(apiResponse.Response.ToString()!) ?? viewModel;
+                    viewModel.Pager = new Pager
+                    {
+                        CurrentPage = sortParams.PageNumber.Value,
+                        PageSize = sortParams.PageSize.Value,
+                        TotalItems = viewModel.TotalCount
+                    };
+                }
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("RoleService.GetListAsync error: {Message}", ex.Message);
+                Log.Logger.Error("GetListAsync error: {Message}", ex.Message);
             }
+
             return viewModel;
         }
         #endregion
@@ -82,17 +94,21 @@ namespace ShopEase.WebApp.Services
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/role-by-id/{roleId}";
+                var response = await DoHttpGet(endpoint, useAuth: true);
 
-                var apiResponse = await DoHttpGet<ApiResponse>(endpoint);
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
 
                 if (apiResponse?.Status == true && apiResponse.Response != null)
-                    return JsonConvert.DeserializeObject<RoleViewModel>(
-                        apiResponse.Response.ToString()!);
+                    return JsonConvert.DeserializeObject<RoleViewModel>(apiResponse.Response.ToString()!);
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("RoleService.GetByIdAsync error: {Message}", ex.Message);
+                Log.Logger.Error("GetByIdAsync error: {Message}", ex.Message);
             }
+
             return null;
         }
         #endregion
@@ -103,13 +119,17 @@ namespace ShopEase.WebApp.Services
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/save";
+                var response = await DoHttpPost(endpoint, model, useAuth: true);
 
-                var result = await DoHttpPost<ApiResponse>(endpoint, model, useAuth: true);
-                return result ?? new ApiResponse { Status = false, Message = "No response" };
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<ApiResponse>(content)
+                    ?? new ApiResponse { Status = false };
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("RoleService.SaveAsync error: {Message}", ex.Message);
+                Log.Logger.Error("SaveAsync error: {Message}", ex.Message);
                 return new ApiResponse { Status = false, Message = "Error occurred" };
             }
         }
@@ -120,16 +140,81 @@ namespace ShopEase.WebApp.Services
         {
             try
             {
-                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/{roleId}";
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/delete/{roleId}";
+                var response = await DoHttpDelete(endpoint);
 
-                var result = await DoHttpDelete<ApiResponse>(endpoint);
-                return result ?? new ApiResponse { Status = false, Message = "No response" };
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+
+                return apiResponse ?? new ApiResponse { Status = false, Message = "Invalid response" };
             }
             catch (Exception ex)
             {
                 Log.Logger.Error("RoleService.DeleteAsync error: {Message}", ex.Message);
                 return new ApiResponse { Status = false, Message = "Error occurred" };
             }
+        }
+        #endregion
+
+        #region GetByRoleIdAsync
+        public async Task<List<PermissionModel>> GetByRoleIdAsync(int roleId)
+        {
+            var list = new List<PermissionModel>();
+
+            try
+            {
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/by-role/{roleId}";
+                var response = await DoHttpGet(endpoint);
+
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+
+                if (apiResponse?.Status == true && apiResponse.Response != null)
+                {
+                    var permissionList = JsonConvert.DeserializeObject<PermissionAssignViewModel>(
+                        apiResponse.Response.ToString()!);
+
+                    if (permissionList != null)
+                    {
+                        list = permissionList.Permissions ?? new List<PermissionModel>();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "GetByRoleIdAsync error");
+            }
+
+            return list;
+        
+        }
+        #endregion
+
+        #region SavePermissionsAsync
+        public async Task<ApiResponse> SavePermissionsAsync(List<SavePermissionsRequest> requests)
+        {
+            var apiResponse = new ApiResponse();
+            try
+            {
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/permission-save";
+                var response = await DoHttpPost(endpoint, requests);
+
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content) ?? apiResponse;
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error("SavePermissionsAsync error: {Message}", ex.Message);
+                apiResponse.Status = false;
+                apiResponse.Message = "Error occurred";
+            }
+            return apiResponse;
         }
         #endregion
     }

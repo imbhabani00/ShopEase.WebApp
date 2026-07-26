@@ -1,0 +1,43 @@
+﻿@model ShopEase.WebApp.Models.Role.RoleViewModel
+
+<form id="deleteRoleForm">
+    <input type="hidden" asp-for="RoleId" />
+
+    <div class="text-center py-3">
+        <div class="mb-3">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none"
+                 stroke="#dc3545" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="13"></line>
+                <circle cx="12" cy="16.5" r="0.8" fill="#dc3545"></circle>
+            </svg>
+        </div>
+
+        <h5 class="mb-2">Delete Role</h5>
+
+        <p class="text-muted mb-0">
+            Are you sure you want to delete this role?
+        </p>
+        <small class="text-danger">
+            This action cannot be undone.
+        </small>
+    </div>
+
+    <div class="modal-footer" style="padding:14px 0 0;margin-top:8px">
+        <button type="button"
+                class="btn btn-secondary btn-sm"
+                onclick="closePopup()">
+            Cancel
+        </button>
+
+        <button type="button"
+                class="btn btn-danger btn-sm"
+                id="deleteRoleBtn">
+            <span class="btn-text">Delete</span>
+            <span class="btn-spinner hidden"></span>
+        </button>
+    </div>
+</form>
+
+<script src="~/js/common.js"></script>
+<script src="~/js/role/delete.js"></script>

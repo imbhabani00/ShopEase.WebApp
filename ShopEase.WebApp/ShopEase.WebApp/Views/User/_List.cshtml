@@ -1,0 +1,143 @@
+﻿@using ShopEase.WebApp.Constants
+@using ShopEase.WebApp.Models.Permission
+@model ShopEase.WebApp.Models.User.UserViewModelList
+@{
+    var permissions = (PermissionViewModel)ViewBag.Permissions;
+}
+
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('FirstName')">
+                        First Name
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
+                <th>
+                    Middle Name
+                </th>
+                <th>
+                    Last Name
+                </th>
+
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('Email')">
+                        Email
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
+
+                <th>
+                    Phone Number
+                </th>
+
+                @* <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('RoleName')">
+                        RoleName
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th>
+
+                <th>
+                    <a href="javascript:void(0)" class="sort-btn" onclick="SortData('CreatedBy')">
+                        CreatedBy
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 6v12" />
+                            <path d="M5 9l3-3 3 3" />
+                            <path d="M16 18V6" />
+                            <path d="M13 15l3 3 3-3" />
+                        </svg>
+                    </a>
+                </th> *@
+                <th style="width:120px;text-align:right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.UsersData != null && Model.UsersData.Count > 0)
+            {
+                @foreach (var user in Model.UsersData)
+                {
+                    <tr>
+                        <td class="fw-600">@user.FirstName</td>
+                        <td class="fw-600">@(user.MiddleName ?? "N/A")</td>
+                        <td class="fw-600">@user.LastName</td>
+                        <td class="fw-600">@user.Email</td>
+                        <td class="fw-600">@(user.PhoneNumber ?? "N/A")</td>
+                        @* <td class="fw-600">@user.RoleName</td>
+                        <td class="fw-600">@(user.CreatedBy ?? "N/A")</td> *@
+
+                        <td style="text-align:right">
+                            <div class="d-flex gap-8 justify-content-end">
+
+                                @if (permissions.Has(PermissionConstants.User_Edit))
+                                {
+                                    <button class="btn btn-outline btn-icon btn-sm" title="Edit"
+                                            onclick="loadPopup('/User/UserEdit?roleId=@user.UserId','Edit User','md')">
+                                        <svg width="13" height="13" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                    </button>
+                                }
+
+                                @if (permissions.Has(PermissionConstants.User_Delete))
+                                {
+                                    <button class="btn btn-danger btn-icon btn-sm" title="Delete"
+                                            onclick="loadPopup('/User/DeleteConfirm?roleId=@user.UserId','Delete User','md')">
+                                        <svg width="13" height="13" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                                            <path d="M10 11v6M14 11v6" />
+                                            <path d="M9 6V4h6v2" />
+                                        </svg>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <img src="~/images/user.png" />
+                            <h5>No Users Found</h5>
+
+                            <p>
+                                There are no users available.
+                                Click <strong>Add User</strong> to create one.
+                            </p>
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_Pagination" model="Model.pager" />
+</div>

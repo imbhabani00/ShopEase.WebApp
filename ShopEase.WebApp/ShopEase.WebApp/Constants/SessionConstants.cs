@@ -14,5 +14,8 @@
         public const string PendingUserId = "PendingUserId";
         public const string PendingEmail = "PendingEmail";
         public const string PendingTenantId = "PendingTenantId";
+        public const string ForcePasswordChange = "ForcePasswordChange";
+        public const string UserEmail = "UserEmail";
+        public const string OtpVerifiedForPasswordChange = "OtpVerifiedForPasswordChange";
     }
 }
