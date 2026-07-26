@@ -83,7 +83,7 @@
                                     </button>
                                 }
 
-                                @if (permissions.Has(PermissionConstants.Role_Permission_Edit))
+                                @if (permissions.Has(PermissionConstants.Permissions_Edit))
                                 {
                                     <button class="btn btn-outline btn-icon btn-sm" title="Assign Permissions"
                                             onclick="loadPopup('/Role/LoadAssignGrid?roleId=@role.RoleId','Assign Permissions','lg')">

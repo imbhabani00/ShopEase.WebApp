@@ -221,7 +221,7 @@ namespace Ecommerce.Web.Controllers
                 SessionHelper.SetForcePasswordChange(HttpContext.Session, token.ForcePasswordChange);
 
                 try
-                {
+                    {
                     var permissions = await _roleService.GetByRoleIdAsync(token.RoleId);
                     if (permissions != null && permissions.Count > 0)
                     {

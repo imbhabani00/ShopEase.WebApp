@@ -29,6 +29,9 @@ namespace ShopEase.WebApp.Constants
 
             // Dashboard
             { PermissionConstants.Dashboard_View, ("DASHBOARD", m => m.CanView) },
+
+            //Permissions
+            { PermissionConstants.Permissions_Edit, ("PERMISSION", m => m.CanEdit) },
         };
     }
 }

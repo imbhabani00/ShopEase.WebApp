@@ -27,6 +27,7 @@ namespace ShopEase.WebApp.Controllers
 
         #region Index
         [HttpGet]
+        [PermissionFilter(PermissionConstants.Role_View_List)]
         public IActionResult Index()
         {
             return View();
@@ -128,6 +129,7 @@ namespace ShopEase.WebApp.Controllers
 
         #region LoadAssignGrid
         [HttpGet]
+        [PermissionFilter(PermissionConstants.Permissions_Edit)]
         public async Task<IActionResult> LoadAssignGrid(int roleId)
         {
             var model = new PermissionAssignViewModel { RoleId = roleId };
@@ -150,19 +152,19 @@ namespace ShopEase.WebApp.Controllers
         #region SavePermissions
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SavePermissions([FromBody] SavePermissionsRequest request)
+        public async Task<IActionResult> SavePermissions([FromBody] List<SavePermissionsRequest> requests)
         {
             var apiResponse = new ApiResponse();
             try
             {
-                if (request.RoleId <= 0)
+                if (requests == null || requests.Count == 0)
                 {
                     apiResponse.Status = false;
-                    apiResponse.Message = "Invalid role.";
+                    apiResponse.Message = "Invalid permissions.";
                     return new ObjectResult(apiResponse);
                 }
 
-                apiResponse = await _roleService.SavePermissionsAsync(request);
+                apiResponse = await _roleService.SavePermissionsAsync(requests);
             }
             catch (Exception ex)
             {

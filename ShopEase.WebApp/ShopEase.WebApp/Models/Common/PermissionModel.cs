@@ -11,6 +11,8 @@
         public bool CanEdit { get; set; }
         public bool CanDelete { get; set; }
         public bool CanInactive { get; set; }
+        public int PermissionId { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 
     public class PermissionAssignViewModel
@@ -18,6 +20,8 @@
         public int RoleId { get; set; }
         public string RoleName { get; set; } = string.Empty;
         public List<PermissionModel> Permissions { get; set; } = new();
+        public int TotalCount { get; set; }
+
     }
     public class SavePermissionsRequest
     {
