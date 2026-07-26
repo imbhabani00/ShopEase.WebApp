@@ -1,0 +1,58 @@
+﻿@model ShopEase.WebApp.Models.Common.PermissionAssignViewModel
+
+<form id="assignPermissionForm" novalidate>
+    <input type="hidden" id="RoleId" value="@Model.RoleId" />
+
+    <div class="form-group">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-control" value="@Model.RoleName" disabled />
+    </div>
+
+    <div class="permission-grid">
+        @if (Model.Permissions != null && Model.Permissions.Count > 0)
+        {
+            @foreach (var module in Model.Permissions)
+            {
+                <div class="permission-module-block" data-module-id="@module.ModuleId">
+                    <div class="permission-module-header">
+                        <label class="checkbox-label fw-600">
+                            <input type="checkbox" class="select-all-checkbox" />
+                            @module.ModuleName
+                        </label>
+                    </div>
+                    <div class="permission-module-actions">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="action-checkbox" data-action="CanView" checked="@module.CanView" /> View
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="action-checkbox" data-action="CanAdd" checked="@module.CanAdd" /> Add
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="action-checkbox" data-action="CanEdit" checked="@module.CanEdit" /> Edit
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="action-checkbox" data-action="CanDelete" checked="@module.CanDelete" /> Delete
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="action-checkbox" data-action="CanInactive" checked="@module.CanInactive" /> Inactive
+                        </label>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No modules found.</p>
+        }
+    </div>
+
+    <div class="modal-footer" style="padding:14px 0 0;margin-top:8px">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closePopup()">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" id="savePermissionBtn">
+            <span class="btn-text">Save Permissions</span>
+            <span class="btn-spinner hidden"></span>
+        </button>
+    </div>
+</form>
+
+<script src="~/js/role/assignPermission.js"></script>

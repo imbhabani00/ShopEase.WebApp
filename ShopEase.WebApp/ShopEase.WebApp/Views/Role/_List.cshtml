@@ -1,5 +1,9 @@
-﻿@using ShopEase.WebApp.Helpers
+﻿@using ShopEase.WebApp.Constants
+@using ShopEase.WebApp.Models.Permission
 @model ShopEase.WebApp.Models.Role.RoleViewModelList
+@{
+    var permissions = (PermissionViewModel)ViewBag.Permissions;
+}
 
 <div class="table-wrap">
     <table class="data-table">
@@ -67,7 +71,7 @@
                         <td style="text-align:right">
                             <div class="d-flex gap-8 justify-content-end">
 
-                                @if (ViewContext.HttpContext.Session.HasPermission("ROLES", "CanEdit"))
+                                @if (permissions.Has(PermissionConstants.Role_Edit))
                                 {
                                     <button class="btn btn-outline btn-icon btn-sm" title="Edit"
                                             onclick="loadPopup('/Role/RoleEdit?roleId=@role.RoleId','Edit Role','md')">
@@ -79,7 +83,17 @@
                                     </button>
                                 }
 
-                                @if (ViewContext.HttpContext.Session.HasPermission("ROLES", "CanDelete"))
+                                @if (permissions.Has(PermissionConstants.Role_Permission_Edit))
+                                {
+                                    <button class="btn btn-outline btn-icon btn-sm" title="Assign Permissions"
+                                            onclick="loadPopup('/Role/LoadAssignGrid?roleId=@role.RoleId','Assign Permissions','lg')">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                        </svg>
+                                    </button>
+                                }
+
+                                @if (permissions.Has(PermissionConstants.Role_Delete))
                                 {
                                     <button class="btn btn-danger btn-icon btn-sm" title="Delete"
                                             onclick="loadPopup('/Role/DeleteConfirm?roleId=@role.RoleId','Delete Role','md')">
@@ -92,6 +106,7 @@
                                         </svg>
                                     </button>
                                 }
+
                             </div>
                         </td>
                     </tr>

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Common;
-
+using ShopEase.WebApp.Models.Permission;
 namespace ShopEase.WebApp.Helpers
 {
     public class SessionHelper
@@ -102,22 +102,18 @@ namespace ShopEase.WebApp.Helpers
         }
 
         #endregion
-        public static bool HasPermission(ISession session, string moduleCode, string permissionType)
+        public static bool HasPermission(ISession session, string flatPermissionKey)
         {
+            if (!PermissionMap.Map.TryGetValue(flatPermissionKey, out var mapping))
+                return false;
+
             var permissions = GetPermissions(session);
             var module = permissions.FirstOrDefault(p =>
-                p.ModuleCode.Equals(moduleCode, StringComparison.OrdinalIgnoreCase));
+                p.ModuleCode.Equals(mapping.ModuleCode, StringComparison.OrdinalIgnoreCase));
 
             if (module == null) return false;
 
-            return permissionType switch
-            {
-                PermissionConstants.CanView => module.CanView,
-                PermissionConstants.CanAdd => module.CanAdd,
-                PermissionConstants.CanEdit => module.CanEdit,
-                PermissionConstants.CanDelete => module.CanDelete,
-                _ => false
-            };
+            return mapping.Selector(module);
         }
 
         public static void ClearSession(ISession session)
@@ -150,16 +146,26 @@ namespace ShopEase.WebApp.Helpers
             session.Remove(SessionConstants.PendingTenantId);
         }
 
+        public static PermissionViewModel BuildPermissionViewModel(ISession session)
+        {
+            var vm = new PermissionViewModel();
+
+            foreach (var key in PermissionMap.Map.Keys)
+            {
+                vm.Permissions[key] = HasPermission(session, key);
+            }
+
+            return vm;
+        }
+
         #endregion
     }
+   
     public static class SessionPermissionExtension
     {
-        public static bool HasPermission(
-            this ISession session,
-            string moduleCode,
-            string permissionType)
-        {
-            return SessionHelper.HasPermission(session, moduleCode, permissionType);
-        }
+        public static bool HasPermission(this ISession session, string flatPermissionKey)
+            => SessionHelper.HasPermission(session, flatPermissionKey);
     }
+
 }
+

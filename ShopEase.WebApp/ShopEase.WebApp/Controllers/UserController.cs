@@ -25,7 +25,7 @@ namespace ShopEase.WebApp.Controllers
 
         #region Index
         [HttpGet]
-        [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanView)]
+        [PermissionFilter(PermissionConstants.User_View_List)]
         public IActionResult Index()
         {
             return View();
@@ -51,7 +51,7 @@ namespace ShopEase.WebApp.Controllers
 
         #region UserAdd
         [HttpGet]
-        [PermissionFilter(PermissionConstants.Modules.Users, PermissionConstants.CanAdd)]
+        [PermissionFilter(PermissionConstants.User_Add)]
         public IActionResult UserAdd()
         {
             var userAdd = new UserViewModel();
@@ -61,7 +61,7 @@ namespace ShopEase.WebApp.Controllers
 
         #region UserEdit
         [HttpGet]
-        [PermissionFilter(PermissionConstants.Modules.Users, PermissionConstants.CanEdit)]
+        [PermissionFilter(PermissionConstants.User_Edit)]
         public async Task<IActionResult> UserEdit(int userId)
         {
             var model = new UserViewModel();
@@ -107,7 +107,7 @@ namespace ShopEase.WebApp.Controllers
         }
 
         [HttpDelete]
-        [PermissionFilter(PermissionConstants.Modules.Users, PermissionConstants.CanDelete)]
+        [PermissionFilter(PermissionConstants.User_Delete)]
         public async Task<IActionResult> Delete(int userId)
         {
             var apiResponse = new ApiResponse();

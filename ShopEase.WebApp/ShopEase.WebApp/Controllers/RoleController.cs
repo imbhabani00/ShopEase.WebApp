@@ -27,7 +27,6 @@ namespace ShopEase.WebApp.Controllers
 
         #region Index
         [HttpGet]
-        [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanView)]
         public IActionResult Index()
         {
             return View();
@@ -53,7 +52,7 @@ namespace ShopEase.WebApp.Controllers
 
         #region RoleAdd
         [HttpGet]
-        [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanAdd)]
+        [PermissionFilter(PermissionConstants.Role_Add)]
         public IActionResult RoleAdd()
         {
             var roleAdd = new RoleViewModel();
@@ -63,7 +62,7 @@ namespace ShopEase.WebApp.Controllers
 
         #region RoleEdit
         [HttpGet]
-        [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanEdit)]
+        [PermissionFilter(PermissionConstants.Role_Edit)]
         public async Task<IActionResult> RoleEdit(int roleId)
         {
             var model = new RoleViewModel();
@@ -109,7 +108,7 @@ namespace ShopEase.WebApp.Controllers
         }
 
         [HttpDelete]
-        [PermissionFilter(PermissionConstants.Modules.Roles, PermissionConstants.CanDelete)]
+        [PermissionFilter(PermissionConstants.Role_Delete)]
         public async Task<IActionResult> Delete(int roleId)
         {
             var apiResponse = new ApiResponse();
@@ -120,6 +119,54 @@ namespace ShopEase.WebApp.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "RoleController.Delete error - RoleId: {RoleId}", roleId);
+                apiResponse.Status = false;
+                apiResponse.Message = "An error occurred.";
+            }
+            return new ObjectResult(apiResponse);
+        }
+        #endregion
+
+        #region LoadAssignGrid
+        [HttpGet]
+        public async Task<IActionResult> LoadAssignGrid(int roleId)
+        {
+            var model = new PermissionAssignViewModel { RoleId = roleId };
+            try
+            {
+                var role = await _roleService.GetByIdAsync(roleId);
+                if (role != null) model.RoleName = role.RoleName;
+
+                var permissionResult = await _roleService.GetByRoleIdAsync(roleId);
+                model.Permissions = permissionResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoleController.LoadAssignGrid error - RoleId: {RoleId}", roleId);
+            }
+            return PartialView("_AssignGrid", model);
+        }
+        #endregion
+
+        #region SavePermissions
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SavePermissions([FromBody] SavePermissionsRequest request)
+        {
+            var apiResponse = new ApiResponse();
+            try
+            {
+                if (request.RoleId <= 0)
+                {
+                    apiResponse.Status = false;
+                    apiResponse.Message = "Invalid role.";
+                    return new ObjectResult(apiResponse);
+                }
+
+                apiResponse = await _roleService.SavePermissionsAsync(request);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoleController.SavePermissions error");
                 apiResponse.Status = false;
                 apiResponse.Message = "An error occurred.";
             }

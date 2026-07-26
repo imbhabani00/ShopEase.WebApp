@@ -15,6 +15,8 @@ namespace ShopEase.WebApp.Services
         Task<RoleViewModel?> GetByIdAsync(int roleId);
         Task<ApiResponse> SaveAsync(RoleViewModel model);
         Task<ApiResponse> DeleteAsync(int roleId);
+        Task<List<PermissionModel>> GetByRoleIdAsync(int roleId);
+        Task<ApiResponse> SavePermissionsAsync(SavePermissionsRequest request);
     }
     #endregion
 
@@ -152,6 +154,56 @@ namespace ShopEase.WebApp.Services
                 Log.Logger.Error("RoleService.DeleteAsync error: {Message}", ex.Message);
                 return new ApiResponse { Status = false, Message = "Error occurred" };
             }
+        }
+        #endregion
+
+        #region GetByRoleIdAsync
+        public async Task<List<PermissionModel>> GetByRoleIdAsync(int roleId)
+        {
+            var list = new List<PermissionModel>();
+            try
+            {
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/by-role/{roleId}";
+                var response = await DoHttpGet(endpoint);
+
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+
+                if (apiResponse?.Status == true && apiResponse.Response != null)
+                    list = JsonConvert.DeserializeObject<List<PermissionModel>>(
+                        apiResponse.Response.ToString()!) ?? list;
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error("GetByRoleIdAsync error: {Message}", ex.Message);
+            }
+            return list;
+        }
+        #endregion
+
+        #region SavePermissionsAsync
+        public async Task<ApiResponse> SavePermissionsAsync(SavePermissionsRequest request)
+        {
+            var apiResponse = new ApiResponse();
+            try
+            {
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/permission-save";
+                var response = await DoHttpPost(endpoint, request);
+
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content) ?? apiResponse;
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error("SavePermissionsAsync error: {Message}", ex.Message);
+                apiResponse.Status = false;
+                apiResponse.Message = "Error occurred";
+            }
+            return apiResponse;
         }
         #endregion
     }

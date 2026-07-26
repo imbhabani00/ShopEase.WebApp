@@ -23,7 +23,7 @@ namespace Ecommerce.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly AppSettings _appSettings;
-        private readonly IPermissionService _permissionService;
+        private readonly IRoleService _roleService;
         #endregion
 
         #region Constructor
@@ -36,7 +36,7 @@ namespace Ecommerce.Web.Controllers
             IHttpContextAccessor httpContextAccessor,
             IHttpClientFactory httpClientFactory,
             AppSettings appSettings,
-            IPermissionService permissionService)
+            IRoleService roleService)
         {
             _accountService = accountService;
             _logger = logger;
@@ -46,7 +46,7 @@ namespace Ecommerce.Web.Controllers
             _httpContextAccessor = httpContextAccessor;
             _appSettings = appSettings;
             _httpClientFactory = httpClientFactory;
-            _permissionService = permissionService;
+            _roleService = roleService;
         }
         #endregion
 
@@ -222,7 +222,7 @@ namespace Ecommerce.Web.Controllers
 
                 try
                 {
-                    var permissions = await _permissionService.GetByRoleIdAsync(token.RoleId);
+                    var permissions = await _roleService.GetByRoleIdAsync(token.RoleId);
                     if (permissions != null && permissions.Count > 0)
                     {
                         SessionHelper.SetPermissions(HttpContext.Session, permissions);
