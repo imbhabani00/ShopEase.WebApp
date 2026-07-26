@@ -1,4 +1,5 @@
-﻿using Ecommerce.Web.Filters;
+﻿using Ecommerce.Web.Controllers;
+using Ecommerce.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Common;
@@ -7,7 +8,7 @@ using ShopEase.WebApp.Services;
 
 namespace ShopEase.WebApp.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         #region Properties
         private readonly IUserService _userService;
