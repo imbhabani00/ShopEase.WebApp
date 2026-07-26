@@ -1,5 +1,9 @@
-﻿@using ShopEase.WebApp.Helpers
+﻿@using ShopEase.WebApp.Constants
+@using ShopEase.WebApp.Models.Permission
 @model ShopEase.WebApp.Models.User.UserViewModelList
+@{
+    var permissions = (PermissionViewModel)ViewBag.Permissions;
+}
 
 <div class="table-wrap">
     <table class="data-table">
@@ -86,7 +90,7 @@
                         <td style="text-align:right">
                             <div class="d-flex gap-8 justify-content-end">
 
-                                @if (ViewContext.HttpContext.Session.HasPermission("USERS", "CanEdit"))
+                                @if (permissions.Has(PermissionConstants.User_Edit))
                                 {
                                     <button class="btn btn-outline btn-icon btn-sm" title="Edit"
                                             onclick="loadPopup('/User/UserEdit?roleId=@user.UserId','Edit User','md')">
@@ -98,7 +102,7 @@
                                     </button>
                                 }
 
-                                @if (ViewContext.HttpContext.Session.HasPermission("USERS", "CanDelete"))
+                                @if (permissions.Has(PermissionConstants.User_Delete))
                                 {
                                     <button class="btn btn-danger btn-icon btn-sm" title="Delete"
                                             onclick="loadPopup('/User/DeleteConfirm?roleId=@user.UserId','Delete User','md')">

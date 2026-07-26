@@ -116,7 +116,7 @@ namespace Ecommerce.Web.Services
             try
             {
                 var payload = new { UserId = userId, PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword) };
-                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/account/change-password";
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/change-password";
                 var response = await DoHttpPost(endpoint, payload, useAuth: true);
                 var content = await response.Content.ReadAsStringAsync();
 

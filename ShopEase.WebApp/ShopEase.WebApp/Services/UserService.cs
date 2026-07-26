@@ -132,6 +132,8 @@ namespace ShopEase.WebApp.Services
                     temporaryPassword = GenerateTemporaryPassword();
                     model.Password = temporaryPassword;
                     model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(temporaryPassword);
+                    model.ForcePasswordChange = true;
+                    model.IsActive = true;
                 }
 
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/save";

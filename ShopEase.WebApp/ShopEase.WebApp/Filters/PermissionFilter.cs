@@ -9,15 +9,14 @@ namespace Ecommerce.Web.Filters
     public class PermissionFilter : Attribute, IActionFilter
     {
         #region Properties
-        private readonly string _moduleCode;
-        private readonly string _permissionType;
+        private readonly string _flatPermissionKey;
         #endregion
 
         #region Constructor
-        public PermissionFilter(string moduleCode, string permissionType = PermissionConstants.CanView)
+
+        public PermissionFilter(string flatPermissionKey)
         {
-            _moduleCode = moduleCode;
-            _permissionType = permissionType;
+            _flatPermissionKey = flatPermissionKey;
         }
         #endregion
 
@@ -25,7 +24,7 @@ namespace Ecommerce.Web.Filters
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var session = context.HttpContext.Session;
-            var hasPermission = SessionHelper.HasPermission(session, _moduleCode, _permissionType);
+            var hasPermission = SessionHelper.HasPermission(session, _flatPermissionKey);
 
             if (!hasPermission)
             {

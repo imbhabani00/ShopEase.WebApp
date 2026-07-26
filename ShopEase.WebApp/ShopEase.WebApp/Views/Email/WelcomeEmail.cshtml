@@ -13,68 +13,165 @@
             }
 
             body {
-                background: #f4f6fb;
-                font-family: "Segoe UI", Arial, sans-serif;
-                color: #444;
+                background: linear-gradient(135deg, #f0f2f8 0%, #e4e8f5 100%);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                color: #2d3748;
                 padding: 40px 15px;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .container {
                 max-width: 600px;
                 margin: auto;
                 background: #ffffff;
-                border-radius: 18px;
+                border-radius: 24px;
                 overflow: hidden;
-                box-shadow: 0 15px 40px rgba(0,0,0,.08);
+                box-shadow: 0 20px 60px rgba(83, 74, 183, 0.12), 0 8px 24px rgba(0, 0, 0, 0.04);
+                transition: transform 0.3s ease;
             }
+
+                .container:hover {
+                    transform: translateY(-4px);
+                }
 
             .header {
-                background: linear-gradient(135deg,#534AB7,#6C63FF);
-                padding: 45px 30px;
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #6d28d9 100%);
+                padding: 50px 30px 40px;
                 text-align: center;
+                position: relative;
+                overflow: hidden;
             }
 
-                .header h1 {
-                    color: #fff;
-                    font-size: 32px;
-                    margin-bottom: 10px;
+                .header::before {
+                    content: '';
+                    position: absolute;
+                    top: -50%;
+                    right: -30%;
+                    width: 80%;
+                    height: 200%;
+                    background: rgba(255, 255, 255, 0.05);
+                    transform: rotate(25deg);
+                    pointer-events: none;
                 }
 
-                .header p {
-                    color: rgba(255,255,255,.9);
-                    font-size: 16px;
+                .header::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 4px;
+                    background: linear-gradient(90deg, #fcd34d, #fbbf24, #fcd34d);
+                    background-size: 200% 100%;
+                    animation: shimmer 3s ease-in-out infinite;
                 }
+
+            @@keyframes shimmer {
+                0%, 100% {
+                    background-position: 0% 0%;
+                }
+
+                50% {
+                    background-position: 100% 0%;
+                }
+            }
+
+            .header h1 {
+                color: #fff;
+                font-size: 34px;
+                margin-bottom: 10px;
+                font-weight: 700;
+                letter-spacing: -0.5px;
+                position: relative;
+                z-index: 1;
+            }
+
+                .header h1 .wave {
+                    display: inline-block;
+                    animation: wave 2s ease-in-out infinite;
+                }
+
+            @@keyframes wave {
+                0%, 100% {
+                    transform: rotate(0deg);
+                }
+
+                25% {
+                    transform: rotate(20deg);
+                }
+
+                75% {
+                    transform: rotate(-10deg);
+                }
+            }
+
+            .header p {
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 17px;
+                font-weight: 400;
+                position: relative;
+                z-index: 1;
+                letter-spacing: 0.3px;
+            }
 
             .content {
-                padding: 40px;
+                padding: 40px 45px 35px;
             }
 
                 .content h2 {
-                    color: #222;
-                    margin-bottom: 20px;
+                    color: #1a1a2e;
+                    margin-bottom: 16px;
                     font-size: 24px;
+                    font-weight: 700;
+                    letter-spacing: -0.3px;
                 }
+
+                    .content h2 strong {
+                        color: #4f46e5;
+                    }
 
                 .content p {
                     line-height: 1.8;
                     margin-bottom: 18px;
-                    color: #555;
+                    color: #4a5568;
                     font-size: 15px;
                 }
 
+                    .content p strong {
+                        color: #4f46e5;
+                    }
+
             .credentials {
-                background: #f7f8fc;
-                border: 1px solid #e5e7f2;
-                border-radius: 12px;
-                padding: 25px;
-                margin: 30px 0;
+                background: #f8f7ff;
+                border: 2px solid #e8e5ff;
+                border-radius: 16px;
+                padding: 28px 30px;
+                margin: 28px 0 32px;
+                transition: border-color 0.3s ease;
             }
 
-                .credentials h3 {
-                    margin-bottom: 18px;
-                    color: #534AB7;
-                    font-size: 18px;
+                .credentials:hover {
+                    border-color: #a78bfa;
                 }
+
+                .credentials h3 {
+                    margin-bottom: 20px;
+                    color: #4f46e5;
+                    font-size: 18px;
+                    font-weight: 600;
+                    letter-spacing: 0.3px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                    .credentials h3::before {
+                        content: '🔐';
+                        font-size: 20px;
+                    }
 
             table {
                 width: 100%;
@@ -83,7 +180,7 @@
 
                 table td {
                     padding: 14px 0;
-                    border-bottom: 1px solid #ececec;
+                    border-bottom: 2px solid #edeafc;
                     font-size: 15px;
                 }
 
@@ -93,85 +190,178 @@
 
                 table td:first-child {
                     font-weight: 600;
-                    color: #222;
+                    color: #1a1a2e;
                     width: 160px;
                 }
 
             .password {
-                font-family: Consolas, monospace;
-                background: #ece8ff;
-                color: #4d3fd3;
-                padding: 5px 10px;
-                border-radius: 6px;
-                font-weight: bold;
+                font-family: 'SF Mono', 'Courier New', monospace;
+                background: #ede8ff;
+                color: #4f46e5;
+                padding: 6px 14px;
+                border-radius: 8px;
+                font-weight: 700;
+                font-size: 14px;
+                display: inline-block;
+                letter-spacing: 0.5px;
+                border: 1px solid #ddd6fe;
             }
 
             .email {
-                color: #534AB7;
+                color: #4f46e5;
                 font-weight: 600;
             }
 
             .button-area {
                 text-align: center;
-                margin: 35px 0;
+                margin: 35px 0 30px;
             }
 
             .button {
                 display: inline-block;
-                background: linear-gradient(135deg,#534AB7,#6C63FF);
+                background: linear-gradient(135deg, #4f46e5, #7c3aed);
                 color: #ffffff !important;
                 text-decoration: none;
-                padding: 14px 36px;
-                border-radius: 50px;
+                padding: 16px 48px;
+                border-radius: 60px;
                 font-weight: 600;
-                font-size: 15px;
-                box-shadow: 0 10px 20px rgba(83,74,183,.3);
+                font-size: 16px;
+                box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+                transition: all 0.3s ease;
+                letter-spacing: 0.3px;
+                position: relative;
+                overflow: hidden;
             }
 
+                .button::after {
+                    content: '→';
+                    margin-left: 8px;
+                    transition: transform 0.3s ease;
+                    display: inline-block;
+                }
+
+                .button:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 14px 40px rgba(79, 70, 229, 0.4);
+                }
+
+                    .button:hover::after {
+                        transform: translateX(6px);
+                    }
+
+                .button:active {
+                    transform: translateY(0px);
+                }
+
             .note {
-                background: #FFF8E7;
-                border-left: 5px solid #F5B301;
-                padding: 18px;
-                border-radius: 8px;
+                background: #fffbeb;
+                border-left: 6px solid #f59e0b;
+                padding: 20px 24px;
+                border-radius: 12px;
                 margin-top: 25px;
             }
 
                 .note strong {
-                    color: #8c6400;
+                    color: #92400e;
+                    font-size: 15px;
+                    display: block;
+                    margin-bottom: 4px;
+                }
+
+                .note br {
+                    display: none;
+                }
+
+                .note p {
+                    margin-bottom: 0;
+                    color: #78350f;
                 }
 
             .footer {
                 text-align: center;
-                background: #fafafa;
-                padding: 30px;
-                border-top: 1px solid #eeeeee;
+                background: #faf9fe;
+                padding: 28px 30px;
+                border-top: 2px solid #f0edfc;
             }
 
                 .footer p {
-                    color: #888;
+                    color: #94a3b8;
                     font-size: 13px;
-                    line-height: 1.6;
+                    line-height: 1.8;
+                    margin: 0;
                 }
 
-            @@media only screen and (max-width:600px) {
+                    .footer p:first-child {
+                        font-weight: 500;
+                        color: #6b7280;
+                        margin-bottom: 2px;
+                    }
+
+            @@media only screen and (max-width: 600px) {
+                body {
+                    padding: 20px 12px;
+                }
 
                 .content {
-                    padding: 25px;
+                    padding: 28px 20px 25px;
                 }
 
                 .header {
-                    padding: 35px 20px;
+                    padding: 38px 20px 32px;
                 }
 
                     .header h1 {
                         font-size: 28px;
                     }
 
+                    .header p {
+                        font-size: 15px;
+                    }
+
                 table td:first-child {
-                    width: 120px;
+                    width: 100px;
+                    font-size: 14px;
+                }
+
+                table td {
+                    font-size: 14px;
+                    padding: 12px 0;
+                }
+
+                .credentials {
+                    padding: 20px 18px;
+                }
+
+                    .credentials h3 {
+                        font-size: 16px;
+                    }
+
+                .button {
+                    padding: 14px 36px;
+                    font-size: 15px;
+                    width: 100%;
+                    text-align: center;
+                }
+
+                .footer {
+                    padding: 20px;
+                }
+
+                .note {
+                    padding: 16px 18px;
                 }
             }
 
+            @@media only screen and (max-width: 400px) {
+                table td:first-child {
+                    width: 80px;
+                }
+
+                .password {
+                    font-size: 12px;
+                    padding: 4px 10px;
+                }
+            }
     </style>
 </head>
 
@@ -180,13 +370,13 @@
     <div class="container">
 
         <div class="header">
-            <h1>🎉 Welcome to ShopEase</h1>
+            <h1><span class="wave">🎉</span> Welcome to ShopEase</h1>
             <p>Your account has been created successfully.</p>
         </div>
 
         <div class="content">
 
-            <h2>Hello {{Name}},</h2>
+            <h2>Hello <strong>{{Name}}</strong>,</h2>
 
             <p>
                 Welcome to <strong>ShopEase</strong>! We're excited to have you with us.
@@ -215,29 +405,29 @@
 
             <div class="button-area">
                 <a href="{{LoginUrl}}" class="button">
-                    Login to ShopEase →
+                    Login to ShopEase
                 </a>
             </div>
 
             <div class="note">
-                <strong>Security Tip:</strong><br><br>
-                Please change your temporary password immediately after your first login to keep your account secure.
+                <strong>🔒 Security Tip:</strong>
+                <p>Please change your temporary password immediately after your first login to keep your account secure.</p>
             </div>
 
             <p style="margin-top:30px;">
                 If you have any questions or need assistance, our support team is always happy to help.
             </p>
 
-            <p>
+            <p style="margin-top:8px;">
                 Happy Shopping! ❤️<br>
-                <strong>Team ShopEase</strong>
+                <strong style="color:#4f46e5;">Team ShopEase</strong>
             </p>
 
         </div>
 
         <div class="footer">
             <p>
-                © 2026 ShopEase. All Rights Reserved.
+                © {{Year}} ShopEase. All Rights Reserved.
             </p>
             <p>
                 This is an automated email. Please do not reply.

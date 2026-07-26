@@ -1,11 +1,9 @@
 ﻿$(document).ready(function () {
-    debugger
     $.validator.unobtrusive.parse('#addUserForm');
     loadDropdown('/Lookup/GetRoles', 'RoleId' ,'' ,  'Select Role');
 });
 
 $('#addUserBtn').click(function (e) {
-    debugger
     e.preventDefault();
     var form = $('#addUserForm');
     if (!form.valid()) {
@@ -24,7 +22,7 @@ $('#addUserBtn').click(function (e) {
                 showSuccess(response.message || 'User saved successfully');
                 setTimeout(function () {
                     closePopup();
-                    LoadRoles();
+                    LoadUsers();
                 }, 500);
             }
             else {
