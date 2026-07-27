@@ -15,6 +15,13 @@ namespace Ecommerce.Web.Controllers
         protected string? CurrentRoleCode => HttpContext.Session.GetString(SessionConstants.RoleCode);
         protected string? CurrentRoleName => HttpContext.Session.GetString(SessionConstants.RoleName);
         protected string? CurrentUserFullName => HttpContext.Session.GetString(SessionConstants.UserFullName);
+
+        // NEW
+        protected string? CurrentUserEmail => HttpContext.Session.GetString(SessionConstants.UserEmail);
+        protected string? CurrentUserPhone => HttpContext.Session.GetString(SessionConstants.UserPhone);
+        protected string? CurrentInitials => HttpContext.Session.GetString(SessionConstants.Initials);
+        protected string? CurrentBackgroundColorCode => HttpContext.Session.GetString(SessionConstants.BackgroundColorCode);
+        protected string? CurrentProfilePicturePath => HttpContext.Session.GetString(SessionConstants.ProfilePicturePath);
         #endregion
 
         #region Permission Helpers
@@ -36,6 +43,13 @@ namespace Ecommerce.Web.Controllers
             if (!string.IsNullOrEmpty(AccessToken))
             {
                 ViewBag.Permissions = SessionHelper.BuildPermissionViewModel(HttpContext.Session);
+
+                // NEW: populate layout-facing ViewData from session on every request
+                ViewData["UserFullName"] = CurrentUserFullName;
+                ViewData["RoleName"] = CurrentRoleName;
+                ViewData["UserInitials"] = CurrentInitials;
+                ViewData["BackgroundColorCode"] = CurrentBackgroundColorCode;
+                ViewData["ProfilePicturePath"] = CurrentProfilePicturePath;
             }
 
             base.OnActionExecuting(context);

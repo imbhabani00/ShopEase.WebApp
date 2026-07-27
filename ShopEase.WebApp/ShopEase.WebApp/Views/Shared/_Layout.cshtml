@@ -115,6 +115,15 @@
                     display: none;
                 }
             }
+
+            .sidebar__avatar-img,
+.topbar__avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
     </style>
 
     @await RenderSectionAsync("Styles", required: false)
@@ -181,10 +190,21 @@
             </div>
         </nav>
         <!-- Sidebar Footer - User Info -->
+
         <div class="sidebar__footer">
             <div class="sidebar__user">
-                <div class="sidebar__avatar">@(ViewData["UserInitials"] ?? "U")</div>
-                <div class="sidebar__user-info">
+                            <div class="sidebar__avatar" id="sidebarAvatar"
+                                 style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
+                                @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
+                                {
+                                    <img src="@ViewData["ProfilePicturePath"]" class="sidebar__avatar-img" />
+                                }
+                                else
+                                {
+                                    @(ViewData["UserInitials"] ?? "U")
+                                }
+                            </div>    
+                            <div class="sidebar__user-info">
                     <span class="sidebar__user-name">@(ViewData["UserFullName"] ?? "User")</span>
                     <span class="sidebar__user-role">@(ViewData["RoleName"] ?? "")</span>
                 </div>
@@ -232,8 +252,17 @@
                 <!-- User dropdown -->
                 <div class="topbar__user-wrap" id="userDropWrap">
                     <button class="topbar__user-btn" id="userDropBtn">
-                        <div class="topbar__avatar">@(ViewData["UserInitials"] ?? "U")</div>
-                        <span class="topbar__username">@(ViewData["UserFullName"] ?? "User")</span>
+<div class="topbar__avatar" id="layoutAvatar"
+     style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
+    @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
+    {
+        <img src="@ViewData["ProfilePicturePath"]" class="topbar__avatar-img" />
+    }
+    else
+    {
+        @(ViewData["UserInitials"] ?? "U")
+    }
+</div>                        <span class="topbar__username">@(ViewData["UserFullName"] ?? "User")</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
                     </button>
                     <div class="user-drop" id="userDrop">
@@ -284,7 +313,10 @@
     <script src="~/lib/toastr/toastr.min.js"></script>
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/user/profile.js" asp-append-version="true"></script>
     <script src="~/js/chat.js" asp-append-version="true"></script>
+
+
 
     <!-- TempData toasts fired from controller -->
     @if (TempData["SuccessMessage"] != null)

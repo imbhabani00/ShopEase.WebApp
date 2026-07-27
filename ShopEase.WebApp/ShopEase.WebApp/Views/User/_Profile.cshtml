@@ -1,0 +1,31 @@
+﻿@model ShopEase.WebApp.Models.User.UserDetails
+
+<div class="profile-view">
+    <div class="profile-avatar-wrap" id="profileAvatarWrap"
+         data-initials="@Model.Initials" data-color="@Model.BackgroundColorCode">
+        @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+        {
+            <img src="@Model.ProfilePicturePath" id="profileAvatarImg" class="profile-avatar-img" />
+        }
+        else
+        {
+            <div class="profile-avatar-fallback" id="profileAvatarFallback"
+                 style="background:@Model.BackgroundColorCode">
+                @Model.Initials
+            </div>
+        }
+        <input type="file" id="profilePicInput" accept="image/*" hidden />
+        <button type="button" id="btnUploadPic" class="avatar-edit-btn">Change</button>
+        @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+        {
+            <button type="button" id="btnRemovePic" class="avatar-remove-btn">Remove</button>
+        }
+    </div>
+
+    <div class="profile-fields">
+        <p><strong>Name:</strong> @Model.FullName</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Role:</strong> @Model.RoleName</p>
+        <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+    </div>
+</div>
