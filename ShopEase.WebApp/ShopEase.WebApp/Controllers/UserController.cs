@@ -2,9 +2,11 @@
 using Ecommerce.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 using ShopEase.WebApp.Constants;
+using ShopEase.WebApp.Helpers;
 using ShopEase.WebApp.Models.Common;
 using ShopEase.WebApp.Models.User;
 using ShopEase.WebApp.Services;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ShopEase.WebApp.Controllers
 {
@@ -64,10 +66,10 @@ namespace ShopEase.WebApp.Controllers
         [PermissionFilter(PermissionConstants.User_Edit)]
         public async Task<IActionResult> UserEdit(int userId)
         {
-            var model = new UserViewModel();
+            var model = new UserDetails();
             try
             {
-                model = await _userService.GetByIdAsync(userId) ?? new UserViewModel();
+                model = await _userService.GetByIdAsync(userId) ?? new UserDetails();
             }
             catch (Exception ex)
             {
@@ -124,5 +126,60 @@ namespace ShopEase.WebApp.Controllers
             return new ObjectResult(apiResponse);
         }
         #endregion
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = SessionHelper.GetUserId(HttpContext.Session) ?? 0;
+            var model = await _userService.GetByIdAsync(userId) ?? new UserDetails();
+            return PartialView("_Profile", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
+        {
+            var apiResponse = new ApiResponse();
+            try
+            {
+                var userId = SessionHelper.GetUserId(HttpContext.Session) ?? 0;
+                apiResponse = await _userService.UploadProfilePictureAsync(userId, file);
+
+                if (apiResponse.Status)
+                {
+                    var newPath = apiResponse.Response?.ToString();
+                    SessionHelper.SetProfilePicturePath(HttpContext.Session, newPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "AccountController.UploadProfilePicture error");
+                apiResponse.Status = false;
+                apiResponse.Message = "An error occurred.";
+            }
+            return new ObjectResult(apiResponse);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveProfilePicture()
+        {
+            var apiResponse = new ApiResponse();
+            try
+            {
+                var userId = SessionHelper.GetUserId(HttpContext.Session) ?? 0;
+                apiResponse = await _userService.RemoveProfilePictureAsync(userId);
+
+                if (apiResponse.Status)
+                {
+                    SessionHelper.ClearProfilePicturePath(HttpContext.Session);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "AccountController.RemoveProfilePicture error");
+                apiResponse.Status = false;
+                apiResponse.Message = "An error occurred.";
+            }
+            return new ObjectResult(apiResponse);
+        }
     }
 }

@@ -93,7 +93,7 @@
                                 @if (permissions.Has(PermissionConstants.User_Edit))
                                 {
                                     <button class="btn btn-outline btn-icon btn-sm" title="Edit"
-                                            onclick="loadPopup('/User/UserEdit?roleId=@user.UserId','Edit User','md')">
+                                            onclick="loadPopup('/User/UserEdit?userId=@user.UserId','Edit User','md')">
                                         <svg width="13" height="13" viewBox="0 0 24 24"
                                              fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
@@ -105,7 +105,7 @@
                                 @if (permissions.Has(PermissionConstants.User_Delete))
                                 {
                                     <button class="btn btn-danger btn-icon btn-sm" title="Delete"
-                                            onclick="loadPopup('/User/DeleteConfirm?roleId=@user.UserId','Delete User','md')">
+                                            onclick="loadPopup('/User/DeleteConfirm?userId=@user.UserId','Delete User','md')">
                                         <svg width="13" height="13" viewBox="0 0 24 24"
                                              fill="none" stroke="currentColor" stroke-width="2">
                                             <polyline points="3 6 5 6 21 6" />
@@ -123,16 +123,14 @@
             else
             {
                 <tr>
-                    <td colspan="4">
+                    <td colspan="6">
                         <div class="empty-state">
                             <img src="~/images/user.png" />
                             <h5>No Users Found</h5>
-
                             <p>
-                                There are no users available.
-                                Click <strong>Add User</strong> to create one.
+                                There are no users available.<br />
+                                Click <strong>Add</strong> to create one.
                             </p>
-
                         </div>
                     </td>
                 </tr>

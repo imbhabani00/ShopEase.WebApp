@@ -20,39 +20,29 @@ function showWarning(message) { toastr.warning(message || 'Warning'); }
 function showInfo(message) { toastr.info(message || 'Info'); }
 
 $(function () {
-    var $sidebar = $('#sidebar');
-    var $overlay = $('#sidebarOverlay');
-    var $toggle = $('#sidebarToggle');
-    var $close = $('#sidebarClose');
-
-    function openSidebar() {
-        $sidebar.addClass('open');
-        $overlay.addClass('open');
+    $(document).on('click', '#sidebarToggle', function () {
+        $('#sidebar').addClass('open');
+        $('#sidebarOverlay').addClass('open');
         $('body').css('overflow', 'hidden');
-    }
+    });
 
-    function closeSidebar() {
-        $sidebar.removeClass('open');
-        $overlay.removeClass('open');
+    $(document).on('click', '#sidebarClose, #sidebarOverlay', function () {
+        $('#sidebar').removeClass('open');
+        $('#sidebarOverlay').removeClass('open');
         $('body').css('overflow', '');
-    }
-
-    $toggle.on('click', openSidebar);
-    $close.on('click', closeSidebar);
-    $overlay.on('click', closeSidebar);
+    });
 });
 
 $(function () {
-    var $btn = $('#userDropBtn');
-    var $drop = $('#userDrop');
-
-    $btn.on('click', function (e) {
+    $(document).on('click', '#userDropBtn', function (e) {
         e.stopPropagation();
-        $drop.toggleClass('open');
+        $('#userDrop').toggleClass('open');
     });
 
-    $(document).on('click', function () {
-        $drop.removeClass('open');
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('#userDropWrap').length) {
+            $('#userDrop').removeClass('open');
+        }
     });
 });
 
@@ -101,9 +91,8 @@ function closePopup() {
     $('#modalBody').html('');
 }
 
-$('#modalBackdrop').on('click', closePopup);
-
-$('#modalClose').on('click', closePopup);
+$(document).on('click', '#modalBackdrop', closePopup);
+$(document).on('click', '#modalClose', closePopup);
 
 $(document).on('keydown', function (e) {
     if (e.key === 'Escape') closePopup();
@@ -126,7 +115,7 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
         dataType: 'json',
         headers: accessToken ? { 'Authorization': 'Bearer ' + accessToken } : {},
         success: function (response) {
-+            if (typeof response === 'string') {
+            if (typeof response === 'string') {
                 try {
                     response = JSON.parse(response);
                 } catch (e) {
@@ -151,7 +140,7 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
             }
 
             $.each(data, function (i, item) {
-+                var id = item.id || item.Id || item.value || item.Value || '';
+                var id = item.id || item.Id || item.value || item.Value || '';
                 var name = item.name || item.Name || item.text || item.Text || '';
 
                 var $opt = $('<option>', { value: id, text: name });

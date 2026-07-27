@@ -14,7 +14,7 @@ namespace ShopEase.WebApp.Services
     public interface IUserService
     {
         Task<UserViewModelList> GetListAsync(SortWithPageParameter sortParams);
-        Task<UserViewModel?> GetByIdAsync(int userId);
+        Task<UserDetails> GetByIdAsync(int userId);
         Task<ApiResponse> SaveAsync(UserViewModel model);
         Task<ApiResponse> DeleteAsync(int userId);
 
@@ -88,27 +88,28 @@ namespace ShopEase.WebApp.Services
         #endregion
 
         #region GetByIdAsync
-        public async Task<UserViewModel?> GetByIdAsync(int userId)
+        public async Task<UserDetails> GetByIdAsync(int userId)
         {
+            var data = new UserDetails();
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/id/{userId}";
                 var response = await DoHttpGet(endpoint, useAuth: true);
-
                 response.EnsureSuccessStatusCode();
+
                 var content = await response.Content.ReadAsStringAsync();
 
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
 
                 if (apiResponse?.Status == true && apiResponse.Response != null)
-                    return JsonConvert.DeserializeObject<UserViewModel>(apiResponse.Response.ToString()!);
+                    return JsonConvert.DeserializeObject<UserDetails>(apiResponse.Response.ToString()!);
             }
             catch (Exception ex)
             {
                 Log.Logger.Error("GetByIdAsync error: {Message}", ex.Message);
             }
 
-            return null;
+            return data;
         }
         #endregion
 

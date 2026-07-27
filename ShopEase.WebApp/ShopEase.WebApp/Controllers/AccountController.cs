@@ -110,6 +110,19 @@ namespace Ecommerce.Web.Controllers
                     SessionHelper.SetTenantId(HttpContext.Session, token.TenantId);
                     SessionHelper.SetRoleId(HttpContext.Session, token.RoleId);
                     SessionHelper.SetForcePasswordChange(HttpContext.Session, true);
+
+                    var userDetails = await _userService.GetByIdAsync(token.UserId);
+                    if (userDetails != null)
+                    {
+                        SessionHelper.SetUserFullName(HttpContext.Session, userDetails.FullName);
+                        SessionHelper.SetUserEmail(HttpContext.Session, userDetails.Email ?? "");
+                        SessionHelper.SetUserPhone(HttpContext.Session, userDetails.PhoneNumber ?? "");
+                        SessionHelper.SetInitials(HttpContext.Session, userDetails.Initials ?? "");
+                        SessionHelper.SetBackgroundColorCode(HttpContext.Session, userDetails.BackgroundColorCode ?? "#1F3358");
+                        SessionHelper.SetColorCode(HttpContext.Session, userDetails.ColorCode ?? "#FFFFFF");
+                        SessionHelper.SetProfilePicturePath(HttpContext.Session, userDetails.ProfilePicturePath);
+                    }
+
                     _logger.LogWarning("Login: session forcePasswordChange SET to true");
                     CookieHelper.SetRefreshTokenCookie(Response, token.RefreshToken, 7);
 
