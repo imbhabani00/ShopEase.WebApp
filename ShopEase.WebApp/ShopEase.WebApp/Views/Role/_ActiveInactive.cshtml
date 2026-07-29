@@ -1,0 +1,79 @@
+﻿@model ShopEase.WebApp.Models.Role.RoleViewModel
+
+<form id="activeInactiveRoleForm">
+
+    <input type="hidden" asp-for="RoleId" id="hdn_RoleId" />
+    <input type="hidden" asp-for="IsActive" id="hdn_IsActive" />
+
+    <div class="text-center py-3">
+
+        <div class="mb-3">
+            @if (Model.IsActive)
+            {
+                <!-- Inactivate Icon -->
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none"
+                     stroke="#dc3545" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+            }
+            else
+            {
+                <!-- Activate Icon -->
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none"
+                     stroke="#198754" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+            }
+        </div>
+
+        <h5 class="mb-2">
+            @(Model.IsActive ? "Deactivate Role" : "Activate Role")
+        </h5>
+
+        <p class="text-muted mb-0">
+            Are you sure you want to
+            @(Model.IsActive ? "deactivate" : "activate") this role?
+        </p>
+
+        @if (Model.IsActive)
+        {
+            <small class="text-danger">
+                Users assigned this role will lose the associated permissions.
+            </small>
+        }
+        else
+        {
+            <small class="text-success">
+                Users assigned this role will regain the associated permissions.
+            </small>
+        }
+    </div>
+
+    <div class="modal-footer" style="padding:14px 0 0;margin-top:8px">
+
+        <button type="button"
+                class="btn btn-secondary btn-sm"
+                onclick="closePopup()">
+            Cancel
+        </button>
+
+        <button type="button"
+                class="btn @(Model.IsActive ? "btn-danger" : "btn-success") btn-sm"
+                id="activeInactiveUserBtn">
+
+            <span class="btn-text">
+                @(Model.IsActive ? "Deactivate" : "Activate")
+            </span>
+
+            <span class="btn-spinner hidden"></span>
+
+        </button>
+
+    </div>
+
+</form>
+
+<script src="~/js/common.js"></script>
+<script src="~/js/role/activeinactive.js"></script>

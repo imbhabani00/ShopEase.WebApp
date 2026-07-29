@@ -122,5 +122,44 @@ namespace Ecommerce.Web.Services.Base
             }
         }
         #endregion
+
+        #region DoHttpPostFile
+        protected async Task<HttpResponseMessage?> DoHttpPostFile(string endpoint, IFormFile file, string fieldName = "file", bool useAuth = true)
+        {
+            try
+            {
+                var client = useAuth ? GetHttpClient() : _httpClientFactory.CreateClient("EcommerceApi");
+
+                using var content = new MultipartFormDataContent();
+                using var fileStream = file.OpenReadStream();
+                using var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(
+                    string.IsNullOrEmpty(file.ContentType) ? "application/octet-stream" : file.ContentType);
+
+                content.Add(streamContent, fieldName, file.FileName);
+
+                return await client.PostAsync(endpoint, content);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        #endregion
+
+        #region DoHttpPostNoBody
+        protected async Task<HttpResponseMessage?> DoHttpPostNoBody(string endpoint, bool useAuth = true)
+        {
+            try
+            {
+                var client = useAuth ? GetHttpClient() : _httpClientFactory.CreateClient("EcommerceApi");
+                return await client.PostAsync(endpoint, null);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        #endregion
     }
 }

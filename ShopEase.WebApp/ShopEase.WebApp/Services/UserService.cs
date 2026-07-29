@@ -3,7 +3,6 @@ using Ecommerce.Web.Services.Base;
 using Newtonsoft.Json;
 using Serilog;
 using ShopEase.WebApp.Configuration;
-using ShopEase.WebApp.Models.Auth;
 using ShopEase.WebApp.Models.Common;
 using ShopEase.WebApp.Models.User;
 using System.Text;
@@ -17,7 +16,9 @@ namespace ShopEase.WebApp.Services
         Task<UserDetails> GetByIdAsync(int userId);
         Task<ApiResponse> SaveAsync(UserViewModel model);
         Task<ApiResponse> DeleteAsync(int userId);
-
+        Task<ApiResponse> UploadProfilePictureAsync(IFormFile file);
+        Task<ApiResponse> RemoveProfilePictureAsync();
+        Task<ApiResponse> ActiveInactiveAsync(int userId, bool isActive);
     }
     #endregion
     public class UserService : BaseService, IUserService
@@ -182,6 +183,101 @@ namespace ShopEase.WebApp.Services
             catch (Exception ex)
             {
                 Log.Logger.Error("RoleService.DeleteAsync error: {Message}", ex.Message);
+                return new ApiResponse { Status = false, Message = "Error occurred" };
+            }
+        }
+        #endregion
+
+        #region ActiveInactiveAsync
+
+        public async Task<ApiResponse> ActiveInactiveAsync(int userId, bool isActive)
+        {
+            try
+            {
+                var query = new StringBuilder();
+
+                query.Append($"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/active-inactive?");
+                query.Append($"userId={userId}&isActive={isActive}");
+
+                var apiResponse = await DoHttpPut<ApiResponse>(
+                    query.ToString(),
+                    null,
+                    useAuth: true
+                );
+
+                return apiResponse ?? new ApiResponse
+                {
+                    Status = false,
+                    Message = "Invalid response"
+                };
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error("UserService.ActiveInactiveAsync error: {Message}", ex.Message);
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = "Error occurred"
+                };
+            }
+        }
+
+        #endregion+
+
+        #region UploadProfilePictureAsync
+        public async Task<ApiResponse> UploadProfilePictureAsync(IFormFile file)
+        {
+            try
+            {
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/upload-profile-picture";
+                var response = await DoHttpPostFile(endpoint, file, "file", useAuth: true);
+
+                if (response == null || !response.IsSuccessStatusCode)
+                {
+                    var errorContent = response != null ? await response.Content.ReadAsStringAsync() : "no response";
+                    Log.Logger.Error("UploadProfilePictureAsync failed: {Content}", errorContent);
+                    return new ApiResponse { Status = false, Message = "Error occurred while uploading picture." };
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content)
+                    ?? new ApiResponse { Status = false };
+
+                return apiResponse;
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "UploadProfilePictureAsync error");
+                return new ApiResponse { Status = false, Message = "Error occurred" };
+            }
+        }
+        #endregion
+
+        #region RemoveProfilePictureAsync
+        public async Task<ApiResponse> RemoveProfilePictureAsync()
+        {
+            try
+            {
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/remove-profile-picture";
+                var response = await DoHttpPostNoBody(endpoint, useAuth: true);
+
+                if (response == null || !response.IsSuccessStatusCode)
+                {
+                    var errorContent = response != null ? await response.Content.ReadAsStringAsync() : "no response";
+                    Log.Logger.Error("RemoveProfilePictureAsync failed: {Content}", errorContent);
+                    return new ApiResponse { Status = false, Message = "Error occurred while removing picture." };
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content)
+                    ?? new ApiResponse { Status = false };
+
+                return apiResponse;
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "RemoveProfilePictureAsync error");
                 return new ApiResponse { Status = false, Message = "Error occurred" };
             }
         }

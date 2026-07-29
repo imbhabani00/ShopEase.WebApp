@@ -41,7 +41,7 @@ namespace ShopEase.WebApp.Models.User
     }
     #endregion
 
-    #region 
+    #region UserDetails
     public class UserDetails
     {
         public int? UserId { get; set; }
@@ -63,8 +63,9 @@ namespace ShopEase.WebApp.Models.User
         public string Initials { get; set; }
         public string ColorCode { get; set; }
         public string BackgroundColorCode { get; set; }
- public string FullName =>
-        string.Join(" ", new[] { FirstName, MiddleName, LastName }
-            .Where(x => !string.IsNullOrWhiteSpace(x)));    }
+        public string FullName =>
+               string.Join(" ", new[] { FirstName, MiddleName, LastName }
+                   .Where(x => !string.IsNullOrWhiteSpace(x)));
+    }
     #endregion
 }
