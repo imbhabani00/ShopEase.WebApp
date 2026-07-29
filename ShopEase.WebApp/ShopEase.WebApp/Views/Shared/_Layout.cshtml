@@ -117,13 +117,13 @@
             }
 
             .sidebar__avatar-img,
-.topbar__avatar-img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-}
+            .topbar__avatar-img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+            }
     </style>
 
     @await RenderSectionAsync("Styles", required: false)
@@ -193,18 +193,18 @@
 
         <div class="sidebar__footer">
             <div class="sidebar__user">
-                            <div class="sidebar__avatar" id="sidebarAvatar"
-                                 style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
-                                @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
-                                {
-                                    <img src="@ViewData["ProfilePicturePath"]" class="sidebar__avatar-img" />
-                                }
-                                else
-                                {
-                                    @(ViewData["UserInitials"] ?? "U")
-                                }
-                            </div>    
-                            <div class="sidebar__user-info">
+                <div class="sidebar__avatar" id="sidebarAvatar"
+                     style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
+                    @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
+                    {
+                        <img src="@ViewData["ProfilePicturePath"]" class="sidebar__avatar-img" />
+                    }
+                    else
+                    {
+                        @(ViewData["UserInitials"] ?? "U")
+                    }
+                </div>
+                <div class="sidebar__user-info">
                     <span class="sidebar__user-name">@(ViewData["UserFullName"] ?? "User")</span>
                     <span class="sidebar__user-role">@(ViewData["RoleName"] ?? "")</span>
                 </div>
@@ -252,22 +252,30 @@
                 <!-- User dropdown -->
                 <div class="topbar__user-wrap" id="userDropWrap">
                     <button class="topbar__user-btn" id="userDropBtn">
-<div class="topbar__avatar" id="layoutAvatar"
-     style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
-    @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
-    {
-        <img src="@ViewData["ProfilePicturePath"]" class="topbar__avatar-img" />
-    }
-    else
-    {
-        @(ViewData["UserInitials"] ?? "U")
-    }
-</div>                        <span class="topbar__username">@(ViewData["UserFullName"] ?? "User")</span>
+                        <div class="topbar__avatar" id="layoutAvatar"
+                             style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
+                            @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
+                            {
+                                <img src="@ViewData["ProfilePicturePath"]" class="topbar__avatar-img" />
+                            }
+                            else
+                            {
+                                @(ViewData["UserInitials"] ?? "U")
+                            }
+                        </div>
+
+                        <span class="topbar__username">@(ViewData["UserFullName"] ?? "User")</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
                     </button>
                     <div class="user-drop" id="userDrop">
-                        <a href="/Account/Profile" class="user-drop__item">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                        <a href="javascript:void(0);"
+                           class="user-drop__item"
+                           onclick="loadPopup('/User/Profile', 'My Profile', 'md')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
                             Profile
                         </a>
                         <a href="/Account/ChangePassword" class="user-drop__item">
@@ -322,13 +330,13 @@
     @if (TempData["SuccessMessage"] != null)
     {
         <script>
-            $(function () { showSuccess('@TempData["SuccessMessage"]'); });
+                $(function() { showSuccess('@TempData["SuccessMessage"]'); });
         </script>
     }
     @if (TempData["ErrorMessage"] != null)
     {
         <script>
-            $(function () { showError('@TempData["ErrorMessage"]'); });
+                $(function() { showError('@TempData["ErrorMessage"]'); });
         </script>
     }
     <!-- Page-specific scripts -->

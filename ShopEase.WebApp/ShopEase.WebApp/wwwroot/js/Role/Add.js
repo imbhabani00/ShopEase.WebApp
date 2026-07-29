@@ -10,7 +10,7 @@ $('#addRoleBtn').click(function (e) {
     }
     $.ajax({
         url: '/Role/Save',
-        type: 'POST',
+        type: 'PUT',
         data: form.serialize(),
         cache: false,
         beforeSend: function () {

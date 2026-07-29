@@ -7,6 +7,7 @@ using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Helpers;
 using ShopEase.WebApp.Models.Auth;
 using ShopEase.WebApp.Models.Common;
+using ShopEase.WebApp.Models.User;
 using ShopEase.WebApp.Repositories;
 using ShopEase.WebApp.Services;
 
@@ -233,6 +234,17 @@ namespace Ecommerce.Web.Controllers
                 SessionHelper.SetRoleId(HttpContext.Session, token.RoleId);
                 SessionHelper.SetForcePasswordChange(HttpContext.Session, token.ForcePasswordChange);
 
+                var userDetails = await _userService.GetByIdAsync(token.UserId);
+                if (userDetails != null)
+                {
+                    SessionHelper.SetUserFullName(HttpContext.Session, userDetails.FullName);
+                    SessionHelper.SetUserEmail(HttpContext.Session, userDetails.Email ?? "");
+                    SessionHelper.SetUserPhone(HttpContext.Session, userDetails.PhoneNumber ?? "");
+                    SessionHelper.SetInitials(HttpContext.Session, userDetails.Initials ?? "");
+                    SessionHelper.SetBackgroundColorCode(HttpContext.Session, userDetails.BackgroundColorCode ?? "#1F3358");
+                    SessionHelper.SetColorCode(HttpContext.Session, userDetails.ColorCode ?? "#FFFFFF");
+                    SessionHelper.SetProfilePicturePath(HttpContext.Session, userDetails.ProfilePicturePath);
+                }
                 try
                     {
                     var permissions = await _roleService.GetByRoleIdAsync(token.RoleId);
@@ -520,6 +532,13 @@ namespace Ecommerce.Web.Controllers
                 }
 
                 var email = SessionHelper.GetUserEmail(HttpContext.Session);
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    apiResponse.Status = false;
+                    apiResponse.Message = "Session expired. Please login again.";
+                    return new ObjectResult(apiResponse);
+                }
 
                 var otp = new Random().Next(100000, 999999).ToString();
                 var otpSaved = await _otpRepository.SaveOtpAsync(email, userId.Value, otp, 10);

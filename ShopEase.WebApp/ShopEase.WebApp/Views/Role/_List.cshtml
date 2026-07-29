@@ -106,7 +106,29 @@
                                         </svg>
                                     </button>
                                 }
+                                @if (permissions.Has(PermissionConstants.User_Inactive))
+                                {
+                                    <button type="button"
+                                            class="btn btn-sm btn-icon @(role.IsActive ? "btn-success" : "btn-secondary")"
+                                            title="@(role.IsActive ? "Deactivate" : "Activate")"
+                                            onclick="loadPopup('/User/ActiveInactive?userId=@role.RoleId&isActive=@role.IsActive.ToString().ToLower()','Change Status','sm')">
 
+                                        @if (role.IsActive)
+                                        {
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                                                <path d="M9 12l2 2 4-5" />
+                                            </svg>
+                                        }
+                                        else
+                                        {
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <line x1="8" y1="12" x2="16" y2="12" />
+                                            </svg>
+                                        }
+                                    </button>
+                                }
                             </div>
                         </td>
                     </tr>

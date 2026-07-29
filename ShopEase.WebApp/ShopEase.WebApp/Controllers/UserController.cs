@@ -6,7 +6,7 @@ using ShopEase.WebApp.Helpers;
 using ShopEase.WebApp.Models.Common;
 using ShopEase.WebApp.Models.User;
 using ShopEase.WebApp.Services;
-using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace ShopEase.WebApp.Controllers
 {
@@ -127,6 +127,43 @@ namespace ShopEase.WebApp.Controllers
         }
         #endregion
 
+        #region ActiveInactive
+
+        [HttpGet]
+        public IActionResult ActiveInactive(int userId, bool isActive)
+        {
+            var model = new UserViewModel()
+            {
+                UserId = userId,
+                IsActive = isActive
+            };
+
+            return PartialView("_ActiveInactive", model);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> ChangeStatus(int userId, bool isActive)
+        {
+            var apiResponse = new ApiResponse();
+
+            try
+            {
+                apiResponse = await _userService.ActiveInactiveAsync(userId, isActive);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserController.ActiveInactive error - UserId: {UserId}", userId);
+
+                apiResponse.Status = false;
+                apiResponse.Message = "An error occurred.";
+            }
+
+            return new ObjectResult(apiResponse);
+        }
+
+        #endregion
+
+        #region Profile -- GET
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -134,15 +171,16 @@ namespace ShopEase.WebApp.Controllers
             var model = await _userService.GetByIdAsync(userId) ?? new UserDetails();
             return PartialView("_Profile", model);
         }
+        #endregion
 
+        #region UploadProfilePicture -- POST
         [HttpPost]
         public async Task<IActionResult> UploadProfilePicture(IFormFile file)
         {
             var apiResponse = new ApiResponse();
             try
             {
-                var userId = SessionHelper.GetUserId(HttpContext.Session) ?? 0;
-                apiResponse = await _userService.UploadProfilePictureAsync(userId, file);
+                apiResponse = await _userService.UploadProfilePictureAsync(file);
 
                 if (apiResponse.Status)
                 {
@@ -158,6 +196,9 @@ namespace ShopEase.WebApp.Controllers
             }
             return new ObjectResult(apiResponse);
         }
+        #endregion
+
+        #region RemoveProfilePicture
 
         [HttpPost]
         public async Task<IActionResult> RemoveProfilePicture()
@@ -165,8 +206,7 @@ namespace ShopEase.WebApp.Controllers
             var apiResponse = new ApiResponse();
             try
             {
-                var userId = SessionHelper.GetUserId(HttpContext.Session) ?? 0;
-                apiResponse = await _userService.RemoveProfilePictureAsync(userId);
+                apiResponse = await _userService.RemoveProfilePictureAsync();
 
                 if (apiResponse.Status)
                 {
@@ -181,5 +221,6 @@ namespace ShopEase.WebApp.Controllers
             }
             return new ObjectResult(apiResponse);
         }
+        #endregion
     }
 }

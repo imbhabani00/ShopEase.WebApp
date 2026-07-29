@@ -17,6 +17,7 @@ namespace ShopEase.WebApp.Services
         Task<ApiResponse> DeleteAsync(int roleId);
         Task<List<PermissionModel>> GetByRoleIdAsync(int roleId);
         Task<ApiResponse> SavePermissionsAsync(List<SavePermissionsRequest> requests);
+        Task<ApiResponse> ActiveInactiveAsync(int userId, bool isActive);
     }
     #endregion
 
@@ -156,6 +157,44 @@ namespace ShopEase.WebApp.Services
             }
         }
         #endregion
+
+        #region ActiveInactiveAsync
+
+        public async Task<ApiResponse> ActiveInactiveAsync(int userId, bool isActive)
+        {
+            try
+            {
+                var query = new StringBuilder();
+
+                query.Append($"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/active-inactive?");
+                query.Append($"userId={userId}&");
+                query.Append($"isActive={isActive}");
+
+                var apiResponse = await DoHttpPut<ApiResponse>(
+                    query.ToString(),
+                    null,
+                    useAuth: true
+                );
+
+                return apiResponse ?? new ApiResponse
+                {
+                    Status = false,
+                    Message = "Invalid response"
+                };
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error("UserService.ActiveInactiveAsync error: {Message}", ex.Message);
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = "Error occurred"
+                };
+            }
+        }
+
+        #endregion+
 
         #region GetByRoleIdAsync
         public async Task<List<PermissionModel>> GetByRoleIdAsync(int roleId)
