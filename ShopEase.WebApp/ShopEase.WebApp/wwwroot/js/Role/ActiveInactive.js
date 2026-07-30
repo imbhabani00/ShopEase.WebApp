@@ -1,7 +1,9 @@
 ﻿$(function () {
-    $(document).on('click', '#activeInactiveRoleBtn', function () {
-        changeRoleStatus();
-    });
+    $(document)
+        .off('click', '#activeInactiveRoleBtn')
+        .on('click', '#activeInactiveRoleBtn', function () {
+            changeRoleStatus();
+        });
 });
 
 function changeRoleStatus() {

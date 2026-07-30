@@ -106,12 +106,12 @@
                                         </svg>
                                     </button>
                                 }
-                                @if (permissions.Has(PermissionConstants.User_Inactive))
+                                @if (permissions.Has(PermissionConstants.Role_Inactive))
                                 {
                                     <button type="button"
                                             class="btn btn-sm btn-icon @(role.IsActive ? "btn-success" : "btn-secondary")"
                                             title="@(role.IsActive ? "Deactivate" : "Activate")"
-                                            onclick="loadPopup('/User/ActiveInactive?userId=@role.RoleId&isActive=@role.IsActive.ToString().ToLower()','Change Status','sm')">
+                                            onclick="loadPopup('/Role/ActiveInactive?roleId=@role.RoleId&isActive=@role.IsActive.ToString().ToLower()','Change Status','sm')">
 
                                         @if (role.IsActive)
                                         {
