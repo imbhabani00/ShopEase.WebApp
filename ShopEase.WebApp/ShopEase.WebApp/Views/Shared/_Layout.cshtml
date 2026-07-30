@@ -5,47 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>@(ViewData["Title"] != null ? ViewData["Title"] + " — ShopEase" : "ShopEase")</title>
-
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
-
+    <link rel="icon" type="image/png" href="~/images/fav_icon.png" />
     <!-- Core CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
-    <!-- Topbar: search / wishlist / cart (used across pages via _Layout) -->
     <style>
-        .topbar__center{flex:1; display:flex; justify-content:center; max-width:520px; margin:0 16px;}
-        .search-bar{display:flex; align-items:center; background:#F2F3EF; border:1px solid #E4E3DC; border-radius:10px; height:38px; padding:0 4px 0 14px; width:420px; margin-left:20px;}
-        .search-bar input{border:0; background:transparent; outline:0; flex:1; font-size:13.5px; color:#151A24; font-family:inherit;}
-        .search-bar input::placeholder{color:#9AA0AC;}
-        .search-bar button{background:#1F3358; color:#fff; border:0; width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;}
-        .search-bar button svg{width:14px; height:14px;}
+            .topbar__center {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                max-width: 520px;
+                margin: 0 16px;
+            }
 
-        .header-action{display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11px; color:#6B7280; font-weight:600; position:relative; text-decoration:none; padding:4px 8px;}
-        .header-action:hover{color:#1F3358;}
-        .header-action svg{width:20px; height:20px; stroke:currentColor; fill:none;}
-        .header-action__label{white-space:nowrap;}
-        .header-action .count{position:absolute; top:-2px; right:0px; background:#DD4B39; color:#fff; font-size:10px; font-weight:700; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center; line-height:1;}
+            .search-bar {
+                display: flex;
+                align-items: center;
+                background: #F2F3EF;
+                border: 1px solid #E4E3DC;
+                border-radius: 10px;
+                height: 38px;
+                padding: 0 4px 0 14px;
+                width: 420px;
+                margin-left: 20px;
+            }
 
-/*         @@media (max-width: 980px){
-            .topbar__center{display:none;}
-        } */
-        @@media (max-width: 620px){
-            .header-action__label{display:none;}
-        }
+                .search-bar input {
+                    border: 0;
+                    background: transparent;
+                    outline: 0;
+                    flex: 1;
+                    font-size: 13.5px;
+                    color: #151A24;
+                    font-family: inherit;
+                }
+
+                    .search-bar input::placeholder {
+                        color: #9AA0AC;
+                    }
+
+                .search-bar button {
+                    background: #1F3358;
+                    color: #fff;
+                    border: 0;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 7px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    flex-shrink: 0;
+                }
+
+                    .search-bar button svg {
+                        width: 14px;
+                        height: 14px;
+                    }
+
+            .header-action {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+                font-size: 11px;
+                color: #6B7280;
+                font-weight: 600;
+                position: relative;
+                text-decoration: none;
+                padding: 4px 8px;
+            }
+
+                .header-action:hover {
+                    color: #1F3358;
+                }
+
+                .header-action svg {
+                    width: 20px;
+                    height: 20px;
+                    stroke: currentColor;
+                    fill: none;
+                }
+
+            .header-action__label {
+                white-space: nowrap;
+            }
+
+            .header-action .count {
+                position: absolute;
+                top: -2px;
+                right: 0px;
+                background: #DD4B39;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 700;
+                width: 15px;
+                height: 15px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
+            }
+
+            @@media (max-width: 620px) {
+                .header-action__label {
+                    display: none;
+                }
+            }
+
+            .sidebar__avatar-img,
+            .topbar__avatar-img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+            }
     </style>
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="@(ViewData["BodyClass"])">
-
-    <!-- ════════════════════════════════════════
-         SIDEBAR
-    ════════════════════════════════════════ -->
+    @* SIDEBAR *@
     <aside class="sidebar" id="sidebar">
-
         <!-- Brand -->
         <div class="sidebar__brand">
             <div class="sidebar__brand-icon">
@@ -60,10 +145,8 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
             </button>
         </div>
-
         <!-- Nav -->
         <nav class="sidebar__nav">
-
             <div class="nav-section">
                 <span class="nav-section__label">Main</span>
                 <a href="/Dashboard/Index" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Dashboard" ? "nav-item--active" : "")">
@@ -71,35 +154,32 @@
                     <span>Dashboard</span>
                 </a>
             </div>
-
             <div class="nav-section">
                 <span class="nav-section__label">Catalogue</span>
-                <a href="/Product" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Product" ? "nav-item--active" : "")">
+                <a href="/Product/Index" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Product" ? "nav-item--active" : "")">
                     <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /></svg>
                     <span>Products</span>
                 </a>
-                <a href="/Category" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Category" ? "nav-item--active" : "")">
+                <a href="/Category/Index" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Category" ? "nav-item--active" : "")">
                     <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
                     <span>Categories</span>
                 </a>
             </div>
-
             <div class="nav-section">
                 <span class="nav-section__label">Sales</span>
-                <a href="/Order" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Order" ? "nav-item--active" : "")">
+                <a href="/Order/Index" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Order" ? "nav-item--active" : "")">
                     <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
                     <span>Orders</span>
                     <span class="nav-badge" id="orderBadge"></span>
                 </a>
-                <a href="/Customer" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Customer" ? "nav-item--active" : "")">
+                <a href="/Customer/Index" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "Customer" ? "nav-item--active" : "")">
                     <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>
                     <span>Customers</span>
                 </a>
             </div>
-
             <div class="nav-section">
                 <span class="nav-section__label">Admin</span>
-                <a href="/User" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "User" ? "nav-item--active" : "")">
+                <a href="/User/Index" class="nav-item @(ViewData["ActiveMenu"]?.ToString() == "User" ? "nav-item--active" : "")">
                     <svg class="nav-item__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
                     <span>Users</span>
                 </a>
@@ -108,13 +188,22 @@
                     <span>Roles</span>
                 </a>
             </div>
-
         </nav>
-
         <!-- Sidebar Footer - User Info -->
+
         <div class="sidebar__footer">
             <div class="sidebar__user">
-                <div class="sidebar__avatar">@(ViewData["UserInitials"] ?? "U")</div>
+                <div class="sidebar__avatar" id="sidebarAvatar"
+                     style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
+                    @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
+                    {
+                        <img src="@ViewData["ProfilePicturePath"]" class="sidebar__avatar-img" />
+                    }
+                    else
+                    {
+                        @(ViewData["UserInitials"] ?? "U")
+                    }
+                </div>
                 <div class="sidebar__user-info">
                     <span class="sidebar__user-name">@(ViewData["UserFullName"] ?? "User")</span>
                     <span class="sidebar__user-role">@(ViewData["RoleName"] ?? "")</span>
@@ -133,7 +222,6 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="main-wrap">
-
         <!-- Top navbar -->
         <header class="topbar">
             <div class="topbar__left">
@@ -144,7 +232,6 @@
                     </button>
                 </div>
             </div>
-
             <div class="topbar__right">
                 <!-- Wishlist / Cart -->
                 <a class="header-action" href="#">
@@ -157,23 +244,38 @@
                     <span class="header-action__label">Cart</span>
                     <span class="count">2</span>
                 </a>
-
                 <!-- Notifications -->
                 <button class="topbar__icon-btn" id="notifBtn" aria-label="Notifications">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
                     <span class="topbar__badge" id="notifBadge" style="display:none">0</span>
                 </button>
-
                 <!-- User dropdown -->
                 <div class="topbar__user-wrap" id="userDropWrap">
                     <button class="topbar__user-btn" id="userDropBtn">
-                        <div class="topbar__avatar">@(ViewData["UserInitials"] ?? "U")</div>
+                        <div class="topbar__avatar" id="layoutAvatar"
+                             style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
+                            @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
+                            {
+                                <img src="@ViewData["ProfilePicturePath"]" class="topbar__avatar-img" />
+                            }
+                            else
+                            {
+                                @(ViewData["UserInitials"] ?? "U")
+                            }
+                        </div>
+
                         <span class="topbar__username">@(ViewData["UserFullName"] ?? "User")</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
                     </button>
                     <div class="user-drop" id="userDrop">
-                        <a href="/Account/Profile" class="user-drop__item">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                        <a href="javascript:void(0);"
+                           class="user-drop__item"
+                           onclick="loadPopup('/User/Profile', 'My Profile', 'md')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
                             Profile
                         </a>
                         <a href="/Account/ChangePassword" class="user-drop__item">
@@ -192,37 +294,15 @@
                 </div>
             </div>
         </header>
-
         <!-- Page content -->
         <main class="page-content">
-
-            <!-- Page header (title + action buttons) -->
-            @if (ViewData["PageTitle"] != null)
-            {
-                <div class="page-header">
-                    <div class="page-header__left">
-                        <h1 class="page-header__title">@ViewData["PageTitle"]</h1>
-                        @if (ViewData["PageSubTitle"] != null)
-                        {
-                            <p class="page-header__sub">@ViewData["PageSubTitle"]</p>
-                        }
-                    </div>
-                    <div class="page-header__actions">
-                        @await RenderSectionAsync("PageActions", required: false)
-                    </div>
-                </div>
-            }
-
             <!-- Main body -->
             @RenderBody()
-
         </main>
-
     </div>
 
-    <!-- ════════════════════════════════════════
-         MODAL CONTAINER (all popups render here)
-    ════════════════════════════════════════ -->
+    @*  MODAL CONTAINER (all popups render here) *@
+
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <div class="modal-container" id="modalContainer" role="dialog" aria-modal="true">
         <div class="modal-box" id="modalBox">
@@ -236,27 +316,27 @@
         </div>
     </div>
 
-    <!-- ════════════════════════════════════════
-         SCRIPTS
-    ════════════════════════════════════════ -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/toastr/toastr.min.js"></script>
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/user/profile.js" asp-append-version="true"></script>
     <script src="~/js/chat.js" asp-append-version="true"></script>
+
+
 
     <!-- TempData toasts fired from controller -->
     @if (TempData["SuccessMessage"] != null)
     {
         <script>
-            $(function () { showSuccess('@TempData["SuccessMessage"]'); });
+                $(function() { showSuccess('@TempData["SuccessMessage"]'); });
         </script>
     }
     @if (TempData["ErrorMessage"] != null)
     {
         <script>
-            $(function () { showError('@TempData["ErrorMessage"]'); });
+                $(function() { showError('@TempData["ErrorMessage"]'); });
         </script>
     }
     <!-- Page-specific scripts -->

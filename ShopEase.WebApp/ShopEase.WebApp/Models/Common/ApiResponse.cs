@@ -7,5 +7,6 @@
         public string Message { get; set; } = string.Empty;
         public string ErrorMessage { get; set; } = string.Empty;
         public object? Response { get; set; }
+        public string ReturnUrl { get; set; }
     }
 }

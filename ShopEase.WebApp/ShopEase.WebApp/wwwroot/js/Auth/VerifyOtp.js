@@ -35,10 +35,10 @@
                 'X-Requested-With': 'XMLHttpRequest'
             },
             success: function (response) {
-                if (response.status === true && response.statusCode == 200) {
+                if (response.status === true) {
                     showSuccess(response.message || 'OTP verified successfully');
                     setTimeout(function () {
-                        window.location.href = response.returnUrl || '/Account/VerifyOtp';
+                        window.location.href = response.returnUrl || '/Dashboard';
                     }, 1000);
                 } else {
                     showError(response.message || 'OTP verification failed');

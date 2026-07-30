@@ -1,5 +1,4 @@
 ﻿$(function () {
-    debugger
     var loginForm = $('#loginForm');
     var loginBtn = $('#loginBtn');
 
@@ -8,7 +7,6 @@
         if (!loginForm.valid()) {
             return false; 
         } 
-
         setButtonLoading(loginBtn, true);
         var formData = new FormData(loginForm[0]);
 
@@ -22,8 +20,6 @@
                 'X-Requested-With': 'XMLHttpRequest'
             },
             success: function (response) {
-                debugger;
-
                 if (response.status === true) {
 
                     if (response.returnUrl && response.returnUrl.includes("VerifyOtp")) {

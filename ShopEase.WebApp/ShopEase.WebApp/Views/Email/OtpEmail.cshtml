@@ -1,105 +1,314 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset='utf-8' />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Code — ShopEase</title>
     <style>
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                background: #f5f5f7;
+            /* ---------- RESET ---------- */
+            * {
                 margin: 0;
                 padding: 0;
+                box-sizing: border-box;
             }
 
-            .wrap {
+            body {
+                background: #f0f2f5;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+                padding: 40px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+            }
+
+            .container {
                 max-width: 520px;
-                margin: 40px auto;
-                background: #fff;
-                border-radius: 14px;
+                width: 100%;
+                background: #ffffff;
+                border-radius: 20px;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
                 overflow: hidden;
-                box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+                transition: transform 0.2s ease;
             }
 
+                .container:hover {
+                    transform: translateY(-2px);
+                }
+
+            /* ---------- HEADER ---------- */
             .header {
-                background: #1a1a2e;
-                padding: 28px 32px;
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                padding: 32px 30px 26px;
                 text-align: center;
+                position: relative;
             }
 
-                .header h1 {
-                    color: #fff;
-                    font-size: 22px;
-                    margin: 0;
-                    letter-spacing: -0.3px;
+                .header::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6);
+                    background-size: 200% 100%;
+                    animation: shimmer 3s ease-in-out infinite;
                 }
 
-                .header span {
-                    color: #534AB7;
+            @@keyframes shimmer {
+                0%,
+                100% {
+                    background-position: 0% 0%;
                 }
 
+                50% {
+                    background-position: 100% 0%;
+                }
+            }
+
+            .header .logo {
+                font-size: 26px;
+                font-weight: 700;
+                color: #ffffff;
+                letter-spacing: -0.3px;
+            }
+
+                .header .logo span {
+                    color: #60a5fa;
+                }
+
+            .header .sub {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 14px;
+                font-weight: 400;
+                margin-top: 4px;
+                letter-spacing: 0.2px;
+            }
+
+            .header .icon-big {
+                font-size: 40px;
+                display: block;
+                margin-bottom: 6px;
+            }
+
+            /* ---------- BODY ---------- */
             .body {
-                padding: 32px;
+                padding: 30px 32px 26px;
             }
 
-                .body p {
-                    color: #555;
-                    font-size: 15px;
-                    line-height: 1.7;
-                    margin: 0 0 16px;
+            .greeting {
+                font-size: 18px;
+                font-weight: 700;
+                color: #0f172a;
+                margin-bottom: 10px;
+            }
+
+                .greeting strong {
+                    color: #2563eb;
                 }
 
-            .otp-box {
-                background: #f5f5f7;
-                border: 2px dashed #534AB7;
-                border-radius: 10px;
-                text-align: center;
-                padding: 20px;
-                margin: 24px 0;
+            .body p {
+                color: #475569;
+                font-size: 15px;
+                line-height: 1.8;
+                margin-bottom: 14px;
             }
+
+                .body p:last-of-type {
+                    margin-bottom: 0;
+                }
+
+            .body .highlight {
+                color: #2563eb;
+                font-weight: 600;
+            }
+
+            /* ---------- OTP BOX ---------- */
+            .otp-wrapper {
+                background: linear-gradient(135deg, #f8fafc, #eff6ff);
+                border: 2px solid #bfdbfe;
+                border-radius: 16px;
+                text-align: center;
+                padding: 24px 20px 20px;
+                margin: 18px 0 16px;
+                position: relative;
+                transition: border-color 0.2s ease;
+            }
+
+                .otp-wrapper:hover {
+                    border-color: #60a5fa;
+                }
+
+                .otp-wrapper .shield {
+                    font-size: 20px;
+                    display: block;
+                    margin-bottom: 6px;
+                }
 
             .otp-code {
-                font-size: 36px;
-                font-weight: 700;
-                letter-spacing: 10px;
-                color: #1a1a2e;
+                font-size: 42px;
+                font-weight: 800;
+                letter-spacing: 12px;
+                color: #0f172a;
+                font-family: 'Courier New', 'SF Mono', monospace;
+                background: #ffffff;
+                padding: 10px 20px;
+                border-radius: 12px;
+                display: inline-block;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+                border: 1px solid #e2e8f0;
             }
 
-            .expiry {
-                font-size: 13px;
-                color: #999;
-                margin-top: 8px;
+            .otp-expiry {
+                font-size: 14px;
+                color: #64748b;
+                margin-top: 14px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
             }
 
+                .otp-expiry .timer {
+                    background: #dbeafe;
+                    padding: 2px 16px;
+                    border-radius: 20px;
+                    color: #1d4ed8;
+                    font-weight: 700;
+                    font-size: 13px;
+                }
+
+                .otp-expiry .clock-icon {
+                    font-size: 16px;
+                }
+
+            /* ---------- DIVIDER ---------- */
+            .divider {
+                border: none;
+                border-top: 1px solid #e2e8f0;
+                margin: 18px 0 14px;
+            }
+
+            /* ---------- FOOTER ---------- */
             .footer {
-                background: #fafafa;
-                padding: 20px 32px;
+                background: #f8fafc;
+                padding: 18px 32px;
                 text-align: center;
-                border-top: 1px solid #eee;
+                border-top: 1px solid #e2e8f0;
             }
 
                 .footer p {
                     font-size: 12px;
-                    color: #aaa;
+                    color: #94a3b8;
                     margin: 0;
+                    line-height: 1.6;
                 }
+
+                    .footer p:first-child {
+                        font-weight: 500;
+                        color: #64748b;
+                    }
+
+            /* ---------- RESPONSIVE ---------- */
+            @@media (max-width: 600px) {
+                body {
+                    padding: 20px 12px;
+                }
+
+                .header {
+                    padding: 24px 20px 20px;
+                }
+
+                    .header .logo {
+                        font-size: 22px;
+                    }
+
+                .body {
+                    padding: 22px 20px 20px;
+                }
+
+                .greeting {
+                    font-size: 16px;
+                }
+
+                .otp-code {
+                    font-size: 30px;
+                    letter-spacing: 8px;
+                    padding: 8px 14px;
+                }
+
+                .otp-wrapper {
+                    padding: 20px 14px 16px;
+                }
+
+                .footer {
+                    padding: 14px 20px;
+                }
+            }
+
+            /* ---------- PRINT ---------- */
+            @@media print {
+                body {
+                    background: #fff;
+                    padding: 20px;
+                }
+
+                .container {
+                    box-shadow: none;
+                    border: 1px solid #e2e8f0;
+                }
+            }
     </style>
 </head>
 <body>
-    <div class='wrap'>
-        <div class='header'>
-            <h1>Shop<span>Ease</span></h1>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <span class="icon-big">🔐</span>
+            <div class="logo">Shop<span>Ease</span></div>
+            <div class="sub">Secure Verification</div>
         </div>
-        <div class='body'>
-            <p>Hi <strong>{{Name}}</strong>,</p>
-            <p>Use the verification code below to complete your sign-in. This code is valid for <strong>10 minutes</strong>.</p>
-            <div class='otp-box'>
-                <div class='otp-code'>{{Otp}}</div>
-                <div class='expiry'>Expires in 10 minutes</div>
+
+        <!-- BODY -->
+        <div class="body">
+
+            <div class="greeting">Hi <strong>{{Name}}</strong>,</div>
+
+            <p>
+                Enter the verification code below to securely complete your authentication.
+                Your code will remain valid for <span class="highlight">10 minutes</span>. For your security, please keep this code confidential.
+            </p>
+
+            <!-- OTP BOX -->
+            <div class="otp-wrapper">
+                <span class="shield">🛡️</span>
+                <div class="otp-code">{{Otp}}</div>
+                <div class="otp-expiry">
+                    <span class="clock-icon">⏱</span>
+                    Expires in <span class="timer">10 minutes</span>
+                </div>
             </div>
-            <p>If you did not request this code, you can safely ignore this email.</p>
+
+            <hr class="divider">
+
+            <p style="font-size:14px; color:#64748b;">
+                If you didn't request this code, you can safely ignore this email.
+                No changes have been made to your account.
+            </p>
+
         </div>
-        <div class='footer'>
-            <p>&copy; {{Year}} ShopEase. All rights reserved.</p>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>© {{Year}} ShopEase. All rights reserved.</p>
+            <p>This is an automated message. Please do not reply.</p>
         </div>
+
     </div>
+
 </body>
 </html>

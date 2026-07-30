@@ -1,14 +1,18 @@
-﻿toastr.options = {
-    closeButton: true,
-    progressBar: true,
-    positionClass: 'toast-top-right',
-    timeOut: 3500,
-    extendedTimeOut: 1000,
-    showEasing: 'swing',
-    hideEasing: 'linear',
-    showMethod: 'fadeIn',
-    hideMethod: 'fadeOut'
-};
+﻿$(document).ready(function () {
+    if (typeof toastr !== "undefined") {
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            timeOut: 3500,
+            extendedTimeOut: 1000,
+            showEasing: 'swing',
+            hideEasing: 'linear',
+            showMethod: 'fadeIn',
+            hideMethod: 'fadeOut'
+        };
+    }
+});
 
 function showSuccess(message) { toastr.success(message || 'Operation successful'); }
 function showError(message) { toastr.error(message || 'Something went wrong'); }
@@ -16,39 +20,29 @@ function showWarning(message) { toastr.warning(message || 'Warning'); }
 function showInfo(message) { toastr.info(message || 'Info'); }
 
 $(function () {
-    var $sidebar = $('#sidebar');
-    var $overlay = $('#sidebarOverlay');
-    var $toggle = $('#sidebarToggle');
-    var $close = $('#sidebarClose');
-
-    function openSidebar() {
-        $sidebar.addClass('open');
-        $overlay.addClass('open');
+    $(document).on('click', '#sidebarToggle', function () {
+        $('#sidebar').addClass('open');
+        $('#sidebarOverlay').addClass('open');
         $('body').css('overflow', 'hidden');
-    }
+    });
 
-    function closeSidebar() {
-        $sidebar.removeClass('open');
-        $overlay.removeClass('open');
+    $(document).on('click', '#sidebarClose, #sidebarOverlay', function () {
+        $('#sidebar').removeClass('open');
+        $('#sidebarOverlay').removeClass('open');
         $('body').css('overflow', '');
-    }
-
-    $toggle.on('click', openSidebar);
-    $close.on('click', closeSidebar);
-    $overlay.on('click', closeSidebar);
+    });
 });
 
 $(function () {
-    var $btn = $('#userDropBtn');
-    var $drop = $('#userDrop');
-
-    $btn.on('click', function (e) {
+    $(document).on('click', '#userDropBtn', function (e) {
         e.stopPropagation();
-        $drop.toggleClass('open');
+        $('#userDrop').toggleClass('open');
     });
 
-    $(document).on('click', function () {
-        $drop.removeClass('open');
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('#userDropWrap').length) {
+            $('#userDrop').removeClass('open');
+        }
     });
 });
 
@@ -97,9 +91,8 @@ function closePopup() {
     $('#modalBody').html('');
 }
 
-$('#modalBackdrop').on('click', closePopup);
-
-$('#modalClose').on('click', closePopup);
+$(document).on('click', '#modalBackdrop', closePopup);
+$(document).on('click', '#modalClose', closePopup);
 
 $(document).on('keydown', function (e) {
     if (e.key === 'Escape') closePopup();
@@ -109,7 +102,6 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
     var $select = $('#' + controlId);
 
     if (!$select.length) {
-        console.warn('loadDropdown: #' + controlId + ' not found');
         return;
     }
 
@@ -120,8 +112,17 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
     $.ajax({
         url: url,
         type: 'GET',
+        dataType: 'json',
         headers: accessToken ? { 'Authorization': 'Bearer ' + accessToken } : {},
         success: function (response) {
+            if (typeof response === 'string') {
+                try {
+                    response = JSON.parse(response);
+                } catch (e) {
+                    response = [];
+                }
+            }
+
             $select.empty();
             var defaultText = defaultSelect || '— Select —';
             $select.append($('<option>', { value: '', text: defaultText }));
@@ -130,8 +131,12 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
 
             if (Array.isArray(response)) {
                 data = response;
-            } else if (response && response.status && Array.isArray(response.response)) {
+            } else if (response && Array.isArray(response.lookupData)) {
+                data = response.lookupData;
+            } else if (response && Array.isArray(response.response)) {
                 data = response.response;
+            } else if (response && Array.isArray(response.data)) {
+                data = response.data;
             }
 
             $.each(data, function (i, item) {
@@ -154,7 +159,6 @@ function loadDropdown(url, controlId, prefillValue, defaultSelect) {
         },
         error: function (xhr) {
             $select.html('<option value="">Failed to load</option>').prop('disabled', false);
-            console.error('loadDropdown error:', xhr.status, url);
         }
     });
 }
@@ -270,25 +274,19 @@ function resetForm(formId) {
     $form.find('.is-invalid').removeClass('is-invalid');
     $form.find('.field-error').text('');
 }
-
 function initFormControls($context) {
 }
-
 function setButtonLoading($btn, loading) {
-    debugger
     if (loading) {
-        $btn.prop('disabled', true)
-            .find('.btn-text').addClass('hidden').end()
-            .find('.btn-spinner').removeClass('hidden');
+        $btn.prop('disabled', true);
+        $btn.find('.btn-spinner').removeClass('hidden');
     } else {
-        $btn.prop('disabled', false)
-            .find('.btn-text').removeClass('hidden').end()
-            .find('.btn-spinner').addClass('hidden');
+        $btn.prop('disabled', false);
+        $btn.find('.btn-spinner').addClass('hidden');
     }
 }
 
 function handleApiResponse(response, successMessage) {
-    debugger
     if (!response) {
         showError('No response from server.');
         return null;

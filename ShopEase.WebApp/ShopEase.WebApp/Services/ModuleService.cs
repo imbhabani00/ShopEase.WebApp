@@ -45,14 +45,20 @@ namespace ShopEase.WebApp.Services
             try
             {
                 var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/module/list";
-                var apiResponse = await DoHttpGet<ApiResponse>(endpoint);
+                var response = await DoHttpGet(endpoint);
+
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
+
                 if (apiResponse?.Status == true && apiResponse.Response != null)
                     list = JsonConvert.DeserializeObject<ModuleViewModelList>(
                         apiResponse.Response.ToString()!) ?? list;
             }
             catch (Exception ex)
             {
-                Log.Logger.Error("ModuleService.GetAllAsync error: {Message}", ex.Message);
+                Log.Logger.Error("GetAllAsync error: {Message}", ex.Message);
             }
             return list;
         }

@@ -9,5 +9,6 @@
         public string RefreshToken { get; set; } = string.Empty;
         public int UserId { get; set; }
         public int TenantId { get; set; }
+        public bool ForcePasswordChange { get; set; }
     }
 }

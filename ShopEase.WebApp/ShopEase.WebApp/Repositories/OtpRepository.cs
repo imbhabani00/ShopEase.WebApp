@@ -50,7 +50,7 @@ namespace ShopEase.WebApp.Repositories
 
                     connection.Open();
                     await connection.ExecuteAsync(
-                        "[dbo].[sp_Otp_Insert]",
+                        "[dbo].[Otp_Insert]",
                         parameters,
                         commandType: CommandType.StoredProcedure);
 
@@ -80,7 +80,7 @@ namespace ShopEase.WebApp.Repositories
 
                     connection.Open();
                     await connection.ExecuteAsync(
-                        "[dbo].[sp_Otp_Verify]",
+                        "[dbo].[Otp_Verify]",
                         parameters,
                         commandType: CommandType.StoredProcedure);
 
@@ -109,7 +109,7 @@ namespace ShopEase.WebApp.Repositories
 
                     connection.Open();
                     var result = await connection.ExecuteAsync(
-                        "[dbo].[sp_Otp_Resend]",
+                        "[dbo].[Otp_Resend]",
                         parameters,
                         commandType: CommandType.StoredProcedure);
 
@@ -135,7 +135,7 @@ namespace ShopEase.WebApp.Repositories
 
                     connection.Open();
                     var result = await connection.ExecuteAsync(
-                        "[dbo].[sp_Otp_Invalidate]",
+                        "[dbo].[Otp_Invalidate]",
                         parameters,
                         commandType: CommandType.StoredProcedure);
 

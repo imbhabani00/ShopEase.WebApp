@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Web.Services.Base;
 using Newtonsoft.Json;
+using Serilog;
 using ShopEase.WebApp.Configuration;
 using ShopEase.WebApp.Models.Auth;
 using ShopEase.WebApp.Models.Common;
@@ -14,6 +15,7 @@ namespace Ecommerce.Web.Services
         void StoreTokenInSession(TokenResponseModel token, IHttpContextAccessor httpContextAccessor);
         TokenResponseModel? GetTokenFromSession(IHttpContextAccessor httpContextAccessor);
         void ClearTempToken(IHttpContextAccessor httpContextAccessor);
+        Task<ApiResponse> ChangePasswordAsync(int userId, string newPassword);
     }
     public class AccountService : BaseService, IAccountService
     {
@@ -33,8 +35,6 @@ namespace Ecommerce.Web.Services
             _httpContextAccessor = httpContextAccessor;
         }
         #endregion
-
-
         public void ClearTempToken(IHttpContextAccessor httpContextAccessor)
         {
             httpContextAccessor.HttpContext?.Session.Remove("TempToken");
@@ -53,13 +53,13 @@ namespace Ecommerce.Web.Services
                 PasswordHash = model.Password
             };
 
-            var result = await DoHttpPost<ApiResponse>(endpoint, payload, useAuth: false);
+            var response = await DoHttpPost(endpoint, payload, useAuth: false);
 
-            return result ?? new ApiResponse
-            {
-                Status = false,
-                Message = "No response from server"
-            };
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<ApiResponse>(content)
+                ?? new ApiResponse { Status = false, Message = "No response from server" };
         }
         #endregion
 
@@ -76,13 +76,13 @@ namespace Ecommerce.Web.Services
                 RefreshToken = refreshToken
             };
 
-            var result = await DoHttpPost<ApiResponse>(endpoint, payload, useAuth: false);
+            var response = await DoHttpPost(endpoint, payload, useAuth: false);
 
-            return result ?? new ApiResponse
-            {
-                Status = false,
-                Message = "No response from server"
-            };
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<ApiResponse>(content)
+                ?? new ApiResponse { Status = false, Message = "No response from server" };
         }
         #endregion
 
@@ -110,5 +110,29 @@ namespace Ecommerce.Web.Services
             return JsonConvert.DeserializeObject<TokenResponseModel>(json);
         }
         #endregion
+
+        public async Task<ApiResponse> ChangePasswordAsync(int userId, string newPassword)
+        {
+            try
+            {
+                var payload = new { UserId = userId, PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword) };
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/change-password";
+                var response = await DoHttpPost(endpoint, payload, useAuth: true);
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Log.Logger.Error("ChangePasswordAsync failed: {StatusCode} - {Content}", response.StatusCode, content);
+                    return new ApiResponse { Status = false, Message = "Failed to change password." };
+                }
+
+                return JsonConvert.DeserializeObject<ApiResponse>(content) ?? new ApiResponse { Status = false };
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "ChangePasswordAsync error");
+                return new ApiResponse { Status = false, Message = "Error occurred" };
+            }
+        }
     }
 }

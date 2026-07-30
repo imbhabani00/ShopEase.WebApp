@@ -1,0 +1,66 @@
+﻿<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="page-title">
+            Users
+        </h4>
+        <small class="page-subtitle">
+            User list and details
+        </small>
+    </div>
+
+    <button class="btn btn-primary btn-sm"
+            onclick="loadPopup('/User/UserAdd', 'Add User', 'md')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Add
+    </button>
+</div>
+
+
+<div class="card">
+    <div class="card__header">
+        <span class="card__title">All Users</span>
+
+        <div class="d-flex gap-8">
+            <div class="search-box">
+                <input type="text"
+                       id="userSearchInput"
+                       class="form-control"
+                       placeholder="Search users..."
+                       style="width:220px" />
+
+                <button type="button" class="search-icon-btn" id="userSearchBtn" title="Search">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card__body" style="padding:0">
+        <div id="userListContainer">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="hdn_PageNumber" value="1" />
+<input type="hidden" id="hdn_PageSize" value="10" />
+<input type="hidden" id="hdn_SortParameter" value="" />
+<input type="hidden" id="hdn_SortDirection" value="ASC" />
+
+@section Scripts {
+    <script src="~/js/user/index.js" asp-append-version="true"></script>
+}
+
+@* 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/user/index.js"></script>
+<script src="~/js/common.js"></script>
+ *@

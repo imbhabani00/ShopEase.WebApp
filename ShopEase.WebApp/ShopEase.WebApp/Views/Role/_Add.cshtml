@@ -1,29 +1,28 @@
 ﻿@model ShopEase.WebApp.Models.Role.RoleViewModel
 
-<form id="addRoleForm" novalidate>
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="RoleId" value="0" />
+<form id="addRoleForm">
+    <input type="hidden" asp-for="RoleId"/>
 
     <div class="form-group">
-        <label class="form-label">Role Name</label>
+        <label class="form-label">Role Name<span class="text-danger">*</span></label>
         <input type="text" asp-for="RoleName" class="form-control"
                placeholder="e.g. Administrator" />
         <span asp-validation-for="RoleName" class="field-error"></span>
     </div>
 
     <div class="form-group">
-        <label class="form-label">Role Code</label>
+        <label class="form-label">Role Code<span class="text-danger">*</span></label>
         <input type="text" asp-for="RoleCode" class="form-control"
                placeholder="e.g. ADM" oninput="this.value = this.value.toUpperCase()" />
         <span asp-validation-for="RoleCode" class="field-error"></span>
     </div>
 
     <div class="form-group">
-        <label class="form-label">Status</label>
-        <select asp-for="IsActive" class="form-control">
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
+        <label class="form-label">Status<span class="text-danger">*</span></label>
+        <select class="form-control text-muted" disabled>
+            <option value="true" selected>Active</option>
         </select>
+        <input type="hidden" asp-for="IsActive" value="true" />
     </div>
 
     <div class="modal-footer" style="padding:14px 0 0;margin-top:8px">
@@ -31,11 +30,17 @@
                 onclick="closePopup()">
             Cancel
         </button>
-        <button type="button" class="btn btn-primary btn-sm"
-                id="saveRoleBtn"
-                onclick="saveRole('addRoleForm')">
+
+        <button type="button" class="btn btn-primary btn-sm" id="addRoleBtn">
             <span class="btn-text">Save</span>
             <span class="btn-spinner hidden"></span>
         </button>
+
     </div>
 </form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/js/common.js"></script>
+<script src="~/js/role/add.js"></script>
