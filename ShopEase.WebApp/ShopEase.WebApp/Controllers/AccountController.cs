@@ -1,5 +1,8 @@
 ﻿using Ecommerce.Application.Services;
 using Ecommerce.Web.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ShopEase.WebApp.Configuration;
@@ -7,9 +10,9 @@ using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Helpers;
 using ShopEase.WebApp.Models.Auth;
 using ShopEase.WebApp.Models.Common;
-using ShopEase.WebApp.Models.User;
 using ShopEase.WebApp.Repositories;
 using ShopEase.WebApp.Services;
+using System.Security.Claims;
 
 namespace Ecommerce.Web.Controllers
 {
@@ -616,6 +619,95 @@ namespace Ecommerce.Web.Controllers
 
             return new ObjectResult(apiResponse);
         }
+        #endregion
+
+
+        #region Google Sign-In
+
+        [HttpGet]
+        public IActionResult GoogleLogin(string? returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(GoogleCallback), "Account", new { returnUrl });
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GoogleCallback(string? returnUrl = null)
+        {
+            var authResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!authResult.Succeeded || authResult.Principal == null)
+            {
+                TempData["ErrorMessage"] = "Google sign-in failed. Please try again.";
+                return Redirect(RouteConstants.Login);
+            }
+
+            var email = authResult.Principal.FindFirstValue(ClaimTypes.Email);
+            var name = authResult.Principal.FindFirstValue(ClaimTypes.Name);
+
+            if (string.IsNullOrEmpty(email))
+            {
+                TempData["ErrorMessage"] = "Could not retrieve email from Google.";
+                return Redirect(RouteConstants.Login);
+            }
+
+            try
+            {
+                // Bridge into your existing system: look up (or create) the user by email,
+                // then set the session exactly like Login()/VerifyOtp() already do.
+                var result = await _accountService.LoginWithGoogleAsync(email, name);
+
+                if (result == null || !result.Status || result.Response == null)
+                {
+                    TempData["ErrorMessage"] = result?.Message ?? "No account found for this Google email.";
+                    return Redirect(RouteConstants.Login);
+                }
+
+                var token = JsonConvert.DeserializeObject<TokenResponseModel>(result.Response.ToString()!);
+                if (token == null)
+                {
+                    TempData["ErrorMessage"] = "Invalid response from server.";
+                    return Redirect(RouteConstants.Login);
+                }
+
+                SessionHelper.SetAccessToken(HttpContext.Session, token.AccessToken);
+                SessionHelper.SetRefreshToken(HttpContext.Session, token.RefreshToken);
+                SessionHelper.SetUserId(HttpContext.Session, token.UserId);
+                SessionHelper.SetRoleCode(HttpContext.Session, token.RoleCode);
+                SessionHelper.SetRoleName(HttpContext.Session, token.RoleName);
+                SessionHelper.SetTenantId(HttpContext.Session, token.TenantId);
+                SessionHelper.SetRoleId(HttpContext.Session, token.RoleId);
+
+                var userDetails = await _userService.GetByIdAsync(token.UserId);
+                if (userDetails != null)
+                {
+                    SessionHelper.SetUserFullName(HttpContext.Session, userDetails.FullName);
+                    SessionHelper.SetUserEmail(HttpContext.Session, userDetails.Email ?? "");
+                    SessionHelper.SetUserPhone(HttpContext.Session, userDetails.PhoneNumber ?? "");
+                    SessionHelper.SetInitials(HttpContext.Session, userDetails.Initials ?? "");
+                    SessionHelper.SetBackgroundColorCode(HttpContext.Session, userDetails.BackgroundColorCode ?? "#1F3358");
+                    SessionHelper.SetColorCode(HttpContext.Session, userDetails.ColorCode ?? "#FFFFFF");
+                    SessionHelper.SetProfilePicturePath(HttpContext.Session, userDetails.ProfilePicturePath);
+                }
+
+                CookieHelper.SetRefreshTokenCookie(Response, token.RefreshToken, 7);
+
+                // Sign out of the transient Google cookie scheme — session is now the source of truth
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                _logger.LogInformation("GoogleCallback: User {UserId} logged in via Google", token.UserId);
+
+                return Redirect(string.IsNullOrEmpty(returnUrl) ? RouteConstants.Dashboard : returnUrl);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GoogleCallback: Error occurred");
+                TempData["ErrorMessage"] = "An error occurred during Google sign-in.";
+                return Redirect(RouteConstants.Login);
+            }
+        }
+
         #endregion
     }
 }
