@@ -160,14 +160,14 @@ namespace ShopEase.WebApp.Services
 
         #region ActiveInactiveAsync
 
-        public async Task<ApiResponse> ActiveInactiveAsync(int userId, bool isActive)
+        public async Task<ApiResponse> ActiveInactiveAsync(int roleId, bool isActive)
         {
             try
             {
                 var query = new StringBuilder();
 
                 query.Append($"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/role/active-inactive?");
-                query.Append($"userId={userId}&");
+                query.Append($"roleId={roleId}&");
                 query.Append($"isActive={isActive}");
 
                 var apiResponse = await DoHttpPut<ApiResponse>(

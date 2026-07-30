@@ -353,5 +353,5 @@ function updateStrength(val) {
 }
 
 function googleSignIn() {
-    showInfo('Google Sign-In coming soon.');
+    window.location.href = '/Account/GoogleLogin?returnUrl=' + encodeURIComponent(window.location.pathname);
 }

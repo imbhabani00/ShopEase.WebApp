@@ -1,8 +1,9 @@
 ﻿$(function () {
-    debugger
-    $(document).on('click', '#activeInactiveUserBtn', function () {
-        changeUserStatus();
-    });
+    $(document)
+        .off('click', '#activeInactiveUserBtn')
+        .on('click', '#activeInactiveUserBtn', function () {
+            changeUserStatus();
+        });
 });
 
 function changeUserStatus() {
