@@ -1,0 +1,14 @@
+# App settings
+appsettings.json
+appsettings.Development.json
+
+# User-specific files
+*.user
+*.suo
+
+# Build folders
+bin/
+obj/
+
+# VS Code
+.vscode/

@@ -115,6 +115,15 @@
                     display: none;
                 }
             }
+
+            .sidebar__avatar-img,
+            .topbar__avatar-img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+            }
     </style>
 
     @await RenderSectionAsync("Styles", required: false)
@@ -181,9 +190,20 @@
             </div>
         </nav>
         <!-- Sidebar Footer - User Info -->
+
         <div class="sidebar__footer">
             <div class="sidebar__user">
-                <div class="sidebar__avatar">@(ViewData["UserInitials"] ?? "U")</div>
+                <div class="sidebar__avatar" id="sidebarAvatar"
+                     style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
+                    @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
+                    {
+                        <img src="@ViewData["ProfilePicturePath"]" class="sidebar__avatar-img" />
+                    }
+                    else
+                    {
+                        @(ViewData["UserInitials"] ?? "U")
+                    }
+                </div>
                 <div class="sidebar__user-info">
                     <span class="sidebar__user-name">@(ViewData["UserFullName"] ?? "User")</span>
                     <span class="sidebar__user-role">@(ViewData["RoleName"] ?? "")</span>
@@ -205,16 +225,16 @@
         <!-- Top navbar -->
         <header class="topbar">
             <div class="topbar__left">
-                <div class="search-bar">
+                @* <div class="search-bar">
                     <input type="text" placeholder="Search for products, brands and more" />
                     <button aria-label="Search">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
                     </button>
-                </div>
+                </div> *@
             </div>
             <div class="topbar__right">
                 <!-- Wishlist / Cart -->
-                <a class="header-action" href="#">
+                @* <a class="header-action" href="#">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z" /></svg>
                     <span class="header-action__label">Wishlist</span>
                     <span class="count">3</span>
@@ -223,22 +243,39 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.5 3h2l2.4 12.4a2 2 0 002 1.6h8.4a2 2 0 002-1.6L21 8H6" /></svg>
                     <span class="header-action__label">Cart</span>
                     <span class="count">2</span>
-                </a>
+                </a> *@
                 <!-- Notifications -->
-                <button class="topbar__icon-btn" id="notifBtn" aria-label="Notifications">
+                @* <button class="topbar__icon-btn" id="notifBtn" aria-label="Notifications">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>
                     <span class="topbar__badge" id="notifBadge" style="display:none">0</span>
-                </button>
+                </button> *@
                 <!-- User dropdown -->
                 <div class="topbar__user-wrap" id="userDropWrap">
                     <button class="topbar__user-btn" id="userDropBtn">
-                        <div class="topbar__avatar">@(ViewData["UserInitials"] ?? "U")</div>
+                        <div class="topbar__avatar" id="layoutAvatar"
+                             style="@(string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string) ? $"background:{ViewData["BackgroundColorCode"] ?? "#1F3358"}" : "")">
+                            @if (!string.IsNullOrEmpty(ViewData["ProfilePicturePath"] as string))
+                            {
+                                <img src="@ViewData["ProfilePicturePath"]" class="topbar__avatar-img" />
+                            }
+                            else
+                            {
+                                @(ViewData["UserInitials"] ?? "U")
+                            }
+                        </div>
+
                         <span class="topbar__username">@(ViewData["UserFullName"] ?? "User")</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9" /></svg>
                     </button>
                     <div class="user-drop" id="userDrop">
-                        <a href="/Account/Profile" class="user-drop__item">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                        <a href="javascript:void(0);"
+                           class="user-drop__item"
+                           onclick="loadPopup('/User/Profile', 'My Profile', 'md')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
                             Profile
                         </a>
                         <a href="/Account/ChangePassword" class="user-drop__item">
@@ -284,19 +321,22 @@
     <script src="~/lib/toastr/toastr.min.js"></script>
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/user/profile.js" asp-append-version="true"></script>
     <script src="~/js/chat.js" asp-append-version="true"></script>
+
+
 
     <!-- TempData toasts fired from controller -->
     @if (TempData["SuccessMessage"] != null)
     {
         <script>
-            $(function () { showSuccess('@TempData["SuccessMessage"]'); });
+                $(function() { showSuccess('@TempData["SuccessMessage"]'); });
         </script>
     }
     @if (TempData["ErrorMessage"] != null)
     {
         <script>
-            $(function () { showError('@TempData["ErrorMessage"]'); });
+                $(function() { showError('@TempData["ErrorMessage"]'); });
         </script>
     }
     <!-- Page-specific scripts -->

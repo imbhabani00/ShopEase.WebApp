@@ -1,0 +1,263 @@
+﻿@model ShopEase.WebApp.Models.User.UserDetails
+
+<style>
+    .profile-box {
+        width: 100%;
+        max-width: 360px;
+        margin: auto;
+    }
+    /* Header */
+
+    .profile-top {
+        text-align: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .profile-avatar {
+        width: 82px;
+        height: 82px;
+        margin: auto;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 700;
+        overflow: hidden;
+        border: 3px solid var(--color-surface);
+        box-shadow: var(--shadow-sm);
+    }
+
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .profile-name {
+        margin-top: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--color-text);
+    }
+
+    .profile-role {
+        display: inline-block;
+        margin-top: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: var(--color-primary-light);
+        color: var(--color-primary);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    /* Actions */
+
+    .profile-actions {
+        margin-top: 16px;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .profile-btn {
+        height: 32px;
+        padding: 0 14px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .profile-btn-upload {
+        background: var(--color-primary);
+        color: #fff;
+        border: 1px solid var(--color-primary);
+    }
+
+        .profile-btn-upload:hover {
+            background: var(--color-primary-dark);
+        }
+
+    .profile-btn-remove {
+        background: #fff;
+        color: var(--color-danger);
+        border: 1px solid var(--color-danger);
+    }
+
+        .profile-btn-remove:hover {
+            background: var(--color-danger);
+            color: #fff;
+        }
+
+    /* Details */
+    .profile-details {
+        padding-top: 16px;
+    }
+
+    .profile-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+        .profile-row:last-child {
+            border-bottom: none;
+        }
+
+    .profile-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-primary-light);
+        color: var(--color-primary);
+        flex-shrink: 0;
+    }
+
+
+
+    .profile-label {
+        font-size: 11px;
+        color: var(--color-text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .profile-value {
+        font-size: 14px;
+        color: var(--color-text);
+        font-weight: 600;
+        margin-top: 2px;
+    }
+</style>
+
+<div class="profile-box">
+
+    <!-- Profile Header -->
+    <div class="profile-top">
+        <div class="profile-avatar"
+             style="background:@Model.BackgroundColorCode;
+            color:@Model.ColorCode;">
+            @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+            {
+                <img src="@Model.ProfilePicturePath"
+                     alt="@Model.FullName" />
+            }
+            else
+            {
+                @Model.Initials
+            }
+        </div>
+        <div class="profile-name">
+
+            @Model.FullName
+
+        </div>
+        <div class="profile-role">
+
+            @Model.RoleName
+
+        </div>
+
+        <div class="profile-actions">
+            <button type="button"
+                    id="btnUploadPic"
+                    class="profile-btn profile-btn-upload">
+                Change Photo
+            </button>
+            @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+            {
+
+                <button type="button"
+                        id="btnRemovePic"
+                        class="profile-btn profile-btn-remove">
+                    Remove
+                </button>
+            }
+        </div>
+
+        <input type="file" id="profilePicInput" accept="image/*"  hidden />
+    </div>
+
+    <!-- Details -->
+
+    <div class="profile-details">
+        <div class="profile-row">
+            <div class="profile-icon">
+
+                <svg width="16"
+                     height="16"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2">
+                    <path d="M4 4h16v16H4z" />
+                    <path d="M22 6l-10 7L2 6" />
+                </svg>
+            </div>
+
+            <div>
+                <div class="profile-label">
+                    Email
+                </div>
+
+                <div class="profile-value">
+                    @Model.Email
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-row">
+            <div class="profile-icon">
+                <svg width="16"
+                     height="16"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 0111.2 18.85a19.5 19.5 0 01-6-6A19.79 19.79 0 012.13 4.2 2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+                </svg>
+            </div>
+            <div>
+                <div class="profile-label">
+                    Phone
+                </div>
+                <div class="profile-value">
+
+                    @(string.IsNullOrWhiteSpace(Model.PhoneNumber)
+                        ? "—"
+                        : Model.PhoneNumber)
+                </div>
+            </div>
+        </div>
+        <div class="profile-row">
+            <div class="profile-icon">
+                <svg width="16"
+                     height="16"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+            </div>
+            <div>
+                <div class="profile-label">
+                    Role
+                </div>
+                <div class="profile-value">
+                    @Model.RoleName
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

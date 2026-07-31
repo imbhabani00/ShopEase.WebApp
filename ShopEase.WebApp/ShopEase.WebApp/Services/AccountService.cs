@@ -16,6 +16,7 @@ namespace Ecommerce.Web.Services
         TokenResponseModel? GetTokenFromSession(IHttpContextAccessor httpContextAccessor);
         void ClearTempToken(IHttpContextAccessor httpContextAccessor);
         Task<ApiResponse> ChangePasswordAsync(int userId, string newPassword);
+        Task<ApiResponse> LoginWithGoogleAsync(string email, string? name);
     }
     public class AccountService : BaseService, IAccountService
     {
@@ -35,10 +36,13 @@ namespace Ecommerce.Web.Services
             _httpContextAccessor = httpContextAccessor;
         }
         #endregion
+
+        #region ClearTempToken
         public void ClearTempToken(IHttpContextAccessor httpContextAccessor)
         {
             httpContextAccessor.HttpContext?.Session.Remove("TempToken");
         }
+        #endregion
 
         #region LoginAsync
         public async Task<ApiResponse> LoginAsync(LoginViewModel model)
@@ -111,6 +115,7 @@ namespace Ecommerce.Web.Services
         }
         #endregion
 
+        #region ChangePasswordAsync
         public async Task<ApiResponse> ChangePasswordAsync(int userId, string newPassword)
         {
             try
@@ -134,5 +139,39 @@ namespace Ecommerce.Web.Services
                 return new ApiResponse { Status = false, Message = "Error occurred" };
             }
         }
+        #endregion
+
+        #region LoginWithGoogleAsync
+        public async Task<ApiResponse> LoginWithGoogleAsync(string email, string? name)
+        {
+            try
+            {
+                var endpoint = $"{ShopEaseApiUrl}/api/v{ShopEaseApiVersion}/user/login-google";
+
+                var payload = new
+                {
+                    Email = email,
+                    FullName = name
+                };
+
+                var response = await DoHttpPost(endpoint, payload, useAuth: false);
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Log.Logger.Error("LoginWithGoogleAsync failed: {StatusCode} - {Content}", response.StatusCode, content);
+                    return new ApiResponse { Status = false, Message = "No account found for this Google email." };
+                }
+
+                return JsonConvert.DeserializeObject<ApiResponse>(content)
+                    ?? new ApiResponse { Status = false, Message = "No response from server" };
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "LoginWithGoogleAsync error");
+                return new ApiResponse { Status = false, Message = "Error occurred" };
+            }
+        }
+        #endregion
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShopEase.WebApp.Constants;
 using ShopEase.WebApp.Models.Common;
 using ShopEase.WebApp.Models.Role;
+using ShopEase.WebApp.Models.User;
 using ShopEase.WebApp.Services;
 
 namespace ShopEase.WebApp.Controllers
@@ -125,6 +126,42 @@ namespace ShopEase.WebApp.Controllers
             }
             return new ObjectResult(apiResponse);
         }
+        #endregion
+
+        #region ActiveInactive
+
+        public IActionResult ActiveInactive(int roleId, bool isActive)
+        {
+            var model = new RoleViewModel()
+            {
+                RoleId = roleId,
+                IsActive = isActive
+            };
+
+            return PartialView("_ActiveInactive", model);
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> ChangeStatus(int roleId, bool isActive)
+        {
+            var apiResponse = new ApiResponse();
+
+            try
+            {
+                apiResponse = await _roleService.ActiveInactiveAsync(roleId, isActive);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoleController.ActiveInactive error - UserId: {RoleId}", roleId);
+
+                apiResponse.Status = false;
+                apiResponse.Message = "An error occurred.";
+            }
+
+            return new ObjectResult(apiResponse);
+        }
+
         #endregion
 
         #region LoadAssignGrid

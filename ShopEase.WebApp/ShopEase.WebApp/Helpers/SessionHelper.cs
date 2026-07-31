@@ -146,6 +146,40 @@ namespace ShopEase.WebApp.Helpers
             session.Remove(SessionConstants.PendingTenantId);
         }
 
+        public static void SetProfilePicturePath(ISession session, string? path)
+    => session.SetString(SessionConstants.ProfilePicturePath, path ?? string.Empty);
+
+        public static string? GetProfilePicturePath(ISession session)
+            => session.GetString(SessionConstants.ProfilePicturePath);
+
+        public static void ClearProfilePicturePath(ISession session)
+            => session.Remove(SessionConstants.ProfilePicturePath);
+
+        public static void SetInitials(ISession session, string initials)
+            => session.SetString(SessionConstants.Initials, initials);
+
+        public static string? GetInitials(ISession session)
+            => session.GetString(SessionConstants.Initials);
+
+        public static void SetBackgroundColorCode(ISession session, string color)
+            => session.SetString(SessionConstants.BackgroundColorCode, color);
+
+        public static string? GetBackgroundColorCode(ISession session)
+            => session.GetString(SessionConstants.BackgroundColorCode);
+
+        public static void SetColorCode(ISession session, string color)
+            => session.SetString(SessionConstants.ColorCode, color);
+
+        public static string? GetColorCode(ISession session)
+            => session.GetString(SessionConstants.ColorCode);
+
+        public static void SetUserPhone(ISession session, string phone)
+            => session.SetString(SessionConstants.UserPhone, phone);
+
+        public static string? GetUserPhone(ISession session)
+            => session.GetString(SessionConstants.UserPhone);
+
+
         public static PermissionViewModel BuildPermissionViewModel(ISession session)
         {
             var vm = new PermissionViewModel();
